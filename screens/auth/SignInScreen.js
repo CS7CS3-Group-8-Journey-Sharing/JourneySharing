@@ -1,12 +1,12 @@
 import * as React from 'react';
-import { Button, TextInput, View } from 'react-native';
+import { Button, TextInput, StyleSheet, View } from 'react-native';
 
 export default function SignInScreen({ signIn }) {
     const [username, setUsername] = React.useState('');
     const [password, setPassword] = React.useState('');
 
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+      <View style={styles.container}>
         <TextInput
             placeholder="Username"
             value={username}
@@ -22,4 +22,14 @@ export default function SignInScreen({ signIn }) {
       </View>
     );
 }
+
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        display: 'flex',
+        justifyContent: 'center', 
+        alignItems: 'center' 
+    },
+});
   
