@@ -2,6 +2,8 @@ import * as React from 'react';
 import { AsyncStorage, Button, Text, TextInput, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
+import HomeScreen from './screens/HomeScreen';
+import SignInScreen from './screens/auth/SignInScreen';
 
 const AuthContext = React.createContext();
 
@@ -13,38 +15,19 @@ function SplashScreen() {
   );
 }
 
-function HomeScreen() {
+function HomeScreenAuth() {
   const { signOut } = React.useContext(AuthContext);
 
   return (
-    <View>
-      <Text>Signed in!</Text>
-      <Button title="Sign out" onPress={signOut} />
-    </View>
+    <HomeScreen signOut={signOut} />
   );
 }
 
-function SignInScreen() {
-  const [username, setUsername] = React.useState('');
-  const [password, setPassword] = React.useState('');
-
+function SignInScreenAuth() {
   const { signIn } = React.useContext(AuthContext);
 
   return (
-    <View>
-      <TextInput
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      <Button title="Sign in" onPress={() => signIn({ username, password })} />
-    </View>
+    <SignInScreen signIn={signIn} />
   );
 }
 
@@ -136,7 +119,7 @@ export default function App({ navigation }) {
             // No token found, user isn't signed in
             <Stack.Screen
               name="SignIn"
-              component={SignInScreen}
+              component={SignInScreenAuth}
               options={{
                 title: 'Sign in',
             // When logging out, a pop animation feels intuitive
@@ -145,7 +128,7 @@ export default function App({ navigation }) {
             />
           ) : (
             // User is signed in
-            <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Screen name="Home" component={HomeScreenAuth} />
           )}
         </Stack.Navigator>
       </NavigationContainer>
