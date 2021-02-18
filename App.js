@@ -3,11 +3,12 @@ import { Button, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "./screens/HomeScreen";
+import HomeScreen from "./screens/home/HomeScreen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SignInScreen from "./screens/auth/SignInScreen";
 import DetailsScreen from "./screens/settings/DetailsScreen";
 import SettingsScreen from "./screens/settings/SettingsScreen";
+import FindJourney from "./screens/home/FindJourneyScreen";
 
 const AuthContext = React.createContext();
 
@@ -19,10 +20,10 @@ function SplashScreen() {
   );
 }
 
-function HomeScreenAuth() {
+function SettingsScreenAuth() {
   const { signOut } = React.useContext(AuthContext);
 
-  return <HomeScreen signOut={signOut} />;
+  return <SettingsScreen signOut={signOut} />;
 }
 
 function SignInScreenAuth() {
@@ -37,7 +38,9 @@ const HomeStack = createStackNavigator();
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator>
-      <HomeStack.Screen name="Home" component={HomeScreenAuth} />
+      <HomeStack.Screen name="Home" component={HomeScreen} />
+      <HomeStack.Screen name="Details" component={DetailsScreen} />
+      <HomeStack.Screen name="FindJourney" component={FindJourney} />
     </HomeStack.Navigator>
   );
 }
@@ -47,8 +50,7 @@ const SettingsStack = createStackNavigator();
 function SettingsStackScreen() {
   return (
     <SettingsStack.Navigator>
-      <SettingsStack.Screen name="Settings" component={SettingsScreen} />
-      <SettingsStack.Screen name="Details" component={DetailsScreen} />
+      <SettingsStack.Screen name="Settings" component={SettingsScreenAuth} />
     </SettingsStack.Navigator>
   );
 }
@@ -159,9 +161,9 @@ export default function App({ navigation }) {
                 let iconName;
 
                 if (route.name === "Home") {
-                  iconName = "ios-information-circle";
+                  iconName = "home-outline";
                 } else if (route.name === "Settings") {
-                  iconName = "ios-list";
+                  iconName = "settings-outline";
                 }
 
                 // You can return any component that you like here!
@@ -169,7 +171,7 @@ export default function App({ navigation }) {
               },
             })}
             tabBarOptions={{
-              activeTintColor: "tomato",
+              activeTintColor: "green",
               inactiveTintColor: "gray",
             }}
           >

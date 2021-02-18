@@ -1,14 +1,11 @@
 import * as React from "react";
 import { Button, Text, View, StyleSheet } from "react-native";
 
-export default function SettingsScreen({ navigation }) {
+export default function SettingsScreen({ signOut }) {
   return (
     <View style={styles.container}>
-      <Text>Settings screen</Text>
-      <Button
-        title="Go to Details"
-        onPress={() => navigation.navigate("Details")}
-      />
+      <Text>Signed in!</Text>
+      <Button title="Sign out" onPress={signOut} />
     </View>
   );
 }
