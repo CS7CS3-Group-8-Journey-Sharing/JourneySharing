@@ -1,0 +1,23 @@
+function SignUpScreen() {
+    const [username, setUsername] = React.useState('');
+    const [password, setPassword] = React.useState('');
+  
+    const { signUp } = React.useContext(AuthContext);
+  
+    return (
+      <View>
+        <TextInput
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          placeholder="Password"
+          value={password}
+          onChangeText={setPassword}
+          secureTextEntry
+        />
+        <Button title="Sign up" onPress={() => signUp({ username, password })} />
+      </View>
+    );
+  }
