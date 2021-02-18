@@ -1,9 +1,13 @@
-import * as React from 'react';
-import { AsyncStorage, Button, Text, TextInput, View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
-import HomeScreen from './screens/HomeScreen';
-import SignInScreen from './screens/auth/SignInScreen';
+import * as React from "react";
+import { Button, Text, View } from "react-native";
+import { NavigationContainer } from "@react-navigation/native";
+import { createStackNavigator } from "@react-navigation/stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import HomeScreen from "./screens/HomeScreen";
+import Ionicons from "react-native-vector-icons/Ionicons";
+import SignInScreen from "./screens/auth/SignInScreen";
+import DetailsScreen from "./screens/settings/DetailsScreen";
+import SettingsScreen from "./screens/settings/SettingsScreen";
 
 const AuthContext = React.createContext();
 
@@ -18,38 +22,56 @@ function SplashScreen() {
 function HomeScreenAuth() {
   const { signOut } = React.useContext(AuthContext);
 
-  return (
-    <HomeScreen signOut={signOut} />
-  );
+  return <HomeScreen signOut={signOut} />;
 }
 
 function SignInScreenAuth() {
   const { signIn } = React.useContext(AuthContext);
 
-  return (
-    <SignInScreen signIn={signIn} />
-  );
+  return <SignInScreen signIn={signIn} />;
 }
 
 const Stack = createStackNavigator();
+const HomeStack = createStackNavigator();
+
+function HomeStackScreen() {
+  return (
+    <HomeStack.Navigator>
+      <HomeStack.Screen name="Home" component={HomeScreenAuth} />
+    </HomeStack.Navigator>
+  );
+}
+
+const SettingsStack = createStackNavigator();
+
+function SettingsStackScreen() {
+  return (
+    <SettingsStack.Navigator>
+      <SettingsStack.Screen name="Settings" component={SettingsScreen} />
+      <SettingsStack.Screen name="Details" component={DetailsScreen} />
+    </SettingsStack.Navigator>
+  );
+}
+
+const Tab = createBottomTabNavigator();
 
 export default function App({ navigation }) {
   const [state, dispatch] = React.useReducer(
     (prevState, action) => {
       switch (action.type) {
-        case 'RESTORE_TOKEN':
+        case "RESTORE_TOKEN":
           return {
             ...prevState,
             userToken: action.token,
             isLoading: false,
           };
-        case 'SIGN_IN':
+        case "SIGN_IN":
           return {
             ...prevState,
             isSignout: false,
             userToken: action.token,
           };
-        case 'SIGN_OUT':
+        case "SIGN_OUT":
           return {
             ...prevState,
             isSignout: true,
@@ -70,7 +92,7 @@ export default function App({ navigation }) {
       let userToken;
 
       try {
-        userToken = await AsyncStorage.getItem('userToken');
+        userToken = await AsyncStorage.getItem("userToken");
       } catch (e) {
         // Restoring token failed
       }
@@ -79,7 +101,7 @@ export default function App({ navigation }) {
 
       // This will switch to the App screen or Auth screen and this loading
       // screen will be unmounted and thrown away.
-      dispatch({ type: 'RESTORE_TOKEN', token: userToken });
+      dispatch({ type: "RESTORE_TOKEN", token: userToken });
     };
 
     bootstrapAsync();
@@ -87,22 +109,22 @@ export default function App({ navigation }) {
 
   const authContext = React.useMemo(
     () => ({
-      signIn: async data => {
+      signIn: async (data) => {
         // In a production app, we need to send some data (usually username, password) to server and get a token
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
 
-        dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
       },
-      signOut: () => dispatch({ type: 'SIGN_OUT' }),
-      signUp: async data => {
+      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signUp: async (data) => {
         // In a production app, we need to send user data to server and get a token
         // We will also need to handle errors if sign up failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
 
-        dispatch({ type: 'SIGN_IN', token: 'dummy-auth-token' });
+        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
       },
     }),
     []
@@ -111,26 +133,50 @@ export default function App({ navigation }) {
   return (
     <AuthContext.Provider value={authContext}>
       <NavigationContainer>
-        <Stack.Navigator>
-          {state.isLoading ? (
-            // We haven't finished checking for the token yet
+        {state.isLoading ? (
+          // We haven't finished checking for the token yet
+          <Stack.Navigator>
             <Stack.Screen name="Splash" component={SplashScreen} />
-          ) : state.userToken == null ? (
-            // No token found, user isn't signed in
+          </Stack.Navigator>
+        ) : state.userToken == null ? (
+          // No token found, user isn't signed in
+          <Stack.Navigator>
             <Stack.Screen
               name="SignIn"
               component={SignInScreenAuth}
               options={{
-                title: 'Sign in',
-            // When logging out, a pop animation feels intuitive
-                animationTypeForReplace: state.isSignout ? 'pop' : 'push',
+                title: "Sign in",
+                // When logging out, a pop animation feels intuitive
+                animationTypeForReplace: state.isSignout ? "pop" : "push",
               }}
             />
-          ) : (
-            // User is signed in
-            <Stack.Screen name="Home" component={HomeScreenAuth} />
-          )}
-        </Stack.Navigator>
+          </Stack.Navigator>
+        ) : (
+          // User is signed in
+          <Tab.Navigator
+            screenOptions={({ route }) => ({
+              tabBarIcon: ({ focused, color, size }) => {
+                let iconName;
+
+                if (route.name === "Home") {
+                  iconName = "ios-information-circle";
+                } else if (route.name === "Settings") {
+                  iconName = "ios-list";
+                }
+
+                // You can return any component that you like here!
+                return <Ionicons name={iconName} size={size} color={color} />;
+              },
+            })}
+            tabBarOptions={{
+              activeTintColor: "tomato",
+              inactiveTintColor: "gray",
+            }}
+          >
+            <Tab.Screen name="Home" component={HomeStackScreen} />
+            <Tab.Screen name="Settings" component={SettingsStackScreen} />
+          </Tab.Navigator>
+        )}
       </NavigationContainer>
     </AuthContext.Provider>
   );
