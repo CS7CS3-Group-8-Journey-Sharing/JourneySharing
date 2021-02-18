@@ -8,11 +8,13 @@ import TouchableScale from "react-native-touchable-scale";
 export default function ListItems({ navigation }) {
   const list = [
     {
+      key: "1",
       title: "Find a Journey",
       icon: "flight-takeoff",
       goTo: "FindJourney",
     },
     {
+      key: "2",
       title: "Appointments",
       icon: "av-timer",
       goTo: "Details",
@@ -29,6 +31,7 @@ export default function ListItems({ navigation }) {
           tension={100} // These props are passed to the parent component (here TouchableScale)
           activeScale={0.95} //
           onPress={() => navigation.navigate(item.goTo)}
+          key={item.key}
         >
           <Icon name={item.icon} />
           <ListItem.Content>
