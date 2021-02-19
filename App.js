@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeScreen from "./screens/home/HomeScreen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SignInScreen from "./screens/auth/SignInScreen";
+import SignUpScreen from "./screens/auth/SignUpScreen";
 import DetailsScreen from "./screens/settings/DetailsScreen";
 import SettingsScreen from "./screens/settings/SettingsScreen";
 import FindJourney from "./screens/home/FindJourneyScreen";
@@ -22,14 +23,29 @@ function SplashScreen() {
 
 function SettingsScreenAuth() {
   const { signOut } = React.useContext(AuthContext);
-
-  return <SettingsScreen signOut={signOut} />;
+  return <SettingsScreen signOut={signOut} />
 }
 
+
+const SignInStack = createStackNavigator();
+
+// https://stackoverflow.com/questions/60954742/how-to-pass-parent-function-to-child-screen-in-react-navigation-5
+// https://github.com/react-navigation/react-navigation/issues/7925
 function SignInScreenAuth() {
   const { signIn } = React.useContext(AuthContext);
+  const { signUp } = React.useContext(AuthContext);
+  return(
+  <SignInStack.Navigator>
+    <SignInStack.Screen name="SignIn" component={SignInScreen} initialParams={{signIn}}/> 
+    <SignInStack.Screen name="SignUp" component={SignUpScreen} initialParams={{signUp}}/>
+  </SignInStack.Navigator>
+  );
+}
 
-  return <SignInScreen signIn={signIn} />;
+function SignUpScreenAuth() {
+  const { signUp } = React.useContext(AuthContext);
+
+  return <SignUpScreen signUp={signUp} />;
 }
 
 const Stack = createStackNavigator();
@@ -142,17 +158,7 @@ export default function App({ navigation }) {
           </Stack.Navigator>
         ) : state.userToken == null ? (
           // No token found, user isn't signed in
-          <Stack.Navigator>
-            <Stack.Screen
-              name="SignIn"
-              component={SignInScreenAuth}
-              options={{
-                title: "Sign in",
-                // When logging out, a pop animation feels intuitive
-                animationTypeForReplace: state.isSignout ? "pop" : "push",
-              }}
-            />
-          </Stack.Navigator>
+          <SignInScreenAuth/>
         ) : (
           // User is signed in
           <Tab.Navigator

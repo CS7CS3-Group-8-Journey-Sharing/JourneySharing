@@ -3,7 +3,8 @@ import { StyleSheet, View } from "react-native";
 import { Input } from "react-native-elements";
 import { Button } from "react-native-elements";
 
-export default function SignInScreen({ signIn }) {
+
+export default function SignInScreen({ navigation, route}) {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
 
@@ -25,7 +26,13 @@ export default function SignInScreen({ signIn }) {
       <Button
         type="outline"
         title="Sign in"
-        onPress={() => signIn({ username, password })}
+        onPress={() => route.params.signIn({ username, password })}
+      />
+      <View style={{marginVertical: 5}} />
+      <Button
+        type="outline"
+        title="New? Create Account"
+        onPress={() => navigation.navigate("SignUp")}
       />
     </View>
   );
