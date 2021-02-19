@@ -9,6 +9,7 @@ import SignInScreen from "./screens/auth/SignInScreen";
 import DetailsScreen from "./screens/settings/DetailsScreen";
 import SettingsScreen from "./screens/settings/SettingsScreen";
 import FindJourney from "./screens/home/FindJourneyScreen";
+import axios from "axios";
 
 const AuthContext = React.createContext();
 
@@ -116,6 +117,14 @@ export default function App({ navigation }) {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
+        axios
+          .post(
+            `http://localhost:8080/api/journeysharing/user/adduser`,
+            data.username
+          )
+          .then((res) => {
+            console.log(res.data);
+          });
 
         dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
       },
