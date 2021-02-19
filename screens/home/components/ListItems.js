@@ -15,7 +15,7 @@ export default function ListItems({ navigation }) {
     },
     {
       key: "2",
-      title: "Appointments",
+      title: "buddies",
       icon: "av-timer",
       goTo: "Details",
     },

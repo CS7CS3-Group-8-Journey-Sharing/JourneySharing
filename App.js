@@ -8,7 +8,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import SignInScreen from "./screens/auth/SignInScreen";
 import DetailsScreen from "./screens/settings/DetailsScreen";
 import SettingsScreen from "./screens/settings/SettingsScreen";
-import FindJourney from "./screens/home/FindJourneyScreen";
+import FindJourneyScreen from "./screens/journey/FindJourneyScreen";
 import axios from "axios";
 
 const AuthContext = React.createContext();
@@ -41,7 +41,6 @@ function HomeStackScreen() {
     <HomeStack.Navigator>
       <HomeStack.Screen name="Home" component={HomeScreen} />
       <HomeStack.Screen name="Details" component={DetailsScreen} />
-      <HomeStack.Screen name="FindJourney" component={FindJourney} />
     </HomeStack.Navigator>
   );
 }
@@ -53,6 +52,16 @@ function SettingsStackScreen() {
     <SettingsStack.Navigator>
       <SettingsStack.Screen name="Settings" component={SettingsScreenAuth} />
     </SettingsStack.Navigator>
+  );
+}
+
+const JourneyStack = createStackNavigator();
+
+function JourneyStackScreen() {
+  return (
+    <JourneyStack.Navigator>
+      <JourneyStack.Screen name="Journey" component={FindJourneyScreen} />
+    </JourneyStack.Navigator>
   );
 }
 
@@ -117,10 +126,16 @@ export default function App({ navigation }) {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
+        console.log(JSON.stringify(data));
+        var username = data.username;
+
         axios
           .post(
-            `http://localhost:8080/api/journeysharing/user/adduser`,
-            data.username
+            "http://localhost:8080/api/journeysharing/user/adduser",
+            username,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
           )
           .then((res) => {
             console.log(res.data);
@@ -171,8 +186,10 @@ export default function App({ navigation }) {
 
                 if (route.name === "Home") {
                   iconName = "home-outline";
-                } else if (route.name === "Settings") {
+                } else if (route.name === "Profile") {
                   iconName = "settings-outline";
+                } else if (route.name === "Find Journey") {
+                  iconName = "airplane-outline";
                 }
 
                 // You can return any component that you like here!
@@ -185,7 +202,8 @@ export default function App({ navigation }) {
             }}
           >
             <Tab.Screen name="Home" component={HomeStackScreen} />
-            <Tab.Screen name="Settings" component={SettingsStackScreen} />
+            <Tab.Screen name="Find Journey" component={JourneyStackScreen} />
+            <Tab.Screen name="Profile" component={SettingsStackScreen} />
           </Tab.Navigator>
         )}
       </NavigationContainer>

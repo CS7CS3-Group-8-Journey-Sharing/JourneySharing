@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { View, StyleSheet, Dimensions, Platform } from "react-native";
 import MapView from "react-native-maps";
 
-export default function FindJourney({ navigation }) {
+export default function FindJourneyScreen() {
   const [region, setRegion] = useState({
     latitude: 53.3436581,
     longitude: -6.2563436,

@@ -6,9 +6,8 @@ import ListItems from "./components/ListItems";
 export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
-      <View style={styles.containerJourneys}>
-        <ListItems navigation={navigation} />
-      </View>
+      <Text>Home</Text>
+      {/*<ListItems navigation={navigation} />*/}
     </View>
   );
 }
@@ -17,7 +16,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     display: "flex",
-    justifyContent: "space-between",
+    justifyContent: "center",
+    alignItems: "center",
   },
   map: {
     width: Dimensions.get("window").width,
