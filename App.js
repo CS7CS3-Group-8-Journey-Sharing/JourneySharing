@@ -7,7 +7,7 @@ import HomeScreen from "./screens/home/HomeScreen";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SignInScreen from "./screens/auth/SignInScreen";
 import DetailsScreen from "./screens/settings/DetailsScreen";
-import SettingsScreen from "./screens/settings/SettingsScreen";
+import ProfileScreen from "./screens/profile/ProfileScreen";
 import FindJourneyScreen from "./screens/journey/FindJourneyScreen";
 import axios from "axios";
 
@@ -21,10 +21,10 @@ function SplashScreen() {
   );
 }
 
-function SettingsScreenAuth() {
+function ProfileScreenAuth() {
   const { signOut } = React.useContext(AuthContext);
 
-  return <SettingsScreen signOut={signOut} />;
+  return <ProfileScreen signOut={signOut} />;
 }
 
 function SignInScreenAuth() {
@@ -45,13 +45,13 @@ function HomeStackScreen() {
   );
 }
 
-const SettingsStack = createStackNavigator();
+const ProfileStack = createStackNavigator();
 
-function SettingsStackScreen() {
+function ProfileStackScreen() {
   return (
-    <SettingsStack.Navigator>
-      <SettingsStack.Screen name="Settings" component={SettingsScreenAuth} />
-    </SettingsStack.Navigator>
+    <ProfileStack.Navigator>
+      <ProfileStack.Screen name="Profile" component={ProfileScreenAuth} />
+    </ProfileStack.Navigator>
   );
 }
 
@@ -187,7 +187,7 @@ export default function App({ navigation }) {
                 if (route.name === "Home") {
                   iconName = "home-outline";
                 } else if (route.name === "Profile") {
-                  iconName = "settings-outline";
+                  iconName = "person-outline";
                 } else if (route.name === "Find Journey") {
                   iconName = "airplane-outline";
                 }
@@ -203,7 +203,7 @@ export default function App({ navigation }) {
           >
             <Tab.Screen name="Home" component={HomeStackScreen} />
             <Tab.Screen name="Find Journey" component={JourneyStackScreen} />
-            <Tab.Screen name="Profile" component={SettingsStackScreen} />
+            <Tab.Screen name="Profile" component={ProfileStackScreen} />
           </Tab.Navigator>
         )}
       </NavigationContainer>
