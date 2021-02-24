@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Button, Text, View, StyleSheet, Dimensions } from "react-native";
-import MapView, { OverlayComponent } from "react-native-maps";
-import ListItems from "./components/ListItems";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
+import { Button } from "react-native-elements";
 
 export default function HomeScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Text>Home</Text>
-      {/*<ListItems navigation={navigation} />*/}
+      <Button type="outline" title="Create Journey" onPress={() => navigation.navigate('CreateJourney')} />
     </View>
   );
 }

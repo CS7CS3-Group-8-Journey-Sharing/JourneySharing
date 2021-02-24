@@ -9,9 +9,11 @@ import SignInScreen from "./screens/auth/SignInScreen";
 import DetailsScreen from "./screens/settings/DetailsScreen";
 import ProfileScreen from "./screens/profile/ProfileScreen";
 import FindJourneyScreen from "./screens/journey/FindJourneyScreen";
+import CreateJourneyScreen from "./screens/journey/CreateJourneyScreen";
 import axios from "axios";
 
 const AuthContext = React.createContext();
+const Stack = createStackNavigator();
 
 function SplashScreen() {
   return (
@@ -23,8 +25,9 @@ function SplashScreen() {
 
 function ProfileScreenAuth() {
   const { signOut } = React.useContext(AuthContext);
+  const { user } = React.useContext(AuthContext);
 
-  return <ProfileScreen signOut={signOut} />;
+  return <ProfileScreen signOut={signOut} user={user}/>;
 }
 
 function SignInScreenAuth() {
@@ -33,14 +36,13 @@ function SignInScreenAuth() {
   return <SignInScreen signIn={signIn} />;
 }
 
-const Stack = createStackNavigator();
 const HomeStack = createStackNavigator();
 
 function HomeStackScreen() {
   return (
     <HomeStack.Navigator>
       <HomeStack.Screen name="Home" component={HomeScreen} />
-      <HomeStack.Screen name="Details" component={DetailsScreen} />
+      <HomeStack.Screen name="CreateJourney" component={CreateJourneyScreen} />
     </HomeStack.Navigator>
   );
 }
@@ -82,6 +84,7 @@ export default function App({ navigation }) {
             ...prevState,
             isSignout: false,
             userToken: action.token,
+            user: action.user
           };
         case "SIGN_OUT":
           return {
@@ -138,10 +141,11 @@ export default function App({ navigation }) {
             }
           )
           .then((res) => {
-            console.log(res.data);
+            var user = res.data;
+            dispatch({ type: "SIGN_IN", token: user.id, user: user });
+          }).catch(() => {
+            console.log(error)
           });
-
-        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
       },
       signOut: () => dispatch({ type: "SIGN_OUT" }),
       signUp: async (data) => {

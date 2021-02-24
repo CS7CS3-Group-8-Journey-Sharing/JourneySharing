@@ -1,7 +1,6 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import { Input } from "react-native-elements";
-import { Button } from "react-native-elements";
+import { Input, Button } from "react-native-elements";
 
 export default function SignInScreen({ signIn }) {
   const [username, setUsername] = React.useState("");
