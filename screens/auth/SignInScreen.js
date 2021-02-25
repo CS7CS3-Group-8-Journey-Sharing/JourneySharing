@@ -2,9 +2,11 @@ import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Input, Button } from "react-native-elements";
 
-export default function SignInScreen({ signIn }) {
+export default function SignInScreen({ navigation, route}) {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [hidePassword, setHidePassword] = React.useState(true);
+  const [passwordEye, setPasswordEye] = React.useState("eyeo");
 
   return (
     <View style={styles.container}>
@@ -19,12 +21,19 @@ export default function SignInScreen({ signIn }) {
         value={password}
         onChangeText={setPassword}
         leftIcon={{ type: "ant-design", name: "key" }}
-        secureTextEntry
+        secureTextEntry = {hidePassword}
+        rightIcon={{ type: "ant-design", name: passwordEye, onPress: () => {setHidePassword(!hidePassword); setPasswordEye(hidePassword ? "eye" : "eyeo")} }} //https://oblador.github.io/react-native-vector-icons/
       />
       <Button
         type="outline"
         title="Sign in"
-        onPress={() => signIn({ username, password })}
+        onPress={() => route.params.signIn({ username, password })}
+      />
+      <View style={{marginVertical: 5}} />
+      <Button
+        type="outline"
+        title="New? Create Account"
+        onPress={() => navigation.navigate("SignUp")}
       />
     </View>
   );
