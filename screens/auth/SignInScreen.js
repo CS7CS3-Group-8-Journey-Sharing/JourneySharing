@@ -1,12 +1,15 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Input, Button } from "react-native-elements";
+import AuthContext from "../../context/AuthContext";
 
-export default function SignInScreen({ navigation, route}) {
+export default function SignInScreen() {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
   const [passwordEye, setPasswordEye] = React.useState("eyeo");
+
+  const { signIn } = React.useContext(AuthContext);
 
   return (
     <View style={styles.container}>
@@ -27,7 +30,7 @@ export default function SignInScreen({ navigation, route}) {
       <Button
         type="outline"
         title="Sign in"
-        onPress={() => route.params.signIn({ username, password })}
+        onPress={() => signIn({ username, password })}
       />
       <View style={{marginVertical: 5}} />
       <Button

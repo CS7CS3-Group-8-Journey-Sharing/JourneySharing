@@ -3,115 +3,28 @@ import { Button, Text, View } from "react-native";
 import { NavigationContainer } from "@react-navigation/native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import HomeScreen from "./screens/home/HomeScreen";
+import HomeStackScreen from "./screens/home/stack";
+import JourneyStackScreen from "./screens/journey/stack";
+import ProfileStackScreen from "./screens/profile/stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
 import SignInScreen from "./screens/auth/SignInScreen";
-import SignUpScreen from "./screens/auth/SignUpScreen";
-import DetailsScreen from "./screens/settings/DetailsScreen";
-import ProfileScreen from "./screens/profile/ProfileScreen";
-import FindJourneyScreen from "./screens/journey/FindJourneyScreen";
-import CreateJourneyScreen from "./screens/journey/CreateJourneyScreen";
+import SplashScreen from "./screens/auth/SplashScreen";
+import AuthContext from "./context/AuthContext";
+import authReducer from "./context/AuthReducer";
+
 import axios from "axios";
 
-const AuthContext = React.createContext();
 const Stack = createStackNavigator();
-
-function SplashScreen() {
-  return (
-    <View>
-      <Text>Loading...</Text>
-    </View>
-  );
-}
-
-function ProfileScreenAuth() {
-  const { signOut } = React.useContext(AuthContext);
-  const { user } = React.useContext(AuthContext);
-
-  return <ProfileScreen signOut={signOut} user={user}/>;
-}
-
-const SignInStack = createStackNavigator();
-
-// https://stackoverflow.com/questions/60954742/how-to-pass-parent-function-to-child-screen-in-react-navigation-5
-// https://github.com/react-navigation/react-navigation/issues/7925
-function SignInScreenAuth() {
-  const { signIn } = React.useContext(AuthContext);
-  const { signUp } = React.useContext(AuthContext);
-  return(
-  <SignInStack.Navigator>
-    <SignInStack.Screen name="SignIn" component={SignInScreen} 
-    initialParams={{signIn}} options={{title: "Sign In"}}/> 
-    <SignInStack.Screen name="SignUp" component={SignUpScreen} 
-    initialParams={{signUp}} options={{title: "Sign Up"}}/> 
-  </SignInStack.Navigator>
-  );
-}
-
-const HomeStack = createStackNavigator();
-
-function HomeStackScreen() {
-  return (
-    <HomeStack.Navigator>
-      <HomeStack.Screen name="Home" component={HomeScreen} />
-      <HomeStack.Screen name="CreateJourney" component={CreateJourneyScreen} />
-    </HomeStack.Navigator>
-  );
-}
-
-const ProfileStack = createStackNavigator();
-
-function ProfileStackScreen() {
-  return (
-    <ProfileStack.Navigator>
-      <ProfileStack.Screen name="Profile" component={ProfileScreenAuth} />
-    </ProfileStack.Navigator>
-  );
-}
-
-const JourneyStack = createStackNavigator();
-
-function JourneyStackScreen() {
-  return (
-    <JourneyStack.Navigator>
-      <JourneyStack.Screen name="Journey" component={FindJourneyScreen} />
-    </JourneyStack.Navigator>
-  );
-}
-
 const Tab = createBottomTabNavigator();
 
 export default function App({ navigation }) {
-  const [state, dispatch] = React.useReducer(
-    (prevState, action) => {
-      switch (action.type) {
-        case "RESTORE_TOKEN":
-          return {
-            ...prevState,
-            userToken: action.token,
-            isLoading: false,
-          };
-        case "SIGN_IN":
-          return {
-            ...prevState,
-            isSignout: false,
-            userToken: action.token,
-            user: action.user
-          };
-        case "SIGN_OUT":
-          return {
-            ...prevState,
-            isSignout: true,
-            userToken: null,
-          };
-      }
-    },
-    {
-      isLoading: true,
-      isSignout: false,
-      userToken: null,
-    }
-  );
+  const initialState = {
+    isLoading: true,
+    isSignout: false,
+    userToken: null,
+  };
+
+  const [state, dispatch] = React.useReducer(authReducer, initialState);
 
   React.useEffect(() => {
     // Fetch the token from storage then navigate to our appropriate place
@@ -144,7 +57,7 @@ export default function App({ navigation }) {
         console.log(JSON.stringify(data));
         var username = data.username;
 
-        axios
+        /*axios
           .post(
             "http://localhost:8080/api/journeysharing/user/adduser",
             username,
@@ -157,7 +70,18 @@ export default function App({ navigation }) {
             dispatch({ type: "SIGN_IN", token: user.id, user: user });
           }).catch(() => {
             console.log(error)
+            dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+          });*/
+
+        try {
+          await AsyncStorage.setItem({
+            userToken: "dummy-auth-token",
           });
+        } catch (e) {
+          // setting token failed
+        }
+
+        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
       },
       signOut: () => dispatch({ type: "SIGN_OUT" }),
       signUp: async (data) => {
@@ -182,7 +106,17 @@ export default function App({ navigation }) {
           </Stack.Navigator>
         ) : state.userToken == null ? (
           // No token found, user isn't signed in
-          <SignInScreenAuth/>
+          <Stack.Navigator>
+            <Stack.Screen
+              name="SignIn"
+              component={SignInScreen}
+              options={{
+                title: "Sign in",
+                // When logging out, a pop animation feels intuitive
+                animationTypeForReplace: state.isSignout ? "pop" : "push",
+              }}
+            />
+          </Stack.Navigator>
         ) : (
           // User is signed in
           <Tab.Navigator
