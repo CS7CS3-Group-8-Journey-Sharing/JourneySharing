@@ -6,6 +6,8 @@ import AuthContext from "../../context/AuthContext";
 export default function SignInScreen() {
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
+  const [hidePassword, setHidePassword] = React.useState(true);
+  const [passwordEye, setPasswordEye] = React.useState("eyeo");
 
   const { signIn } = React.useContext(AuthContext);
 
@@ -22,12 +24,19 @@ export default function SignInScreen() {
         value={password}
         onChangeText={setPassword}
         leftIcon={{ type: "ant-design", name: "key" }}
-        secureTextEntry
+        secureTextEntry = {hidePassword}
+        rightIcon={{ type: "ant-design", name: passwordEye, onPress: () => {setHidePassword(!hidePassword); setPasswordEye(hidePassword ? "eye" : "eyeo")} }} //https://oblador.github.io/react-native-vector-icons/
       />
       <Button
         type="outline"
         title="Sign in"
         onPress={() => signIn({ username, password })}
+      />
+      <View style={{marginVertical: 5}} />
+      <Button
+        type="outline"
+        title="New? Create Account"
+        onPress={() => navigation.navigate("SignUp")}
       />
     </View>
   );
