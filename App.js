@@ -90,7 +90,6 @@ export default function App({ navigation }) {
 
         dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
       },
-      recover: () => {dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });}
     }),
     []
   );
