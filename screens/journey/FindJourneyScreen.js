@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { View, StyleSheet, Dimensions, Platform } from "react-native";
-import MapView from "react-native-maps";
+import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 
 export default function FindJourneyScreen() {
   const [region, setRegion] = useState({
@@ -12,7 +12,12 @@ export default function FindJourneyScreen() {
 
   return (
     <View style={styles.container}>
-      <MapView region={region} onRegionChange={setRegion} style={styles.map} />
+      <MapView
+        initialRegion={region}
+        onRegionChange={(newRegion) => setRegion(newRegion)}
+        style={styles.map}
+        provider={PROVIDER_GOOGLE}
+      />
     </View>
   );
 }
