@@ -47,7 +47,8 @@ export default function App({ navigation }) {
     bootstrapAsync();
   }, []);
 
-  const authContext = React.useMemo(
+  // Authentication functions, useMemo is so that we wait until the functions are done
+  const authFunctions = React.useMemo(
     () => ({
       signIn: async (data) => {
         // In a production app, we need to send some data (usually username, password) to server and get a token
@@ -96,8 +97,9 @@ export default function App({ navigation }) {
     []
   );
 
+  // pass both the authentication functions and the whole context state
   return (
-    <AuthContext.Provider value={authContext}>
+    <AuthContext.Provider value={{ authFunctions, ...state }}>
       <NavigationContainer>
         {state.isLoading ? (
           // We haven't finished checking for the token yet

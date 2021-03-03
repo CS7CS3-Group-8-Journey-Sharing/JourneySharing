@@ -9,7 +9,7 @@ export default function SignInScreen() {
   const [hidePassword, setHidePassword] = React.useState(true);
   const [passwordEye, setPasswordEye] = React.useState("eyeo");
 
-  const { signIn } = React.useContext(AuthContext);
+  const { signIn } = React.useContext(AuthContext).authFunctions;
 
   return (
     <View style={styles.container}>

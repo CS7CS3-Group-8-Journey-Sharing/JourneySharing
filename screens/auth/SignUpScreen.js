@@ -11,6 +11,8 @@ export default function SignUpScreen({ route }) {
   const [hidePassword, setHidePassword] = React.useState(true);
   const [passwordEye, setPasswordEye] = React.useState("eyeo");
 
+  const { signUp } = React.useContext(AuthContext).authFunctions;
+
   return (
     <View style={styles.container}>
       <Input
@@ -36,13 +38,22 @@ export default function SignUpScreen({ route }) {
         label="Password"
         value={password}
         onChangeText={setPassword}
-        secureTextEntry = {hidePassword}
-        rightIcon={{ type: "ant-design", name: passwordEye, onPress: () => {setHidePassword(!hidePassword); setPasswordEye(hidePassword ? "eye" : "eyeo")} }} //https://oblador.github.io/react-native-vector-icons/
+        secureTextEntry={hidePassword}
+        rightIcon={{
+          type: "ant-design",
+          name: passwordEye,
+          onPress: () => {
+            setHidePassword(!hidePassword);
+            setPasswordEye(hidePassword ? "eye" : "eyeo");
+          },
+        }} //https://oblador.github.io/react-native-vector-icons/
       />
       <Button
         type="outline"
         title="Sign Up"
-        onPress={() => route.params.signUp({ firstname, surname, username, password })}
+        onPress={() =>
+          route.params.signUp({ firstname, surname, username, password })
+        }
       />
     </View>
   );
