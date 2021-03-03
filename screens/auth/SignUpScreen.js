@@ -51,9 +51,7 @@ export default function SignUpScreen({ route }) {
       <Button
         type="outline"
         title="Sign Up"
-        onPress={() =>
-          route.params.signUp({ firstname, surname, username, password })
-        }
+        onPress={() => signUp({ firstname, surname, username, password })}
       />
     </View>
   );
