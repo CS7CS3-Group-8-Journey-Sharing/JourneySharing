@@ -1,10 +1,17 @@
 import React, { useState, useEffect } from "react";
 import { Button, Text, Input, CheckBox } from "react-native-elements";
-import { View, StyleSheet, TouchableOpacity, Dimensions } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableOpacity,
+  Dimensions,
+  ScrollView,
+} from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import axios from "axios";
-import DateTimePicker from '@react-native-community/datetimepicker';
-import DropDownPicker from "react-native-dropdown-picker"
+import DateTimePicker from "@react-native-community/datetimepicker";
+import DropDownPicker from "react-native-dropdown-picker";
+import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
 
 export default function CreateJourneyScreen({ navigation }) {
@@ -15,27 +22,35 @@ export default function CreateJourneyScreen({ navigation }) {
     latitudeDelta: 0.00922,
     longitudeDelta: 0.00421,
   });
+  const GOOGLE_MAPS_APIKEY = "AIzaSyAAR-RYyfCvnHlgiLa1reZe7DpioIX04tM";
 
-  const {userToken} = React.useContext(AuthContext);
+  const { userToken } = React.useContext(AuthContext);
 
   // << pulled straight from datetimepicker
   const [startDate, setStartDate] = useState(new Date());
   //const [startTime, setStartTime] = useState();
-  const [mode, setMode] = useState('date');
+  const [mode, setMode] = useState("date");
   const [show, setShow] = useState(false);
 
   const onChange = (event, selectedDate) => {
     const currentDate = selectedDate || date;
-    setShow(Platform.OS === 'ios');
+    setShow(Platform.OS === "ios");
     setDate(currentDate);
   };
   // >>
 
   const [recurring, setRecurring] = useState(false);
   const [transportMode, setTransportMode] = useState("walk");
-  const [startMarker, setStartMarker] = useState({ coordinate: null, visible: false, set: false });
-  const [endMarker, setEndMarker] = useState({ coordinate: null, visible: false, set: false });
-
+  const [startMarker, setStartMarker] = useState({
+    coordinate: null,
+    visible: false,
+    set: false,
+  });
+  const [endMarker, setEndMarker] = useState({
+    coordinate: null,
+    visible: false,
+    set: false,
+  });
 
   function placeMarker(e) {
     if (!startMarker.set) {
@@ -80,14 +95,28 @@ export default function CreateJourneyScreen({ navigation }) {
           initialRegion={region}
           onRegionChange={setRegion}
           style={styles.map}
-          onPress={e => placeMarker(e)}
+          onPress={(e) => placeMarker(e)}
         >
-          {startMarker.visible ? <Marker coordinate={startMarker.coordinate} pinColor='#080' /> : null}
-          {endMarker.visible ? <Marker coordinate={endMarker.coordinate} /> : null}
+          {startMarker.visible ? (
+            <Marker coordinate={startMarker.coordinate} pinColor="#080" />
+          ) : null}
+          {endMarker.visible ? (
+            <Marker coordinate={endMarker.coordinate} />
+          ) : null}
+          {endMarker.set && startMarker.set ? (
+            <MapViewDirections
+              origin={startMarker.coordinate}
+              destination={endMarker.coordinate}
+              mode="WALKING"
+              apikey={GOOGLE_MAPS_APIKEY}
+              strokeWidth={3}
+              strokeColor="darkgreen"
+              optimizeWaypoints={true}
+            />
+          ) : null}
         </MapView>
 
         {setMarkersButton()}
-
       </View>
 
       {
@@ -95,7 +124,7 @@ export default function CreateJourneyScreen({ navigation }) {
         // could use elements overlay for options
         // or react native bottom drawer
       }
-      <View style={styles.journeyMenu}>
+      <ScrollView style={styles.journeyMenu}>
         {/*
           {startMarker.visible ? <Text>Start Marker Visible</Text> : <Text>Start Marker NOT Visible</Text>}
           {endMarker.visible ? <Text>End Marker Visible</Text> : <Text>End Marker NOT Visible</Text>}
@@ -105,19 +134,21 @@ export default function CreateJourneyScreen({ navigation }) {
         <DropDownPicker
           items={[
             // Could add nice icons
-            { label: 'Walk', value: 'walk' },
-            { label: 'Car', value: 'car' },
-            { label: 'Bicycle', value: 'bike' },
-            { label: 'Taxi', value: 'taxi' },
+            { label: "Walk", value: "walk" },
+            { label: "Car", value: "car" },
+            { label: "Bicycle", value: "bike" },
+            { label: "Taxi", value: "taxi" },
           ]}
           defaultValue={transportMode}
-          containerStyle={{ height: 40}}
-          style={{ backgroundColor: '#fafafa' }}
-          itemStyle={{
-            //justifyContent: 'flex-start'
-          }}
-          dropDownStyle={{ backgroundColor: '#fafafa' }}
-          onChangeItem={item => setTransportMode(item.value)}
+          containerStyle={{ height: 40 }}
+          style={{ backgroundColor: "#fafafa" }}
+          itemStyle={
+            {
+              //justifyContent: 'flex-start'
+            }
+          }
+          dropDownStyle={{ backgroundColor: "#fafafa" }}
+          onChangeItem={(item) => setTransportMode(item.value)}
         />
         <CheckBox
           //center
@@ -130,13 +161,13 @@ export default function CreateJourneyScreen({ navigation }) {
         <TouchableOpacity onPress={() => console.log("Time thing")}>
           <Input
             disabled="True"
-            leftIcon={{ type: 'font-awesome', name: 'clock-o' }}
+            leftIcon={{ type: "font-awesome", name: "clock-o" }}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={() => console.log("Date thing")}>
           <Input
             disabled="True"
-            leftIcon={{ type: 'font-awesome', name: 'calendar' }}
+            leftIcon={{ type: "font-awesome", name: "calendar" }}
           />
         </TouchableOpacity>
 
@@ -158,7 +189,7 @@ export default function CreateJourneyScreen({ navigation }) {
           title="Create Journey"
           onPress={() => createJourney}
         />
-      </View>
+      </ScrollView>
     </View>
   );
 }
@@ -181,7 +212,7 @@ const styles = StyleSheet.create({
   },
 
   mapContainer: {
-    height:(Dimensions.get("window").height / 2 - 10),
+    height: Dimensions.get("window").height / 2 - 10,
   },
 
   map: {
