@@ -3,7 +3,7 @@ import { StyleSheet, View } from "react-native";
 import { Input } from "react-native-elements";
 import { Button } from "react-native-elements";
 
-export default function SignUpScreen({ route }) {
+export default function SignUpScreen() {
   const [firstname, setFirstname] = React.useState("");
   const [surname, setSurname] = React.useState("");
   const [username, setUsername] = React.useState("");
