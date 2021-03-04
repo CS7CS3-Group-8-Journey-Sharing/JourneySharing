@@ -11,8 +11,7 @@ export default function SignUpScreen() {
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
   const [passwordEye, setPasswordEye] = React.useState("eyeo");
-
-  const { signUp } = React.useContext(AuthContext);
+  const { signUp } = React.useContext(AuthContext).authFunctions;
 
   return (
     <View style={styles.container}>
