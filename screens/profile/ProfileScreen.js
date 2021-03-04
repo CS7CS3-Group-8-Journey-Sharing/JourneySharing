@@ -4,12 +4,12 @@ import { TextInput } from "react-native-gesture-handler";
 import AuthContext from "../../context/AuthContext";
 
 export default function ProfileScreen() {
-  const { authFunctions, userToken } = React.useContext(AuthContext);
+  const { authFunctions, username } = React.useContext(AuthContext);
 
   return (
     <View style={styles.container}>
       <Text>My Profile</Text>
-      <Text>{userToken}</Text>
+      <Text>{username}</Text>
       <Image
         style={styles.profile_image}
         source={require("../../assets/default-profile.png")}

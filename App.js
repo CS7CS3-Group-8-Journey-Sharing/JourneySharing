@@ -23,6 +23,7 @@ export default function App({ navigation }) {
     isLoading: true,
     isSignout: false,
     userToken: null,
+    username: null,
   };
 
   const [state, dispatch] = React.useReducer(authReducer, initialState);
@@ -31,6 +32,7 @@ export default function App({ navigation }) {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
+      let userName;
 
       try {
         userToken = await AsyncStorage.getItem("userToken");
@@ -42,7 +44,7 @@ export default function App({ navigation }) {
 
       // This will switch to the App screen or Auth screen and this loading
       // screen will be unmounted and thrown away.
-      dispatch({ type: "RESTORE_TOKEN", token: userToken });
+      dispatch({ type: "RESTORE_TOKEN", token: userToken , username: userName});
     };
 
     bootstrapAsync();
@@ -56,7 +58,7 @@ export default function App({ navigation }) {
         // We will also need to handle errors if sign in failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
-        console.log(JSON.stringify(data));
+        console.log(JSON.stringify(data.username));
 
         try {
           await AsyncStorage.setItem({
@@ -66,7 +68,7 @@ export default function App({ navigation }) {
           // setting token failed
         }
 
-        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+        dispatch({ type: "SIGN_IN", token: "dummy-auth-token", username: data.username });
       },
       signOut: () => dispatch({ type: "SIGN_OUT" }),
       signUp: async (data) => {
@@ -90,7 +92,7 @@ export default function App({ navigation }) {
             dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
           });*/
 
-        dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+        dispatch({ type: "SIGN_IN", token: "dummy-auth-token", username: data.username });
       },
     }),
     []
