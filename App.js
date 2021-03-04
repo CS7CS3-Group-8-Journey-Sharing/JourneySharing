@@ -13,6 +13,7 @@ import AuthContext from "./context/AuthContext";
 import authReducer from "./context/AuthReducer";
 
 import axios from "axios";
+import SignUpScreen from "./screens/auth/SignUpScreen";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
