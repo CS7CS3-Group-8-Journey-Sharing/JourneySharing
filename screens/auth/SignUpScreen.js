@@ -2,15 +2,15 @@ import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Input } from "react-native-elements";
 import { Button } from "react-native-elements";
+import AuthContext from "../../context/AuthContext";
 
-export default function SignUpScreen({ route }) {
+export default function SignUpScreen() {
   const [firstname, setFirstname] = React.useState("");
   const [surname, setSurname] = React.useState("");
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
   const [passwordEye, setPasswordEye] = React.useState("eyeo");
-
   const { signUp } = React.useContext(AuthContext).authFunctions;
 
   return (
