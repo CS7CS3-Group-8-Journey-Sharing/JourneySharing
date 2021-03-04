@@ -6,8 +6,8 @@ import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import HomeStackScreen from "./screens/home/stack";
 import JourneyStackScreen from "./screens/journey/stack";
 import ProfileStackScreen from "./screens/profile/stack";
+import AuthStackScreen from "./screens/auth/stack";
 import Ionicons from "react-native-vector-icons/Ionicons";
-import SignInScreen from "./screens/auth/SignInScreen";
 import SplashScreen from "./screens/auth/SplashScreen";
 import AuthContext from "./context/AuthContext";
 import authReducer from "./context/AuthReducer";
@@ -57,23 +57,6 @@ export default function App({ navigation }) {
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
         console.log(JSON.stringify(data));
-        var username = data.username;
-
-        /*axios
-          .post(
-            "http://localhost:8080/api/journeysharing/user/adduser",
-            username,
-            {
-              headers: { "Content-Type": "application/json" },
-            }
-          )
-          .then((res) => {
-            var user = res.data;
-            dispatch({ type: "SIGN_IN", token: user.id, user: user });
-          }).catch(() => {
-            console.log(error)
-            dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
-          });*/
 
         try {
           await AsyncStorage.setItem({
@@ -91,6 +74,21 @@ export default function App({ navigation }) {
         // We will also need to handle errors if sign up failed
         // After getting token, we need to persist the token using `AsyncStorage`
         // In the example, we'll use a dummy token
+        /*axios
+          .post(
+            "http://localhost:8080/api/journeysharing/user/adduser",
+            username,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          )
+          .then((res) => {
+            var user = res.data;
+            dispatch({ type: "SIGN_IN", token: user.id, user: user });
+          }).catch(() => {
+            console.log(error)
+            dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
+          });*/
 
         dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
       },
@@ -109,18 +107,7 @@ export default function App({ navigation }) {
           </Stack.Navigator>
         ) : state.userToken == null ? (
           // No token found, user isn't signed in
-          <Stack.Navigator>
-            <Stack.Screen
-              name="SignIn"
-              component={SignInScreen}
-              options={{
-                title: "Sign in",
-                // When logging out, a pop animation feels intuitive
-                animationTypeForReplace: state.isSignout ? "pop" : "push",
-              }}
-            />
-            <Stack.Screen name="SignUp" component={SignUpScreen} />
-          </Stack.Navigator>
+          <AuthStackScreen />
         ) : (
           // User is signed in
           <Tab.Navigator
