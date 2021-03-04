@@ -17,7 +17,12 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "ie.asegroup8.journeysharing",
+      "buildNumber": "1.0.0",
+      "config": {
+        "googleMapsApiKey": "AIzaSyAAR-RYyfCvnHlgiLa1reZe7DpioIX04tM"
+      }
     },
     "android": {
       "adaptiveIcon": {
