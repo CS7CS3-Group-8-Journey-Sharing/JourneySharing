@@ -13,13 +13,14 @@ export default authReducer = (prevState, action) => {
         ...prevState,
         isSignout: false,
         userToken: action.token,
-        user: action.user,
+        username: action.username,
       };
     case "SIGN_OUT":
       return {
         ...prevState,
         isSignout: true,
         userToken: null,
+        username: null
       };
   }
 };
