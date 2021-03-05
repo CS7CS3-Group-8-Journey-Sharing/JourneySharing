@@ -8,8 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import axios from "axios";
-import DateTimePicker from "@react-native-community/datetimepicker";
+import CustomDatePicker from "./CustomDatePicker"
 import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
@@ -22,22 +21,15 @@ export default function CreateJourneyScreen({ navigation }) {
     latitudeDelta: 0.00922,
     longitudeDelta: 0.00421,
   });
+
   const GOOGLE_MAPS_APIKEY = "AIzaSyAAR-RYyfCvnHlgiLa1reZe7DpioIX04tM";
 
   const { userToken } = React.useContext(AuthContext);
 
-  // << pulled straight from datetimepicker
+  // is date AND time
   const [startDate, setStartDate] = useState(new Date());
-  //const [startTime, setStartTime] = useState();
-  const [mode, setMode] = useState("date");
-  const [show, setShow] = useState(false);
-
-  const onChange = (event, selectedDate) => {
-    const currentDate = selectedDate || date;
-    setShow(Platform.OS === "ios");
-    setDate(currentDate);
-  };
-  // >>
+  const [dateTimeMode, setDateTimeMode] = useState("date");
+  const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [recurring, setRecurring] = useState(false);
   const [transportMode, setTransportMode] = useState("walk");
@@ -125,12 +117,6 @@ export default function CreateJourneyScreen({ navigation }) {
         // or react native bottom drawer
       }
       <ScrollView style={styles.journeyMenu}>
-        {/*
-          {startMarker.visible ? <Text>Start Marker Visible</Text> : <Text>Start Marker NOT Visible</Text>}
-          {endMarker.visible ? <Text>End Marker Visible</Text> : <Text>End Marker NOT Visible</Text>}
-          {startMarker.set ? <Text>Start Marker Set</Text> : <Text>Start Marker NOT Set</Text>}
-          {endMarker.set ? <Text>End Marker Set</Text> : <Text>End Marker NOT Set</Text>}
-        */}
         <DropDownPicker
           items={[
             // Could add nice icons
@@ -158,28 +144,44 @@ export default function CreateJourneyScreen({ navigation }) {
           checked={recurring}
           onPress={() => setRecurring(!recurring)}
         />
-        <TouchableOpacity onPress={() => console.log("Time thing")}>
+        <TouchableOpacity onPress={() => {
+          setDateTimeMode("time");
+          setShowDatePicker(true);
+        }
+          }>
           <Input
-            disabled="True"
+            disabled={true}
+            placeholder={"Start Time"}
+            value={startDate.toLocaleTimeString()}
             leftIcon={{ type: "font-awesome", name: "clock-o" }}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => console.log("Date thing")}>
+        <TouchableOpacity onPress={() => {setDateTimeMode("date"); setShowDatePicker(true)}}>
           <Input
-            disabled="True"
+            disabled={true}
+            placeholder={"Start Date"}
+            value={startDate.toLocaleDateString()}
             leftIcon={{ type: "font-awesome", name: "calendar" }}
           />
         </TouchableOpacity>
 
-        {show && (
-          // Does it matter where this goes?
-          <DateTimePicker
-            testID="dateTimePicker"
-            value={date}
-            mode={mode}
-            is24Hour={true}
-            display="default"
-            onChange={onChange}
+        {showDatePicker && (
+          <CustomDatePicker
+            date={startDate}
+            mode={dateTimeMode}
+            onClose={date => {
+              if (date && Platform.OS !== 'iOS') {
+                setShowDatePicker(false);
+                //setStartDate(moment(date));
+                setStartDate(date);
+              } else {
+                setShowDatePicker(false);
+              }
+            }}
+            onChange={d => {
+              // don't know about this
+              setStartDate(moment(d));
+            }}
           />
         )}
 
