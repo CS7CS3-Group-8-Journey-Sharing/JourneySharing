@@ -1,11 +1,10 @@
-import { dummyFunction } from "../dummy";
 import { createJourney } from "../utils/APIcalls";
 
-test("adds 1 + 2 to equal 3", () => {
-  expect(dummyFunction(1, 2)).toBe(3);
+test("Assert CreateJourney exists", () => {
+  expect(createJourney).toBeDefined();
 });
 
-test("Create journey and retrieve it, ", () => {
+test("Assert CreateJourney creates a journey and retrieves it", () => {
   var journey = {
     latitude: 35,
     longitude: 35,

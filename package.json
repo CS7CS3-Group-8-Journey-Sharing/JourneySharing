@@ -29,7 +29,8 @@
     "react-native-screens": "~2.15.2",
     "react-native-touchable-scale": "^2.1.2",
     "react-native-web": "~0.13.12",
-    "react-native-web-maps": "^0.3.0"
+    "react-native-web-maps": "^0.3.0",
+    "ts-jest": "^26.5.3"
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",

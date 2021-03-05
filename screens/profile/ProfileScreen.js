@@ -1,6 +1,5 @@
 import * as React from "react";
 import { Image, Button, Text, View, StyleSheet } from "react-native";
-import { TextInput } from "react-native-gesture-handler";
 import AuthContext from "../../context/AuthContext";
 
 export default function ProfileScreen() {
