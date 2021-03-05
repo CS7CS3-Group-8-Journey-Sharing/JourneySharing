@@ -7,3 +7,11 @@ export function getHelloFromAPI() {
       return response.data;
     });
 }
+
+export const createJourney = (journey) => {
+  /*
+  TODO: call backend and create a journey and return it once created
+  */
+
+  return journey;
+};

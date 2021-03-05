@@ -1,33 +1,21 @@
-import React from 'react';
+import React, { useState } from "react";
 
 const STATUS = {
-    HOVERED: 'hovered',
-    NORMAL: 'normal'
+  HOVERED: "hovered",
+  NORMAL: "normal",
 };
 
-export default class DummyLink extends React.Component {
-    constructor(props) {
-        super(props);
+export default function DummyLink() {
+  const [className, setClassName] = useState(STATUS.NORMAL);
 
-        this._onMouseEnter = this._onMouseEnter.bind(this);
-        this._onMouseLeave = this._onMouseLeave.bind(this);
-
-        this.state = {
-            class: STATUS.NORMAL,
-        };
-    }
-
-    _onMouseEnter() {
-        this.setState({class: STATUS.HOVERED});
-    }
-
-    _onMouseLeave() {
-        this.setState({class: STATUS.NORMAL});
-    }
-
-    render() {
-        return (
-            <a className={this.state.class} href={this.props.page || '#'} onMouseEnter={this._onMouseEnter} onMouseLeave={this._onMouseLeave}>{this.props.children}</a>
-        );
-    }
+  return (
+    <a
+      className={className}
+      href={this.props.page || "#"}
+      onMouseEnter={setClassName(STATUS.HOVERED)}
+      onMouseLeave={setClassName(STATUS.NORMAL)}
+    >
+      {this.props.children}
+    </a>
+  );
 }
