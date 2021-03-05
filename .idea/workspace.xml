@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="48682786-1110-4427-83e1-166f5e35c469" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/screens/profile/ProfileScreen.js" beforeDir="false" afterPath="$PROJECT_DIR$/screens/profile/ProfileScreen.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -36,13 +36,13 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
-    <state x="95" y="103" width="1254" height="840" key="AVDManager" timestamp="1614874650042">
+    <state x="95" y="103" width="1254" height="840" key="AVDManager" timestamp="1614936639855">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="95" y="103" width="1254" height="840" key="AVDManager/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1614874650042" />
-    <state x="378" y="244" key="run.anything.popup" timestamp="1613667936354">
+    <state x="95" y="103" width="1254" height="840" key="AVDManager/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1614936639855" />
+    <state x="378" y="244" key="run.anything.popup" timestamp="1614936623233">
       <screen x="0" y="0" width="1920" height="1040" />
     </state>
-    <state x="378" y="244" key="run.anything.popup/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1613667936354" />
+    <state x="378" y="244" key="run.anything.popup/-1920.0.1920.1040/0.0.1920.1040@0.0.1920.1040" timestamp="1614936623233" />
   </component>
 </project>
