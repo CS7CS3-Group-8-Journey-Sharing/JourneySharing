@@ -4,6 +4,7 @@ export function getHelloFromAPI() {
   axios
     .get("http://localhost:8080/api/journeysharing/journey/hi")
     .then((response) => {
+      console.log(response);
       return response.data;
     });
 }
