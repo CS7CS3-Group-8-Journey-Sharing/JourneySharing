@@ -8,7 +8,7 @@ import {
   ScrollView,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import CustomDatePicker from "./CustomDatePicker"
+import CustomDatePicker from "./CustomDatePicker";
 import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
@@ -22,7 +22,7 @@ export default function CreateJourneyScreen({ navigation }) {
     longitudeDelta: 0.00421,
   });
 
-  const GOOGLE_MAPS_APIKEY = "AIzaSyAAR-RYyfCvnHlgiLa1reZe7DpioIX04tM";
+  const GOOGLE_MAPS_APIKEY = "AIzaSyBvpQxAF7Ix36SK5pdB1vyW6O3Ek5tUAYI";
 
   const { userToken } = React.useContext(AuthContext);
 
@@ -144,11 +144,12 @@ export default function CreateJourneyScreen({ navigation }) {
           checked={recurring}
           onPress={() => setRecurring(!recurring)}
         />
-        <TouchableOpacity onPress={() => {
-          setDateTimeMode("time");
-          setShowDatePicker(true);
-        }
-          }>
+        <TouchableOpacity
+          onPress={() => {
+            setDateTimeMode("time");
+            setShowDatePicker(true);
+          }}
+        >
           <Input
             disabled={true}
             placeholder={"Start Time"}
@@ -156,7 +157,12 @@ export default function CreateJourneyScreen({ navigation }) {
             leftIcon={{ type: "font-awesome", name: "clock-o" }}
           />
         </TouchableOpacity>
-        <TouchableOpacity onPress={() => {setDateTimeMode("date"); setShowDatePicker(true)}}>
+        <TouchableOpacity
+          onPress={() => {
+            setDateTimeMode("date");
+            setShowDatePicker(true);
+          }}
+        >
           <Input
             disabled={true}
             placeholder={"Start Date"}
@@ -169,8 +175,8 @@ export default function CreateJourneyScreen({ navigation }) {
           <CustomDatePicker
             date={startDate}
             mode={dateTimeMode}
-            onClose={date => {
-              if (date && Platform.OS !== 'iOS') {
+            onClose={(date) => {
+              if (date && Platform.OS !== "iOS") {
                 setShowDatePicker(false);
                 //setStartDate(moment(date));
                 setStartDate(date);
@@ -178,7 +184,7 @@ export default function CreateJourneyScreen({ navigation }) {
                 setShowDatePicker(false);
               }
             }}
-            onChange={d => {
+            onChange={(d) => {
               // don't know about this
               setStartDate(moment(d));
             }}

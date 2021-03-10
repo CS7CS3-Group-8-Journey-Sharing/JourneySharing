@@ -19,3 +19,13 @@ test("Assert CreateJourney creates a journey and retrieves it", () => {
 
   expect(journeyCreated).toBe(journey);
 });
+
+test("Assert find journey shows journeys in x radius", () => {
+  var radius = 500;
+
+  // TODO: retrieve journeys within x radius from the backend
+  var journeys = getJourneysWithinRadius(500);
+
+  // check
+  expect(journeys).toBeDefined();
+});
