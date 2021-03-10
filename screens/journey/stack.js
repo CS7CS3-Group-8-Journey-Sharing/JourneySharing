@@ -5,9 +5,12 @@ import FindJourneyScreen from "./FindJourneyScreen";
 const JourneyStack = createStackNavigator();
 
 export default function JourneyStackScreen() {
-    return (
-        <JourneyStack.Navigator>
-            <JourneyStack.Screen name="Journey" component={FindJourneyScreen} />
-        </JourneyStack.Navigator>
-    );
+  return (
+    <JourneyStack.Navigator>
+      <JourneyStack.Screen
+        name="Find a Journey"
+        component={FindJourneyScreen}
+      />
+    </JourneyStack.Navigator>
+  );
 }

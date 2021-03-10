@@ -1,53 +1,100 @@
-import React, { useState } from "react";
-import { View, StyleSheet, Dimensions, Platform } from "react-native";
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  Platform,
+  ScrollView,
+} from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
+import {
+  getJourneysWithinRadius,
+  getJourneysOfUser,
+} from "../../utils/APIcalls";
+import HomeScreenItems from "../home/HomeScreenItem";
 
-export default function FindJourneyScreen() {
+export default function FindJourneyScreen({ navigation }) {
   const [region, setRegion] = useState({
     latitude: 53.3436581,
     longitude: -6.2563436,
-    latitudeDelta: 0.00922,
-    longitudeDelta: 0.00421,
+    latitudeDelta: 0.00582,
+    longitudeDelta: 0.00271,
   });
+  const [journeys, setJourneys] = useState(getJourneysWithinRadius(500));
+  const [currentJourney, setCurrentJourney] = useState(journeys[0]);
 
-  const origin = { latitude: 53.347257, longitude: -6.2589555 };
-  const destination = { latitude: 53.3446581, longitude: -6.2563436 };
-  const GOOGLE_MAPS_APIKEY = "AIzaSyAAR-RYyfCvnHlgiLa1reZe7DpioIX04tM";
+  const GOOGLE_MAPS_APIKEY = "AIzaSyBvpQxAF7Ix36SK5pdB1vyW6O3Ek5tUAYI";
 
-  return (
-    <View style={styles.container}>
-      <MapView
-        initialRegion={region}
-        onRegionChange={(newRegion) => setRegion(newRegion)}
-        style={styles.map}
-        //provider={PROVIDER_GOOGLE}
-      >
-        <MapView.Marker coordinate={origin} title="origin" />
-        <MapView.Marker coordinate={destination} title="destination" />
-        <MapViewDirections
-          origin={origin}
-          destination={destination}
-          mode="WALKING"
-          apikey={GOOGLE_MAPS_APIKEY}
-          strokeWidth={3}
-          strokeColor="darkgreen"
-          optimizeWaypoints={true}
-        />
-      </MapView>
-    </View>
-  );
+  if (journeys.length > 0)
+    return (
+      <View style={styles.container}>
+        <MapView
+          initialRegion={region}
+          onRegionChange={(newRegion) => setRegion(newRegion)}
+          style={styles.map}
+          //provider={PROVIDER_GOOGLE}
+        >
+          <MapView.Marker
+            coordinate={currentJourney.coords.origin}
+            title="origin"
+          />
+          <MapView.Marker
+            coordinate={currentJourney.coords.destination}
+            title="destination"
+          />
+          <MapViewDirections
+            origin={currentJourney.coords.origin}
+            destination={currentJourney.coords.destination}
+            mode="WALKING"
+            apikey={GOOGLE_MAPS_APIKEY}
+            strokeWidth={3}
+            strokeColor="darkgreen"
+            optimizeWaypoints={true}
+          />
+        </MapView>
+        <ScrollView>
+          <HomeScreenItems
+            navigation={navigation}
+            list={journeys}
+            setCurrentJourney={setCurrentJourney}
+            fromFindJourney
+          />
+        </ScrollView>
+      </View>
+    );
+  else
+    return (
+      <View style={styles.container}>
+        <View style={styles.center}>
+          <Text style={{ marginBottom: 10 }}>
+            You have no Journeys. Create one?
+          </Text>
+          <Button
+            type="outline"
+            title="Create Journey"
+            onPress={() => navigation.navigate("CreateJourney")}
+          />
+        </View>
+      </View>
+    );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     display: "flex",
-    justifyContent: "space-between",
     alignItems: "center",
+    alignItems: "stretch",
   },
   map: {
     width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
+    height: Dimensions.get("window").height / 2.3,
+  },
+  center: {
+    flex: 1,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
   },
 });
