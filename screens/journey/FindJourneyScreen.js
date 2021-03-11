@@ -24,7 +24,7 @@ export default function FindJourneyScreen({ navigation }) {
   const [journeys, setJourneys] = useState(getJourneysWithinRadius(500));
   const [currentJourney, setCurrentJourney] = useState(journeys[0]);
 
-  const GOOGLE_MAPS_APIKEY = "AIzaSyBvpQxAF7Ix36SK5pdB1vyW6O3Ek5tUAYI";
+  const GOOGLE_MAPS_APIKEY = "#####";
 
   if (journeys.length > 0)
     return (
@@ -43,6 +43,7 @@ export default function FindJourneyScreen({ navigation }) {
             coordinate={currentJourney.coords.destination}
             title="destination"
           />
+          {/* 
           <MapViewDirections
             origin={currentJourney.coords.origin}
             destination={currentJourney.coords.destination}
@@ -52,6 +53,7 @@ export default function FindJourneyScreen({ navigation }) {
             strokeColor="darkgreen"
             optimizeWaypoints={true}
           />
+          */}
         </MapView>
         <ScrollView>
           <HomeScreenItems

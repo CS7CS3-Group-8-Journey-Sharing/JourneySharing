@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import { Button, Text, View, StyleSheet, Dimensions } from "react-native";
+import { Text, View, StyleSheet, Dimensions } from "react-native";
 import MapView, { OverlayComponent } from "react-native-maps";
-import { ListItem, Icon, Avatar } from "react-native-elements";
+import { ListItem, Icon, Avatar, Button } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import TouchableScale from "react-native-touchable-scale";
 
@@ -33,9 +33,18 @@ export default function HomeScreenItems({
           key={i}
         >
           <ListItem.Content>
-            <Text style={styles.containerJourneys_text_title}>
-              {item.title}
-            </Text>
+            <View style={{ flexDirection: "row" }}>
+              <Text style={styles.containerJourneys_text_title}>
+                {item.title}
+              </Text>
+              {fromFindJourney && (
+                <Button
+                  type="outline"
+                  title="JOIN"
+                  style={{ flex: 2, backgroundColor: "white" }}
+                />
+              )}
+            </View>
             <View style={styles.containerJourneys_row}>
               <View style={styles.containerJourneys_icon}>
                 <Icon
@@ -170,7 +179,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   containerJourneys_text_title: {
-    flexDirection: "row",
+    flex: 1,
     color: "white",
     fontSize: 20,
     paddingBottom: 5,
