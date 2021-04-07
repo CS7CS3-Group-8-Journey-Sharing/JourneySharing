@@ -45,6 +45,12 @@ export default function SignInScreen({ navigation }) {
         title="New? Create Account"
         onPress={() => navigation.navigate("SignUp")}
       />
+      <View style={{ marginVertical: 5 }} />
+      <Button
+        type="outline"
+        title="Recover Password"
+        onPress={() => navigation.navigate("RecoverPassword")}
+      />
     </View>
   );
 }

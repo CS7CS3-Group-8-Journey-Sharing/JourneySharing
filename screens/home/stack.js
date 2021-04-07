@@ -2,6 +2,7 @@ import * as React from "react";
 import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./HomeScreen";
 import CreateJourneyScreen from "./CreateJourneyScreen";
+import ViewTrip from "./ViewTrip";
 import { Icon } from 'react-native-elements'
 import Ionicons from "react-native-vector-icons/Ionicons";
 
@@ -23,6 +24,7 @@ export default function HomeStackScreen({navigation}) {
           ),
         }}/>
         <HomeStack.Screen name="CreateJourney" component={CreateJourneyScreen} />
+        <HomeStack.Screen name="ViewTrip" component={ViewTrip} />
       </HomeStack.Navigator>
     );
 }
