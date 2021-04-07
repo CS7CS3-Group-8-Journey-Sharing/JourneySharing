@@ -14,6 +14,7 @@ import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
 import { Platform } from "react-native";
 import axios from "axios";
+import {sendCreateJourney, what} from "../../utils/APIcalls"
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
@@ -60,45 +61,45 @@ export default function CreateJourneyScreen({ navigation }) {
   }
 
   function createJourney() {
-    console.log("Send it")
+    console.log("Send it");
+
     //TODO: validate data
-    axios
-      .post(
-        // https?
-        //TODO: localhost doesn't work on android, use 10.0.2.2 or proxy in emulator settings?
-        "http://10.0.2.2:8080/api/journeysharing/journey/createjourney",
-        {
-          maxParticipants: 99999,
-          modeOfTransport: transportMode.toUpperCase(),
+    var journey = {
+      maxParticipants: 99999,
+      modeOfTransport: transportMode.toUpperCase(),
 
-          //ownerId: userToken,
-          ownerId: "6065e0e6fdb39f04922f3d53",
-          participantIds: ["6065e1e3388f3868f0487e30", "6065e1fb388f3868f0487e31"],
-          //participantIds: [],
+      //ownerId: userToken,
+      ownerId: "6065e0e6fdb39f04922f3d53",
+      participantIds: ["6065e1e3388f3868f0487e30", "6065e1fb388f3868f0487e31"],
+      //participantIds: [],
 
-          recurring: recurring,
-          startTime: startDate,
-          //TODO: Set actual end time
-          endTime: "3000-02-30T20:42:49.978Z",
+      recurring: recurring,
+      startTime: startDate,
+      //TODO: Set actual end time
+      // endtime is required parameter, probably shouldn't be
+      endTime: "3000-02-30T20:42:49.978Z",
+      //endTime: null,
 
-          startLocation: {
-            lat: startMarker.coordinate.latitude,
-            lng: startMarker.coordinate.longitude,
-            name: null
-          },
-          endLocation: {
-            lat: endMarker.coordinate.latitude,
-            lng: endMarker.coordinate.longitude,
-            name: null
-          },
-        }
-      )
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
+      startLocation: {
+        lat: startMarker.coordinate.latitude,
+        lng: startMarker.coordinate.longitude,
+        name: null
+      },
+      endLocation: {
+        lat: endMarker.coordinate.latitude,
+        lng: endMarker.coordinate.longitude,
+        name: null
+      },
+    };
+
+    sendCreateJourney(journey);
+
+    //  .then(function (response) {
+    //    console.log(response);
+    //  })
+    //  .catch(function (error) {
+    //    console.log(error);
+    //  });
       console.log("plz sens");
 
   }

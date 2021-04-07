@@ -33,10 +33,28 @@ export function getHelloFromAPI() {
     });
 }
 
-export const createJourney = (journey) => {
+export const what = () => {
+  console.log("what");
+}
+
+export const sendCreateJourney = (journey) => {
   /*
   TODO: call backend and create a journey and return it once created
   */
+
+  axios
+    .post(
+      // https?
+      //TODO: localhost doesn't work on android, use 10.0.2.2 or proxy in emulator settings?
+      "http://10.0.2.2:8080/api/journeysharing/journey/createjourney",
+      journey
+    )
+    .then(function (response) {
+      console.log(response);
+    })
+    .catch(function (error) {
+      console.log(error);
+    });
 
   return journey;
 };
