@@ -7,6 +7,8 @@ import AuthContext from "../../context/AuthContext";
 export default function SignUpScreen() {
   const [firstname, setFirstname] = React.useState("");
   const [surname, setSurname] = React.useState("");
+  const [age, setAge] = React.useState("");
+  const [gender, setGender] = React.useState("");
   const [username, setUsername] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
@@ -26,6 +28,18 @@ export default function SignUpScreen() {
         label="Surname"
         value={surname}
         onChangeText={setSurname}
+      />
+      <Input
+        placeholder="Age"
+        label="Age"
+        value={age}
+        onChangeText={setAge}
+      />
+      <Input
+        placeholder="Gender"
+        label="Gender"
+        value={gender}
+        onChangeText={setGender}
       />
       <Input
         placeholder="Username"

@@ -33,6 +33,17 @@ export default function ProfileScreen() {
         </View>
       </View>
 
+      <View style={styles.detailsContainer}>
+        <View style={styles.detailsContent}>
+          <Text style={styles.detailsTitle}>Age</Text>
+          <Text style={styles.detailsText}>24</Text>
+        </View>
+        <View style={styles.detailsContent}>
+          <Text style={styles.detailsTitle}>Gender</Text>
+          <Text style={styles.detailsText}>Female</Text>
+        </View>
+      </View>
+
       <View style={styles.buttonContainer}>
         <Button style={styles.buttonContent} title='Sign out' onPress={authFunctions.signOut} />
       </View>
