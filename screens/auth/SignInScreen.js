@@ -5,7 +5,7 @@ import AuthContext from "../../context/AuthContext";
 import CustomButton from "../../components/CustomButton"
 
 export default function SignInScreen({ navigation }) {
-  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
   const [passwordEye, setPasswordEye] = React.useState("eyeo");
@@ -15,9 +15,9 @@ export default function SignInScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Input
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
         leftIcon={{ type: "ant-design", name: "user" }}
       />
       <Input
@@ -37,7 +37,7 @@ export default function SignInScreen({ navigation }) {
       />
       <CustomButton
         title="Sign in"
-        onPress={() => signIn({ username, password })}
+        onPress={() => signIn({ email: email, password })}
       />
       <View style={{ marginVertical: 5 }} />
       <CustomButton
