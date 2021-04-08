@@ -1,7 +1,7 @@
 import * as React from "react";
 import { StyleSheet, View, Alert} from "react-native";
 import { Input } from "react-native-elements";
-import { Button } from "react-native-elements";
+import CustomButton from "../../components/CustomButton"
 
 export default function RecoverPasswordScreen({navigation}) {
     const [newPassword, setNewPassword] = React.useState("");
@@ -67,8 +67,7 @@ export default function RecoverPasswordScreen({navigation}) {
                 },
              }} //https://oblador.github.io/react-native-vector-icons/
           />
-          <Button
-            type="outline"
+          <CustomButton
             title="Sign in"
             onPress={createTwoButtonAlert}
           />

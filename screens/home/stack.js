@@ -3,8 +3,9 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./HomeScreen";
 import CreateJourneyScreen from "./CreateJourneyScreen";
 import ViewTrip from "./ViewTrip";
-import { Icon } from 'react-native-elements'
+import { Icon } from 'react-native-elements';
 import Ionicons from "react-native-vector-icons/Ionicons";
+import COLORS from "../../common/colors";
 
 const HomeStack = createStackNavigator();
 
@@ -17,14 +18,14 @@ export default function HomeStackScreen({navigation}) {
               size = {40}
               type = "ionicon"
               name = "ios-add"
-              color="#2196F3"
+              color={COLORS.mainColor}
               onPress={() => navigation.navigate('CreateJourney')}
               containerStyle={{ marginRight: 20 }}
             />
           ),
         }}/>
         <HomeStack.Screen name="CreateJourney" component={CreateJourneyScreen} />
-        <HomeStack.Screen name="ViewTrip" component={ViewTrip} />
+        <HomeStack.Screen name="ViewTrip" component={ViewTrip} options={({ route }) => ({ title: route.params.item.title })}/>
       </HomeStack.Navigator>
     );
 }

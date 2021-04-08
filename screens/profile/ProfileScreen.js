@@ -1,15 +1,30 @@
 import * as React from 'react';
-import { Image, Button, Text, View, StyleSheet } from 'react-native';
+import { Image, Button, Text, View, StyleSheet, ScrollView } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { TextInput } from 'react-native-gesture-handler';
 import AuthContext from '../../context/AuthContext';
+import { getJourneysOfUser } from "../../utils/APIcalls";
+import JourneyListView from "../../components/JourneyListView";
+import COLORS from "../../common/colors"
 
-export default function ProfileScreen() {
-  const { authFunctions, username } = React.useContext(AuthContext);
+export default function ProfileScreen({ navigation }) {
+  const list = getJourneysOfUser();
 
   return (
-    <View style={styles.container}>
+    <ScrollView>
+      <ProfileView />
+      <View style={styles.container}>
+        <Text style={styles.title}>Recurrent Journeys</Text>
+        <JourneyListView navigation={navigation} list={list} />
+      </View>
+    </ScrollView>
+  );
+}
 
+function ProfileView(){
+  const { authFunctions, username } = React.useContext(AuthContext);
+  return (
+    <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.headerContent}>
           <Avatar rounded source={ require('../../assets/default-profile.png') } size='xlarge' onPress={() => console.log('Avatar clicked!')} activeOpacity={0.7} avatarStyle={styles.avatar} />
@@ -17,7 +32,6 @@ export default function ProfileScreen() {
           <Text style={styles.headerText}>+123456789</Text>
         </View>
       </View>
-
       <View style={styles.detailsContainer}>
         <View style={styles.detailsContent}>
           <Text style={styles.detailsTitle}>Reputation</Text>
@@ -32,7 +46,6 @@ export default function ProfileScreen() {
           <Text style={styles.detailsText}>123</Text>
         </View>
       </View>
-
       <View style={styles.detailsContainer}>
         <View style={styles.detailsContent}>
           <Text style={styles.detailsTitle}>Age</Text>
@@ -43,14 +56,11 @@ export default function ProfileScreen() {
           <Text style={styles.detailsText}>Female</Text>
         </View>
       </View>
-
       <View style={styles.buttonContainer}>
         <Button style={styles.buttonContent} title='Sign out' onPress={authFunctions.signOut} />
       </View>
-
     </View>
-  );
-}
+)}
 
 const styles = StyleSheet.create({
   container: {
@@ -69,7 +79,7 @@ const styles = StyleSheet.create({
   headerText:{
     padding: 5,
     fontSize:22,
-    color:'#000000',
+    color: COLORS.mainColor,
     fontWeight:'600',
   },
   avatar: {
@@ -98,5 +108,11 @@ const styles = StyleSheet.create({
   },
   buttonContent: {
     color: '#00bfff'
+  },
+  title: {
+    marginHorizontal: 10, 
+    marginTop: 10,
+    fontSize: 25,
+    fontWeight: "bold"
   }
 });
