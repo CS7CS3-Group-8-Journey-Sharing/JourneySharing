@@ -1,7 +1,8 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import { Input, Button } from "react-native-elements";
+import { Input } from "react-native-elements";
 import AuthContext from "../../context/AuthContext";
+import CustomButton from "../../components/CustomButton"
 
 export default function SignInScreen({ navigation }) {
   const [username, setUsername] = React.useState("");
@@ -34,20 +35,17 @@ export default function SignInScreen({ navigation }) {
           },
         }} //https://oblador.github.io/react-native-vector-icons/
       />
-      <Button
-        type="outline"
+      <CustomButton
         title="Sign in"
         onPress={() => signIn({ username, password })}
       />
       <View style={{ marginVertical: 5 }} />
-      <Button
-        type="outline"
+      <CustomButton
         title="New? Create Account"
         onPress={() => navigation.navigate("SignUp")}
       />
       <View style={{ marginVertical: 5 }} />
-      <Button
-        type="outline"
+      <CustomButton
         title="Recover Password"
         onPress={() => navigation.navigate("RecoverPassword")}
       />

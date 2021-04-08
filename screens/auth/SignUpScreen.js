@@ -1,8 +1,8 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
 import { Input } from "react-native-elements";
-import { Button } from "react-native-elements";
 import AuthContext from "../../context/AuthContext";
+import CustomButton from "../../components/CustomButton"
 
 export default function SignUpScreen() {
   const [firstname, setFirstname] = React.useState("");
@@ -62,8 +62,7 @@ export default function SignUpScreen() {
           },
         }} //https://oblador.github.io/react-native-vector-icons/
       />
-      <Button
-        type="outline"
+      <CustomButton
         title="Sign Up"
         onPress={() => signUp({ firstname, surname, username, password })}
       />

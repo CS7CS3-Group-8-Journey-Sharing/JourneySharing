@@ -11,6 +11,7 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import SplashScreen from "./screens/auth/SplashScreen";
 import AuthContext from "./context/AuthContext";
 import authReducer from "./context/AuthReducer";
+import COLORS from "./common/colors"
 
 import axios from "axios";
 import SignUpScreen from "./screens/auth/SignUpScreen";
@@ -130,7 +131,7 @@ export default function App({ navigation }) {
               },
             })}
             tabBarOptions={{
-              activeTintColor: "green",
+              activeTintColor: COLORS.mainColor,
               inactiveTintColor: "gray",
             }}
           >

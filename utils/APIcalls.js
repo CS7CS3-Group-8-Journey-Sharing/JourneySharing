@@ -20,9 +20,9 @@ export const createJourney = (journey) => {
 export function getJourneysOfUser(user) {
   const journeys = [
     {
-      title: "Find a Journey",
-      owner: "Owner",
-      people: "People",
+      title: "One of Bob's Journeys",
+      owner: "Bob",
+      people: "Joe",
       time: "Time",
       date: "Date",
       from: "From",
@@ -43,8 +43,8 @@ export function getJourneysOfUser(user) {
     },
     {
       title: "Weekly Zoo Trip",
-      owner: "Billy",
-      people: "Joe, Bob",
+      owner: "Joe",
+      people: "Bob",
       time: "14:00",
       date: "Every Sunday",
       from: "Bear St.",

@@ -3,19 +3,34 @@ import { Text, ScrollView, View, StyleSheet, Dimensions } from "react-native";
 import { Button } from "react-native-elements";
 import { Icon } from "react-native-elements";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import HomeScreenItems from "./HomeScreenItem";
+import JourneyListView from "../../components/JourneyListView";
 import { getJourneysOfUser } from "../../utils/APIcalls";
+import COLORS from "../../common/colors"
+import { getOwnersJourneys } from "../../utils/utilFunctions";
 
 export default function HomeScreen({ navigation }) {
   const list = getJourneysOfUser();
+  const { username } = React.useContext(AuthContext);
 
   if (list.length > 0)
     return (
-      <View style={styles.container}>
-        <ScrollView>
-          <HomeScreenItems navigation={navigation} list={list} />
-        </ScrollView>
-      </View>
+      <ScrollView>
+        <View style={styles.container}>
+          {/* Journeys that are happening at the current time */}
+          <Text style={styles.title}>Current Journey</Text> 
+          <JourneyListView navigation={navigation} isHappening list={[list[0]]} />
+        </View>
+        <View style={styles.container}>
+          {/* Journeys that you are the owner of */}
+          <Text style={styles.title}>Your Journeys</Text> 
+          <JourneyListView navigation={navigation} list={getOwnersJourneys(list, username)} />
+        </View>
+        <View style={styles.container}>
+          {/* Journeys that you are NOT the owner of, but are participating in */}
+          <Text style={styles.title}>Participating In</Text> 
+          <JourneyListView navigation={navigation} list={list} />
+        </View>
+      </ScrollView>
     );
   else
     return (
@@ -27,6 +42,7 @@ export default function HomeScreen({ navigation }) {
           <Button
             type="outline"
             title="Create Journey"
+            color={COLORS.mainColor}
             onPress={() => navigation.navigate("CreateJourney")}
           />
         </View>
@@ -46,4 +62,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  title: {
+    marginHorizontal: 10, 
+    marginTop: 10,
+    fontSize: 25,
+    fontWeight: "bold"
+  }
 });
