@@ -6,7 +6,7 @@ import CustomButton from "../../components/CustomButton"
 export default function RecoverPasswordScreen({navigation}) {
     const [newPassword, setNewPassword] = React.useState("");
     const [RepeatPassword, setRepeatPassword] = React.useState("");
-    const [username, setUsername] = React.useState("");
+    const [email, setEmail] = React.useState("");
     const [hidePassword, setHidePassword] = React.useState(true);
     const [passwordEye, setPasswordEye] = React.useState("eyeo");
     // const { recover } = ;
@@ -32,10 +32,10 @@ export default function RecoverPasswordScreen({navigation}) {
     return (
         <View style={styles.container}>
           <Input
-            placeholder="Username"
-            label="Username"
-            value={username}
-            onChangeText={setUsername}
+            placeholder="Email"
+            label="Email"
+            value={email}
+            onChangeText={setEmail}
           />
           <Input
             placeholder="New Password"

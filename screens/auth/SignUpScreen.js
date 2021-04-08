@@ -9,7 +9,7 @@ export default function SignUpScreen() {
   const [surname, setSurname] = React.useState("");
   const [age, setAge] = React.useState("");
   const [gender, setGender] = React.useState("");
-  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
   const [passwordEye, setPasswordEye] = React.useState("eyeo");
@@ -42,10 +42,10 @@ export default function SignUpScreen() {
         onChangeText={setGender}
       />
       <Input
-        placeholder="Username"
-        label="Username"
-        value={username}
-        onChangeText={setUsername}
+        placeholder="Email"
+        label="Email"
+        value={email}
+        onChangeText={setEmail}
       />
       <Input
         placeholder="Password"
@@ -64,7 +64,7 @@ export default function SignUpScreen() {
       />
       <CustomButton
         title="Sign Up"
-        onPress={() => signUp({ firstname, surname, username, password })}
+        onPress={() => signUp({ firstname, surname, email: email, password })}
       />
     </View>
   );
