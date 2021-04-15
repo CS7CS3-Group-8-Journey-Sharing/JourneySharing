@@ -12,6 +12,7 @@ import SplashScreen from "./screens/auth/SplashScreen";
 import AuthContext from "./context/AuthContext";
 import authReducer from "./context/AuthReducer";
 import COLORS from "./common/colors"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from "axios";
 import SignUpScreen from "./screens/auth/SignUpScreen";
@@ -36,64 +37,55 @@ export default function App({ navigation }) {
       let userName;
 
       try {
-        userToken = await AsyncStorage.getItem("userToken");
+        userToken = await AsyncStorage.getItem("jwtToken");
       } catch (e) {
-        // Restoring token failed
+        console.log("Could restore token, error: "+e)
       }
 
-      // After restoring token, we may need to validate it in production apps
-
-      // This will switch to the App screen or Auth screen and this loading
-      // screen will be unmounted and thrown away.
-      dispatch({ type: "RESTORE_TOKEN", token: userToken , username: userName});
+      dispatch({ type: "RESTORE_TOKEN", userToken: userToken , username: userName});
     };
 
     bootstrapAsync();
   }, []);
 
-  // Authentication functions, useMemo is so that we wait until the functions are done
   const authFunctions = React.useMemo(
     () => ({
       signIn: async (data) => {
-        // In a production app, we need to send some data (usually username, password) to server and get a token
-        // We will also need to handle errors if sign in failed
-        // After getting token, we need to persist the token using `AsyncStorage`
-        // In the example, we'll use a dummy token
-        console.log(JSON.stringify(data.username));
-
-        try {
-          await AsyncStorage.setItem({
-            userToken: "dummy-auth-token",
-          });
-        } catch (e) {
-          // setting token failed
-        }
-
-        dispatch({ type: "SIGN_IN", token: "dummy-auth-token", username: data.username });
-      },
-      signOut: () => dispatch({ type: "SIGN_OUT" }),
-      signUp: async (data) => {
-        // In a production app, we need to send user data to server and get a token
-        // We will also need to handle errors if sign up failed
-        // After getting token, we need to persist the token using `AsyncStorage`
-        // In the example, we'll use a dummy token
-        /*axios
+        axios
           .post(
-            "http://localhost:8080/api/journeysharing/user/adduser",
-            username,
+            "http://localhost:8080/api/journeysharing/login",
+            data,
             {
               headers: { "Content-Type": "application/json" },
             }
           )
           .then((res) => {
-            var user = res.data;
-            dispatch({ type: "SIGN_IN", token: user.id, user: user });
+            var responseData = res.data;
+            //AsyncStorage.setItem("jwtToken", responseData.jwtToken);
+            dispatch({ type: "SIGN_IN", userToken: responseData.jwtToken, user: responseData.user });
           }).catch(() => {
-            console.log(error)
-            dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
-          });*/
-
-        dispatch({ type: "SIGN_IN", token: "dummy-auth-token", username: data.username });
+            console.log("Could not sign in: "+error)
+            dispatch({ type: "SIGN_OUT" });
+          });
+      },
+      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signUp: async (data) => {
+        axios
+          .post(
+            "http://localhost:8080/api/journeysharing/signup",
+            data,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          )
+          .then((res) => {
+            var data = res.data;
+            AsyncStorage.setItem("jwtToken", data.jwtToken);
+            dispatch({ type: "SIGN_IN", userToken: data.jwtToken, user: data.user });
+          }).catch(() => {
+            console.log("Could not sign up: "+error)
+            dispatch({ type: "SIGN_OUT" });
+          });
       },
     }),
     []

@@ -18,6 +18,7 @@ export default function SignInScreen({ navigation }) {
         placeholder="Email"
         value={email}
         onChangeText={setEmail}
+        autoCapitalize='none'
         leftIcon={{ type: "ant-design", name: "user" }}
       />
       <Input
@@ -37,7 +38,7 @@ export default function SignInScreen({ navigation }) {
       />
       <CustomButton
         title="Sign in"
-        onPress={() => signIn({ email: email, password })}
+        onPress={() => signIn({ email, password })}
       />
       <View style={{ marginVertical: 5 }} />
       <CustomButton
