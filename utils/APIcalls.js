@@ -1,4 +1,7 @@
 import axios from "axios";
+import AuthContext from "../context/AuthContext";
+
+//const { userToken } = React.useContext(AuthContext);
 
 const baseUrl = "http://localhost:8080/api/journeysharing/";
 
@@ -38,23 +41,29 @@ export const sendCreateJourney = (journey) => {
   TODO: call backend and create a journey and return it once created
   */
 
+  let message = "";
   axios
     .post(
       // https?
       //TODO: localhost doesn't work on android, use 10.0.2.2 or proxy in emulator settings?
       "http://10.0.2.2:8080/api/journeysharing/journey/createjourney",
-      journey
+      journey,
+      //{
+      //  headers: {"what", A},
+      //}
     )
     .then(function (response) {
       console.log(response);
-      return response;
+      message = "All good!";
+      //return "All good!";
     })
     .catch(function (error) {
       console.log(error);
-      return error;
+      message = "Oh no";
+      //return "Oh no";
     });
 
-  return journey;
+  return message;
 };
 
 export function getJourneysOfUser(user) {

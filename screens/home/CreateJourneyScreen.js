@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from "react";
-import { Button, Text, Input, CheckBox } from "react-native-elements";
+import {Text, Input, CheckBox } from "react-native-elements";
+import CustomButton from "../../components/CustomButton";
 import {
+  Platform,
+  Modal,
   View,
   StyleSheet,
   TouchableOpacity,
   Dimensions,
   ScrollView,
+  Pressable,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import CustomDatePicker2 from "../../components/CustomDatePicker2";
 import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
-import { Platform } from "react-native";
-import axios from "axios";
-import {sendCreateJourney, what} from "../../utils/APIcalls"
+import {sendCreateJourney} from "../../utils/APIcalls"
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
@@ -50,6 +52,10 @@ export default function CreateJourneyScreen({ navigation }) {
   const [recurringDays, setRecurringDays] = useState([
     false, false, false, false, false, false, false,
   ]);
+
+  const [popupText, setPopupText] = useState("");
+
+  const [showPopup, setShowPopup] = useState(false);
 
   const DayCheckbox = (props) => {
     return(
@@ -114,6 +120,8 @@ export default function CreateJourneyScreen({ navigation }) {
     };
 
     let what = sendCreateJourney(journey);
+    setPopupText(what);
+    setShowPopup(true);
     console.log(what);
     //  .then(function (response) {
     //    console.log(response);
@@ -128,7 +136,7 @@ export default function CreateJourneyScreen({ navigation }) {
   function setMarkersButton() {
     if (!startMarker.set) {
       return (
-        <Button
+        <CustomButton
           title="Set Start"
           disabled={!startMarker.visible}
           // Best way to set 1 property?
@@ -138,7 +146,7 @@ export default function CreateJourneyScreen({ navigation }) {
       );
     } else if (!endMarker.set) {
       return (
-        <Button
+        <CustomButton
           title="Set End"
           disabled={!endMarker.visible}
           onPress={() => setEndMarker({ ...endMarker, set: true })}
@@ -149,6 +157,31 @@ export default function CreateJourneyScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+
+        <Modal
+          visible={showPopup}
+          transparent={true}
+          onTouchOutside={() => {
+          //this.setState({ visible: false });
+          setShowPopup(!showPopup)
+        }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{popupText}</Text>
+              <Pressable
+                style={[styles.button, styles.buttonClose]}
+                onPress={() => setShowPopup(!showPopup)}
+              >
+              <CustomButton
+                title="Ok"
+                onPress={() => setShowPopup(!showPopup)}
+               />
+                <Text style={styles.textStyle}>Hide Modal</Text>
+              </Pressable>
+            </View>
+          </View>
+        </Modal>
+
       <View style={styles.mapContainer}>
         <MapView
           initialRegion={region}
@@ -266,13 +299,14 @@ export default function CreateJourneyScreen({ navigation }) {
           </View>
         )}
 
-        <Button
+        <CustomButton
           type="outline"
           disabled={!readyToCreate()}
           title="Create Journey"
           onPress={() => createJourney()}
         />
       </ScrollView>
+
     </View>
   );
 }
@@ -307,4 +341,45 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height / 2 - 60,
     //height: inherit,
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }
 });
