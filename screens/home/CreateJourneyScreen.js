@@ -29,6 +29,7 @@ export default function CreateJourneyScreen({ navigation }) {
 
   const { userToken } = React.useContext(AuthContext);
 
+  const [journeyName, setJourneyName] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [dateTimeMode, setDateTimeMode] = useState("date");
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -45,6 +46,24 @@ export default function CreateJourneyScreen({ navigation }) {
     visible: false,
     set: false,
   });
+
+  const [recurringDays, setRecurringDays] = useState([
+    false, false, false, false, false, false, false,
+  ]);
+
+  const DayCheckbox = (props) => {
+    return(
+      <CheckBox 
+        title={props.name} 
+        checked={recurringDays[props.dayIndex]}
+        onPress={() => {
+          let newDays = [...recurringDays];
+          let oldBool = recurringDays[props.dayIndex];
+          newDays[props.dayIndex] = !oldBool;
+          setRecurringDays(newDays);
+        }} />
+    );
+  }
 
   function placeMarker(e) {
     if (!startMarker.set) {
@@ -65,6 +84,7 @@ export default function CreateJourneyScreen({ navigation }) {
 
     //TODO: validate data
     var journey = {
+      name: journeyName,
       maxParticipants: 99999,
       modeOfTransport: transportMode.toUpperCase(),
 
@@ -74,6 +94,7 @@ export default function CreateJourneyScreen({ navigation }) {
       //participantIds: [],
 
       recurring: recurring,
+      recurringDays: recurringDays,
       startTime: startDate,
       //TODO: Set actual end time
       // endtime is required parameter, probably shouldn't be
@@ -92,8 +113,8 @@ export default function CreateJourneyScreen({ navigation }) {
       },
     };
 
-    sendCreateJourney(journey);
-
+    let what = sendCreateJourney(journey);
+    console.log(what);
     //  .then(function (response) {
     //    console.log(response);
     //  })
@@ -158,6 +179,11 @@ export default function CreateJourneyScreen({ navigation }) {
       </View>
 
       <ScrollView style={styles.journeyMenu}>
+        <Input
+          placeholder={"Enter journey name"}
+          value={journeyName}
+          onChangeText={setJourneyName}
+        />
         <DropDownPicker
           items={[
             // Could add nice icons
@@ -176,14 +202,6 @@ export default function CreateJourneyScreen({ navigation }) {
           }
           dropDownStyle={{ backgroundColor: "#fafafa" }}
           onChangeItem={(item) => setTransportMode(item.value)}
-        />
-        <CheckBox
-          //center
-          iconRight
-          title="Recurring? Repeat?"
-          type="outline"
-          checked={recurring}
-          onPress={() => setRecurring(!recurring)}
         />
 
         {Platform.OS === 'android' ?
@@ -227,6 +245,27 @@ export default function CreateJourneyScreen({ navigation }) {
         )
         }
 
+        <CheckBox
+          //center
+          iconRight
+          title="Recurring? Repeat?"
+          type="outline"
+          checked={recurring}
+          onPress={() => setRecurring(!recurring)}
+        />
+
+        {recurring && (
+          <View style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+            <DayCheckbox name="Mon" dayIndex={0} />
+            <DayCheckbox name="Tue" dayIndex={1} />
+            <DayCheckbox name="Wed" dayIndex={2} />
+            <DayCheckbox name="Thu" dayIndex={3} />
+            <DayCheckbox name="Fri" dayIndex={4} />
+            <DayCheckbox name="Sat" dayIndex={5} />
+            <DayCheckbox name="Sun" dayIndex={6} />
+          </View>
+        )}
+
         <Button
           type="outline"
           disabled={!readyToCreate()}
@@ -241,11 +280,11 @@ export default function CreateJourneyScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    display: "flex",
+    //display: "flex",
     //justifyContent: "center",
     //justifyContent: "space-between",
-    justifyContent: "flex-start",
-    alignItems: "center",
+    //justifyContent: "flex-start",
+    //alignItems: "center",
   },
 
   journeyMenu: {
@@ -253,6 +292,10 @@ const styles = StyleSheet.create({
     display: "flex",
     //justifyContent: "center",
     //alignItems: "center",
+  },
+
+  dayCheckbox: {
+    flex: 1,
   },
 
   mapContainer: {

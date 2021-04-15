@@ -33,10 +33,6 @@ export function getHelloFromAPI() {
     });
 }
 
-export const what = () => {
-  console.log("what");
-}
-
 export const sendCreateJourney = (journey) => {
   /*
   TODO: call backend and create a journey and return it once created
@@ -51,9 +47,11 @@ export const sendCreateJourney = (journey) => {
     )
     .then(function (response) {
       console.log(response);
+      return response;
     })
     .catch(function (error) {
       console.log(error);
+      return error;
     });
 
   return journey;
