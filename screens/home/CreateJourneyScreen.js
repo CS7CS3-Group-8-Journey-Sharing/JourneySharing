@@ -27,6 +27,8 @@ export default function CreateJourneyScreen({ navigation }) {
 
   const { userToken } = React.useContext(AuthContext);
 
+  console.log("User Token: "+userToken)
+
   const [startDate, setStartDate] = useState(new Date());
   const [dateTimeMode, setDateTimeMode] = useState("date");
   const [showDatePicker, setShowDatePicker] = useState(false);

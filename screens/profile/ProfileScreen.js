@@ -22,13 +22,13 @@ export default function ProfileScreen({ navigation }) {
 }
 
 function ProfileView(){
-  const { authFunctions, username } = React.useContext(AuthContext);
+  const { authFunctions, user } = React.useContext(AuthContext);
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.headerContent}>
           <Avatar rounded source={ require('../../assets/default-profile.png') } size='xlarge' onPress={() => console.log('Avatar clicked!')} activeOpacity={0.7} avatarStyle={styles.avatar} />
-          <Text style={styles.headerText}>{username}</Text>
+          <Text style={styles.headerText}>{user.email}</Text>
           <Text style={styles.headerText}>+123456789</Text>
         </View>
       </View>

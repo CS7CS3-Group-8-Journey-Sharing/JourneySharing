@@ -18,6 +18,13 @@ export default function SignUpScreen() {
   return (
     <View style={styles.container}>
       <Input
+        placeholder="Email"
+        label="Email"
+        autoCapitalize='none'
+        value={email}
+        onChangeText={setEmail}
+      />
+      <Input
         placeholder="First Name"
         label="First Name"
         value={firstname}
@@ -42,12 +49,6 @@ export default function SignUpScreen() {
         onChangeText={setGender}
       />
       <Input
-        placeholder="Email"
-        label="Email"
-        value={email}
-        onChangeText={setEmail}
-      />
-      <Input
         placeholder="Password"
         label="Password"
         value={password}
@@ -64,7 +65,7 @@ export default function SignUpScreen() {
       />
       <CustomButton
         title="Sign Up"
-        onPress={() => signUp({ firstname, surname, email: email, password })}
+        onPress={() => signUp({ email: email, firstName: firstname, lastName: surname, password: password })}
       />
     </View>
   );
