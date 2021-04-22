@@ -88,6 +88,7 @@ export default function CreateJourneyScreen({ navigation }) {
   function createJourney() {
     console.log("Send it");
 
+    console.log("User Token: "+userToken)
     //TODO: validate data
     var journey = {
       name: journeyName,
@@ -119,18 +120,10 @@ export default function CreateJourneyScreen({ navigation }) {
       },
     };
 
-    let what = sendCreateJourney(journey);
-    setPopupText(what);
+    let response = sendCreateJourney(userToken, journey, setPopupText);
     setShowPopup(true);
-    console.log(what);
-    //  .then(function (response) {
-    //    console.log(response);
-    //  })
-    //  .catch(function (error) {
-    //    console.log(error);
-    //  });
-      console.log("plz sens");
-
+    console.log(response);
+    console.log("plz sens");
   }
 
   function setMarkersButton() {
@@ -158,29 +151,23 @@ export default function CreateJourneyScreen({ navigation }) {
   return (
     <View style={styles.container}>
 
-        <Modal
-          visible={showPopup}
-          transparent={true}
-          onTouchOutside={() => {
-          //this.setState({ visible: false });
-          setShowPopup(!showPopup)
-        }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>{popupText}</Text>
-              <Pressable
-                style={[styles.button, styles.buttonClose]}
-                onPress={() => setShowPopup(!showPopup)}
-              >
-              <CustomButton
-                title="Ok"
-                onPress={() => setShowPopup(!showPopup)}
-               />
-                <Text style={styles.textStyle}>Hide Modal</Text>
-              </Pressable>
-            </View>
+      <Modal
+        visible={showPopup}
+        transparent={true}
+        onTouchOutside={() => {
+        //this.setState({ visible: false });
+        setShowPopup(!showPopup)
+      }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{popupText}</Text>
+            <CustomButton
+              title="Ok"
+              onPress={() => setShowPopup(!showPopup)}
+              />
           </View>
-        </Modal>
+        </View>
+      </Modal>
 
       <View style={styles.mapContainer}>
         <MapView

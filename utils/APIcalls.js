@@ -1,7 +1,17 @@
+import React from "react";
 import axios from "axios";
 import AuthContext from "../context/AuthContext";
+import { Platform } from "react-native";
 
-//const { userToken } = React.useContext(AuthContext);
+const ipStem = () => {
+  let stem = "";
+  if(Platform.OS === 'ios') {
+    stem = "http://localhost:8080/api/journeysharing/";
+  } else {
+    stem = "http://10.0.2.2:8080/api/journeysharing/";
+  }
+  return stem;
+}
 
 const baseUrl = "http://localhost:8080/api/journeysharing/";
 
@@ -36,34 +46,44 @@ export function getHelloFromAPI() {
     });
 }
 
-export const sendCreateJourney = (journey) => {
-  /*
-  TODO: call backend and create a journey and return it once created
-  */
+export const sendCreateJourney = (userToken, journey, setPopupText) => {
 
-  let message = "";
+  console.log("Bearer "+userToken);
+  console.log(ipStem()+"journey/createjourney");
   axios
     .post(
       // https?
       //TODO: localhost doesn't work on android, use 10.0.2.2 or proxy in emulator settings?
-      "http://10.0.2.2:8080/api/journeysharing/journey/createjourney",
+      ipStem()+"journey/createjourney",
       journey,
-      //{
-      //  headers: {"what", A},
-      //}
+      {
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer "+userToken, },
+      }
     )
     .then(function (response) {
       console.log(response);
-      message = "All good!";
+      //setPopupText("All Good!\n" +response.status);
+      setPopupText("All Good");
       //return "All good!";
     })
     .catch(function (error) {
       console.log(error);
-      message = "Oh no";
-      //return "Oh no";
+      if(error.response){
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        setPopupText("oh no:(\n" +error.response.status +"\n" +error.response.data);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        setPopupText("oh no :(\nRequest was made but no response was received.\n" +error.request);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        setPopupText("oh no, what is dis:(\n" +error.status);
+      }
+      //console.log(error.config);
+      //console.log(error.toJSON());
     });
-
-  return message;
 };
 
 export function getJourneysOfUser(user) {
