@@ -16,6 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from "axios";
 import SignUpScreen from "./screens/auth/SignUpScreen";
+import { getUserDetails } from "./utils/APIcalls";
+import { parseJwt } from "./utils/utilFunctions";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,7 +36,6 @@ export default function App({ navigation }) {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
-      let userName;
 
       try {
         userToken = await AsyncStorage.getItem("jwtToken");
@@ -42,7 +43,17 @@ export default function App({ navigation }) {
         console.log("Could restore token, error: "+e)
       }
 
-      dispatch({ type: "RESTORE_TOKEN", userToken: userToken , username: userName});
+      if(userToken != null){
+        const decodedEmail = parseJwt(userToken);
+        getUserDetails(decodedEmail, userToken).then(resData => {
+          dispatch({ type: "RESTORE_TOKEN", userToken: userToken , user: resData});    
+        }).catch((error) => {
+          console.log(error);
+          dispatch({ type: "SIGN_OUT" });
+        });
+      } else {
+        dispatch({ type: "SIGN_OUT" });
+      }
     };
 
     bootstrapAsync();
@@ -61,14 +72,17 @@ export default function App({ navigation }) {
           )
           .then((res) => {
             var responseData = res.data;
-            //AsyncStorage.setItem("jwtToken", responseData.jwtToken);
+            AsyncStorage.setItem("jwtToken", responseData.jwtToken);
             dispatch({ type: "SIGN_IN", userToken: responseData.jwtToken, user: responseData.user });
           }).catch(() => {
             console.log("Could not sign in: "+error)
             dispatch({ type: "SIGN_OUT" });
           });
       },
-      signOut: () => dispatch({ type: "SIGN_OUT" }),
+      signOut: () =>  {
+        AsyncStorage.removeItem("jwtToken")
+        dispatch({ type: "SIGN_OUT" })
+      },
       signUp: async (data) => {
         axios
           .post(
@@ -80,6 +94,7 @@ export default function App({ navigation }) {
           )
           .then((res) => {
             var data = res.data;
+            console.log(data);
             AsyncStorage.setItem("jwtToken", data.jwtToken);
             dispatch({ type: "SIGN_IN", userToken: data.jwtToken, user: data.user });
           }).catch(() => {

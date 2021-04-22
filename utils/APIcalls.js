@@ -1,5 +1,29 @@
 import axios from "axios";
 
+const baseUrl = "http://localhost:8080/api/journeysharing/";
+
+export function getUserDetails(email, token) {
+  let params = {
+    email: email
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token 
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl+"user/details", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      reject(error);
+    })
+  });
+}
+
 export function getHelloFromAPI() {
   axios
     .get("http://localhost:8080/api/journeysharing/journey/hi")

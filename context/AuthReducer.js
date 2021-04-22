@@ -20,7 +20,8 @@ export default authReducer = (prevState, action) => {
         ...prevState,
         isSignout: true,
         userToken: null,
-        username: null
+        username: null,
+        isLoading: false,
       };
   }
 };
