@@ -8,11 +8,12 @@ import {
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
+import { SearchBar } from 'react-native-elements';
 import {
   getJourneysWithinRadius,
   getJourneysOfUser,
 } from "../../utils/APIcalls";
-import HomeScreenItems from "../home/HomeScreenItem";
+import HomeScreenItems from "../../components/JourneyListView";
 
 export default function FindJourneyScreen({ navigation }) {
   const [region, setRegion] = useState({
@@ -23,12 +24,20 @@ export default function FindJourneyScreen({ navigation }) {
   });
   const [journeys, setJourneys] = useState(getJourneysWithinRadius(500));
   const [currentJourney, setCurrentJourney] = useState(journeys[0]);
+  const [search, setSearch] = useState('');
 
   const GOOGLE_MAPS_APIKEY = "#####";
 
   if (journeys.length > 0)
     return (
       <View style={styles.container}>
+        <SearchBar
+          placeholder="Search a journey..."
+          onChangeText={setSearch}
+          lightTheme
+          round
+          value={search}
+        />
         <MapView
           initialRegion={region}
           onRegionChange={(newRegion) => setRegion(newRegion)}
@@ -60,6 +69,7 @@ export default function FindJourneyScreen({ navigation }) {
             navigation={navigation}
             list={journeys}
             setCurrentJourney={setCurrentJourney}
+            currentJourney={currentJourney}
             fromFindJourney
           />
         </ScrollView>

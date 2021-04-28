@@ -4,18 +4,12 @@ import { createStackNavigator } from "@react-navigation/stack";
 import HomeScreen from "./HomeScreen";
 import CreateJourneyScreen from "./CreateJourneyScreen";
 import ViewTrip from "./ViewTrip";
+import Rating from "./Rating";
 import { ListItem,Avatar,Badge,Icon,withBadge ,Button, Overlay } from 'react-native-elements'
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { StyleSheet,View , Text} from "react-native";
 
 const HomeStack = createStackNavigator();
-const list = [
-  {
-    name: 'Amy Farha',
-    avatar_url: 'https://case.ntu.edu.tw/blog/wp-content/uploads/2021/03/01-2.png',
-  },
-]
-
 
 export default function HomeStackScreen({navigation}) {
   const [visible, setVisible] = useState(false);
@@ -91,8 +85,10 @@ export default function HomeStackScreen({navigation}) {
           </View>
           ),
         }}/>
+      <HomeStack.Screen name="Rating" component={Rating} />
       </HomeStack.Navigator>
     );
+    
 }
 const styles = StyleSheet.create({
   container: {
