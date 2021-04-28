@@ -50,7 +50,9 @@ export const sendCreateJourney = (userToken, journey, setPopupText) => {
 
   console.log("Bearer "+userToken);
   console.log(ipStem()+"journey/createjourney");
-  axios
+  //return new Promise()
+  //return axios
+  return axios
     .post(
       // https?
       //TODO: localhost doesn't work on android, use 10.0.2.2 or proxy in emulator settings?
@@ -59,31 +61,31 @@ export const sendCreateJourney = (userToken, journey, setPopupText) => {
       {
         headers: { "Content-Type": "application/json", "Authorization": "Bearer "+userToken, },
       }
-    )
-    .then(function (response) {
-      console.log(response);
-      //setPopupText("All Good!\n" +response.status);
-      setPopupText("All Good");
-      //return "All good!";
-    })
-    .catch(function (error) {
-      console.log(error);
-      if(error.response){
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        setPopupText("oh no:(\n" +error.response.status +"\n" +error.response.data);
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        // http.ClientRequest in node.js
-        setPopupText("oh no :(\nRequest was made but no response was received.\n" +error.request);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        setPopupText("oh no, what is dis:(\n" +error.status);
-      }
-      //console.log(error.config);
-      //console.log(error.toJSON());
-    });
+    );
+    //.then(function (response) {
+    //  console.log(response);
+    //  //setPopupText("All Good!\n" +response.status);
+    //  setPopupText("All Good\nJourney has been created!");
+    //  //return "All good!";
+    //})
+    //.catch(function (error) {
+    //  console.log(error);
+    //  if(error.response){
+    //    // The request was made and the server responded with a status code
+    //    // that falls out of the range of 2xx
+    //    setPopupText("Oh no :(\n" +error.response.status +"\n" +error.response.data);
+    //  } else if (error.request) {
+    //    // The request was made but no response was received
+    //    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+    //    // http.ClientRequest in node.js
+    //    setPopupText("Oh no :(\nRequest was made but no response was received.\n" +error.request);
+    //  } else {
+    //    // Something happened in setting up the request that triggered an Error
+    //    setPopupText("Oh no, error with creating request. :(\n" +error.status);
+    //  }
+    //  //console.log(error.config);
+    //  //console.log(error.toJSON());
+    //});
 };
 
 export function getJourneysOfUser(user) {

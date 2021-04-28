@@ -120,10 +120,39 @@ export default function CreateJourneyScreen({ navigation }) {
       },
     };
 
-    let response = sendCreateJourney(userToken, journey, setPopupText);
-    setShowPopup(true);
-    console.log(response);
-    console.log("plz sens");
+    //let response = sendCreateJourney(userToken, journey, setPopupText);
+    sendCreateJourney(userToken, journey, setPopupText)
+    .then(function (response) {
+      //console.log(response);
+      //  //setPopupText("All Good!\n" +response.status);
+      setPopupText("All Good\nJourney has been created!");
+      console.log("1st");
+      setShowPopup(true);
+    })
+    .catch(function (error)
+    {
+      console.log(error);
+      if(error.response){
+        // The request was made and the server responded with a status code
+        // that falls out of the range of 2xx
+        setPopupText("Oh no :(\n" +error.response.status +"\n" +error.response.data);
+        setShowPopup(true);
+      } else if (error.request) {
+        // The request was made but no response was received
+        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+        // http.ClientRequest in node.js
+        setPopupText("Oh no :(\nRequest was made but no response was received.\n" +error.request);
+        setShowPopup(true);
+      } else {
+        // Something happened in setting up the request that triggered an Error
+        setPopupText("Oh no, error with creating request. :(\n" +error.status);
+        setShowPopup(true);
+      }
+      //console.log(error.config);
+      //console.log(error.toJSON());
+    });
+    console.log("2nd?");
+    //console.log(response);
   }
 
   function setMarkersButton() {
