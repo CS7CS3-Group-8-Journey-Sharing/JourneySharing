@@ -13,6 +13,7 @@ export default function SignUpScreen() {
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
   const [passwordEye, setPasswordEye] = React.useState("eyeo");
+  const [error, setError] = React.useState("");
   const { signUp } = React.useContext(AuthContext).authFunctions;
 
   return (
@@ -62,10 +63,12 @@ export default function SignUpScreen() {
             setPasswordEye(hidePassword ? "eye" : "eyeo");
           },
         }} //https://oblador.github.io/react-native-vector-icons/
+        errorStyle={styles.errorText}
+        errorMessage={error.length > 0 ? error : ""}
       />
       <CustomButton
         title="Sign Up"
-        onPress={() => signUp({ email: email, firstName: firstname, lastName: surname, password: password })}
+        onPress={() => signUp({ email: email, firstName: firstname, lastName: surname, password: password }, setError)}
       />
     </View>
   );
@@ -78,4 +81,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  errorText: {
+    color: 'red',
+    fontSize: 20,
+    textAlign: 'center',
+    marginBottom: 10
+  }
 });

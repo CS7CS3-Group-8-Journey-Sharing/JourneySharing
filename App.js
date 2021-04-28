@@ -61,7 +61,7 @@ export default function App({ navigation }) {
 
   const authFunctions = React.useMemo(
     () => ({
-      signIn: async (data) => {
+      signIn: async (data, setError) => {
         axios
           .post(
             "http://localhost:8080/api/journeysharing/login",
@@ -74,8 +74,9 @@ export default function App({ navigation }) {
             var responseData = res.data;
             AsyncStorage.setItem("jwtToken", responseData.jwtToken);
             dispatch({ type: "SIGN_IN", userToken: responseData.jwtToken, user: responseData.user });
-          }).catch(() => {
+          }).catch((error) => {
             console.log("Could not sign in: "+error)
+            setError(error);
             dispatch({ type: "SIGN_OUT" });
           });
       },
@@ -83,7 +84,7 @@ export default function App({ navigation }) {
         AsyncStorage.removeItem("jwtToken")
         dispatch({ type: "SIGN_OUT" })
       },
-      signUp: async (data) => {
+      signUp: async (data, setError) => {
         axios
           .post(
             "http://localhost:8080/api/journeysharing/signup",
@@ -97,8 +98,11 @@ export default function App({ navigation }) {
             console.log(data);
             AsyncStorage.setItem("jwtToken", data.jwtToken);
             dispatch({ type: "SIGN_IN", userToken: data.jwtToken, user: data.user });
-          }).catch(() => {
-            console.log("Could not sign up: "+error)
+          }).catch(error => {
+            var errorMessage = error.response.data.errorMessage;
+            errorMessage = errorMessage.substring(1, errorMessage.length-1);
+            setError(errorMessage)
+            console.log("Could not sign up: "+errorMessage)
             dispatch({ type: "SIGN_OUT" });
           });
       },
