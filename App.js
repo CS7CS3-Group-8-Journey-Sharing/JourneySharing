@@ -16,6 +16,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from "axios";
 import SignUpScreen from "./screens/auth/SignUpScreen";
+import { getUserDetails } from "./utils/APIcalls";
+import { parseJwt } from "./utils/utilFunctions";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -34,7 +36,6 @@ export default function App({ navigation }) {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
-      let userName;
 
       try {
         userToken = await AsyncStorage.getItem("jwtToken");
@@ -42,7 +43,17 @@ export default function App({ navigation }) {
         console.log("Could restore token, error: "+e)
       }
 
-      dispatch({ type: "RESTORE_TOKEN", userToken: userToken , username: userName});
+      if(userToken != null){
+        const decodedEmail = parseJwt(userToken);
+        getUserDetails(decodedEmail, userToken).then(resData => {
+          dispatch({ type: "RESTORE_TOKEN", userToken: userToken , user: resData});    
+        }).catch((error) => {
+          console.log(error);
+          dispatch({ type: "SIGN_OUT" });
+        });
+      } else {
+        dispatch({ type: "SIGN_OUT" });
+      }
     };
 
     bootstrapAsync();
@@ -50,7 +61,7 @@ export default function App({ navigation }) {
 
   const authFunctions = React.useMemo(
     () => ({
-      signIn: async (data) => {
+      signIn: async (data, setError) => {
         axios
           .post(
             "http://localhost:8080/api/journeysharing/login",
@@ -61,15 +72,19 @@ export default function App({ navigation }) {
           )
           .then((res) => {
             var responseData = res.data;
-            //AsyncStorage.setItem("jwtToken", responseData.jwtToken);
+            AsyncStorage.setItem("jwtToken", responseData.jwtToken);
             dispatch({ type: "SIGN_IN", userToken: responseData.jwtToken, user: responseData.user });
-          }).catch(() => {
+          }).catch((error) => {
             console.log("Could not sign in: "+error)
+            setError(error);
             dispatch({ type: "SIGN_OUT" });
           });
       },
-      signOut: () => dispatch({ type: "SIGN_OUT" }),
-      signUp: async (data) => {
+      signOut: () =>  {
+        AsyncStorage.removeItem("jwtToken")
+        dispatch({ type: "SIGN_OUT" })
+      },
+      signUp: async (data, setError) => {
         axios
           .post(
             "http://localhost:8080/api/journeysharing/signup",
@@ -80,10 +95,14 @@ export default function App({ navigation }) {
           )
           .then((res) => {
             var data = res.data;
+            console.log(data);
             AsyncStorage.setItem("jwtToken", data.jwtToken);
             dispatch({ type: "SIGN_IN", userToken: data.jwtToken, user: data.user });
-          }).catch(() => {
-            console.log("Could not sign up: "+error)
+          }).catch(error => {
+            var errorMessage = error.response.data.errorMessage;
+            errorMessage = errorMessage.substring(1, errorMessage.length-1);
+            setError(errorMessage)
+            console.log("Could not sign up: "+errorMessage)
             dispatch({ type: "SIGN_OUT" });
           });
       },

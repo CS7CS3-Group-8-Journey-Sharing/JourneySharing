@@ -6,6 +6,7 @@ export default authReducer = (prevState, action) => {
       return {
         ...prevState,
         userToken: action.userToken,
+        user: action.user,
         isLoading: false,
       };
     case "SIGN_IN":
@@ -20,7 +21,8 @@ export default authReducer = (prevState, action) => {
         ...prevState,
         isSignout: true,
         userToken: null,
-        username: null
+        user: null,
+        isLoading: false,
       };
   }
 };

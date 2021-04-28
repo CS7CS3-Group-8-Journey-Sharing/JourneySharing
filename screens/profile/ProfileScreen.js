@@ -23,6 +23,7 @@ export default function ProfileScreen({ navigation }) {
 
 function ProfileView(){
   const { authFunctions, user } = React.useContext(AuthContext);
+
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>

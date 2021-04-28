@@ -9,6 +9,7 @@ export default function SignInScreen({ navigation }) {
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
   const [passwordEye, setPasswordEye] = React.useState("eyeo");
+  const [error, setError] = React.useState("");
 
   const { signIn } = React.useContext(AuthContext).authFunctions;
 
@@ -35,10 +36,15 @@ export default function SignInScreen({ navigation }) {
             setPasswordEye(hidePassword ? "eye" : "eyeo");
           },
         }} //https://oblador.github.io/react-native-vector-icons/
+        errorStyle={styles.errorText}
+        errorMessage={error ? "Invalid Credentials" : ""}
       />
       <CustomButton
         title="Sign in"
-        onPress={() => signIn({ email, password })}
+        onPress={() => {
+          setError("")
+          signIn({ email, password }, setError)
+        }}
       />
       <View style={{ marginVertical: 5 }} />
       <CustomButton
@@ -61,4 +67,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  errorText: {
+    color: 'red',
+    fontSize: 20,
+    textAlign: 'center',
+    marginBottom: 10
+  }
 });
