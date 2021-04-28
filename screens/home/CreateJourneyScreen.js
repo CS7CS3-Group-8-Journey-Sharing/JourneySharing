@@ -28,7 +28,7 @@ export default function CreateJourneyScreen({ navigation }) {
 
   const GOOGLE_MAPS_APIKEY = null;
 
-  const { userToken } = React.useContext(AuthContext);
+  const { userToken, user } = React.useContext(AuthContext);
 
   const [journeyName, setJourneyName] = useState("");
   const [startDate, setStartDate] = useState(new Date());
@@ -87,7 +87,8 @@ export default function CreateJourneyScreen({ navigation }) {
   function createJourney() {
     console.log("Send it");
 
-    console.log("User Token: " + userToken)
+    console.log("User Token: " + userToken);
+    console.log("User email: " + user.email);
     //TODO: validate data
     var journey = {
       name: journeyName,
@@ -96,8 +97,8 @@ export default function CreateJourneyScreen({ navigation }) {
 
       //ownerId: userToken,
       ownerId: "6065e0e6fdb39f04922f3d53",
-      participantIds: ["6065e1e3388f3868f0487e30", "6065e1fb388f3868f0487e31"],
-      //participantIds: [],
+      //participantIds: ["6065e1e3388f3868f0487e30", "6065e1fb388f3868f0487e31"],
+      participantIds: [],
 
       recurring: recurring,
       recurringDays: recurringDays,
