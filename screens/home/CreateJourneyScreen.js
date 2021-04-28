@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {Text, Input, CheckBox } from "react-native-elements";
+import { Text, Input, CheckBox } from "react-native-elements";
 import CustomButton from "../../components/CustomButton";
 import {
   Platform,
@@ -9,14 +9,13 @@ import {
   TouchableOpacity,
   Dimensions,
   ScrollView,
-  Pressable,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
 import CustomDatePicker2 from "../../components/CustomDatePicker2";
 import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
-import {sendCreateJourney} from "../../utils/APIcalls"
+import { sendCreateJourney } from "../../utils/APIcalls"
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
@@ -58,9 +57,9 @@ export default function CreateJourneyScreen({ navigation }) {
   const [showPopup, setShowPopup] = useState(false);
 
   const DayCheckbox = (props) => {
-    return(
-      <CheckBox 
-        title={props.name} 
+    return (
+      <CheckBox
+        title={props.name}
         checked={recurringDays[props.dayIndex]}
         onPress={() => {
           let newDays = [...recurringDays];
@@ -88,11 +87,11 @@ export default function CreateJourneyScreen({ navigation }) {
   function createJourney() {
     console.log("Send it");
 
-    console.log("User Token: "+userToken)
+    console.log("User Token: " + userToken)
     //TODO: validate data
     var journey = {
       name: journeyName,
-      maxParticipants: 99999,
+      maxParticipants: 10,
       modeOfTransport: transportMode.toUpperCase(),
 
       //ownerId: userToken,
@@ -105,8 +104,8 @@ export default function CreateJourneyScreen({ navigation }) {
       startTime: startDate,
       //TODO: Set actual end time
       // endtime is required parameter, probably shouldn't be
-      endTime: "3000-02-30T20:42:49.978Z",
-      //endTime: null,
+      //endTime: "3000-02-30T20:42:49.978Z",
+      endTime: null,
 
       startLocation: {
         lat: startMarker.coordinate.latitude,
@@ -122,37 +121,35 @@ export default function CreateJourneyScreen({ navigation }) {
 
     //let response = sendCreateJourney(userToken, journey, setPopupText);
     sendCreateJourney(userToken, journey, setPopupText)
-    .then(function (response) {
-      //console.log(response);
-      //  //setPopupText("All Good!\n" +response.status);
-      setPopupText("All Good\nJourney has been created!");
-      console.log("1st");
-      setShowPopup(true);
-    })
-    .catch(function (error)
-    {
-      console.log(error);
-      if(error.response){
-        // The request was made and the server responded with a status code
-        // that falls out of the range of 2xx
-        setPopupText("Oh no :(\n" +error.response.status +"\n" +error.response.data);
+      .then(function (response) {
+        //console.log(response);
+        //setPopupText("All Good!\n" +response.status);
+        setPopupText("All Good\nJourney has been created!");
         setShowPopup(true);
-      } else if (error.request) {
-        // The request was made but no response was received
-        // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-        // http.ClientRequest in node.js
-        setPopupText("Oh no :(\nRequest was made but no response was received.\n" +error.request);
-        setShowPopup(true);
-      } else {
-        // Something happened in setting up the request that triggered an Error
-        setPopupText("Oh no, error with creating request. :(\n" +error.status);
-        setShowPopup(true);
-      }
-      //console.log(error.config);
-      //console.log(error.toJSON());
-    });
-    console.log("2nd?");
-    //console.log(response);
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log(error.message);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          setPopupText("Oh no :(\n" + error.response.status + "\n" + error.message);
+          setShowPopup(true);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          setPopupText("Oh no :(\nRequest was made but no response was received.\n" + error.request);
+          setShowPopup(true);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          setPopupText("Oh no, error with creating request. :(\n" + error.status);
+          setShowPopup(true);
+        }
+        //console.log(error.config);
+        //console.log(error.toJSON());
+      });
+    // Stuff here will execute before axios call is finished
   }
 
   function setMarkersButton() {
@@ -184,16 +181,16 @@ export default function CreateJourneyScreen({ navigation }) {
         visible={showPopup}
         transparent={true}
         onTouchOutside={() => {
-        //this.setState({ visible: false });
-        setShowPopup(!showPopup)
-      }}>
+          //this.setState({ visible: false });
+          setShowPopup(!showPopup)
+        }}>
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>{popupText}</Text>
             <CustomButton
               title="Ok"
               onPress={() => setShowPopup(!showPopup)}
-              />
+            />
           </View>
         </View>
       </Modal>
@@ -284,13 +281,13 @@ export default function CreateJourneyScreen({ navigation }) {
           </>
           :
           <>
-            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"date"} setShow={setShowDatePicker}/>
-            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"time"} setShow={setShowDatePicker}/>
+            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"date"} setShow={setShowDatePicker} />
+            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"time"} setShow={setShowDatePicker} />
           </>
         }
 
         {showDatePicker && Platform.OS === "android" && (
-          <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={dateTimeMode} setShow={setShowDatePicker}/>
+          <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={dateTimeMode} setShow={setShowDatePicker} />
         )
         }
 
@@ -304,7 +301,7 @@ export default function CreateJourneyScreen({ navigation }) {
         />
 
         {recurring && (
-          <View style={{display: "flex", flexDirection: "row", flexWrap: "wrap"}}>
+          <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
             <DayCheckbox name="Mon" dayIndex={0} />
             <DayCheckbox name="Tue" dayIndex={1} />
             <DayCheckbox name="Wed" dayIndex={2} />

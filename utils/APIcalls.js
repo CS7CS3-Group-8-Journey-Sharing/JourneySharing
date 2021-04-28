@@ -3,17 +3,7 @@ import axios from "axios";
 import AuthContext from "../context/AuthContext";
 import { Platform } from "react-native";
 
-const ipStem = () => {
-  let stem = "";
-  if(Platform.OS === 'ios') {
-    stem = "http://localhost:8080/api/journeysharing/";
-  } else {
-    stem = "http://10.0.2.2:8080/api/journeysharing/";
-  }
-  return stem;
-}
-
-const baseUrl = "http://localhost:8080/api/journeysharing/";
+export const baseUrl = (Platform.OS === 'ios') ? "http://localhost:8080/api/journeysharing/" : "http://10.0.2.2:8080/api/journeysharing/";
 
 export function getUserDetails(email, token) {
   let params = {
@@ -22,11 +12,11 @@ export function getUserDetails(email, token) {
 
   let headers = {
     'Content-Type': 'application/json',
-    'Authorization': 'Bearer ' + token 
+    'Authorization': 'Bearer ' + token
   }
 
   return new Promise((resolve, reject) => {
-    axios.get(baseUrl+"user/details", {
+    axios.get(baseUrl + "user/details", {
       headers: headers,
       params: params
     }).then((res) => {
@@ -46,46 +36,20 @@ export function getHelloFromAPI() {
     });
 }
 
-export const sendCreateJourney = (userToken, journey, setPopupText) => {
+export const sendCreateJourney = (userToken, journey) => {
 
-  console.log("Bearer "+userToken);
-  console.log(ipStem()+"journey/createjourney");
+  console.log("Bearer " + userToken);
+  console.log(baseUrl + "journey/createjourney");
   //return new Promise()
   //return axios
   return axios
     .post(
-      // https?
-      //TODO: localhost doesn't work on android, use 10.0.2.2 or proxy in emulator settings?
-      ipStem()+"journey/createjourney",
+      baseUrl + "journey/createjourney",
       journey,
       {
-        headers: { "Content-Type": "application/json", "Authorization": "Bearer "+userToken, },
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + userToken, },
       }
     );
-    //.then(function (response) {
-    //  console.log(response);
-    //  //setPopupText("All Good!\n" +response.status);
-    //  setPopupText("All Good\nJourney has been created!");
-    //  //return "All good!";
-    //})
-    //.catch(function (error) {
-    //  console.log(error);
-    //  if(error.response){
-    //    // The request was made and the server responded with a status code
-    //    // that falls out of the range of 2xx
-    //    setPopupText("Oh no :(\n" +error.response.status +"\n" +error.response.data);
-    //  } else if (error.request) {
-    //    // The request was made but no response was received
-    //    // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
-    //    // http.ClientRequest in node.js
-    //    setPopupText("Oh no :(\nRequest was made but no response was received.\n" +error.request);
-    //  } else {
-    //    // Something happened in setting up the request that triggered an Error
-    //    setPopupText("Oh no, error with creating request. :(\n" +error.status);
-    //  }
-    //  //console.log(error.config);
-    //  //console.log(error.toJSON());
-    //});
 };
 
 export function getJourneysOfUser(user) {
@@ -100,7 +64,7 @@ export function getJourneysOfUser(user) {
       to: "To",
       price: "Price",
       transport: "Transport",
-      goTo: ["ViewTrip",0],
+      goTo: ["ViewTrip", 0],
       coords: {
         origin: {
           latitude: 53.347257,
@@ -122,7 +86,7 @@ export function getJourneysOfUser(user) {
       to: "Dublin Zoo",
       price: "2",
       transport: "Car",
-      goTo: ["ViewTrip",1],
+      goTo: ["ViewTrip", 1],
       number: "1",
       coords: {
         origin: {
@@ -155,7 +119,7 @@ export function getJourneysWithinRadius(radius) {
       to: "To",
       price: "Price",
       transport: "Transport",
-      goTo: ["Example",0],
+      goTo: ["Example", 0],
       coords: {
         origin: {
           latitude: 53.347257,
@@ -177,7 +141,7 @@ export function getJourneysWithinRadius(radius) {
       to: "Dublin Zoo",
       price: "2",
       transport: "Car",
-      goTo: ["Example",1],
+      goTo: ["Example", 1],
       coords: {
         origin: {
           latitude: 53.347779,
@@ -206,7 +170,7 @@ export function getJourneysDetails(number) {
         to: "To",
         price: "Price",
         transport: "Transport",
-        goTo: ["ViewTrip",0],
+        goTo: ["ViewTrip", 0],
         coords: {
           origin: {
             latitude: 53.347257,
@@ -233,7 +197,7 @@ export function getJourneysDetails(number) {
         to: "Dublin Zoo",
         price: "2",
         transport: "Car",
-        goTo: ["ViewTrip",1],
+        goTo: ["ViewTrip", 1],
         coords: {
           origin: {
             latitude: 53.347779,
