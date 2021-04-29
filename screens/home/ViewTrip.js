@@ -9,19 +9,20 @@ import {
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
+import { ListItem, Badge,Icon,withBadge , Avatar, Button } from "react-native-elements";
+import TouchableScale from "react-native-touchable-scale";
 
 import JourneyItemView from "../../components/JourneyItemView";
 
-export default function ViewTrip({ route,navigation }) {
+export default function ViewTripScreen({ route,navigation }) {
   const {item} = route.params;
-
   const [region, setRegion] = useState({
     latitude: 53.3436581,
     longitude: -6.2563436,
     latitudeDelta: 0.00582,
     longitudeDelta: 0.00271,
   });
-
+  
   const GOOGLE_MAPS_APIKEY = "#####";
 
     return (
@@ -53,7 +54,7 @@ export default function ViewTrip({ route,navigation }) {
           */}
         </MapView>
         <ScrollView>
-          <JourneyItemView item={item} />
+        <JourneyItemView navigation={navigation} item={item} />
         </ScrollView>
       </View>
     );
@@ -75,5 +76,9 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  containerJourneys: {
+    backgroundColor: "#2196F3",
+    borderRadius: 10,
   },
 });
