@@ -7,7 +7,7 @@ import TouchableScale from "react-native-touchable-scale";
 import COLORS from "../common/colors";
 import CustomButton from "./CustomButton"
 
-export default function JourneyItemView({ item }) {
+export default function JourneyItemView({ item ,navigation}) {
   const handleItemPress = (item) => {};
 
   return (
@@ -18,7 +18,7 @@ export default function JourneyItemView({ item }) {
           Component={TouchableScale}
           friction={90} //
           tension={100} // These props are passed to the parent component (here TouchableScale)
-          activeScale={0.95} //
+          activeScale={0.95} //.abs
           onPress={() => handleItemPress(item)}
         >
           <ListItem.Content>
@@ -136,6 +136,8 @@ export default function JourneyItemView({ item }) {
         </ListItem>
       <View style={{ marginBottom: 10 }} />
       <CustomButton style={{marginHorizontal: 10}} title="START" />
+      <View style={{ marginBottom: 10 }} />
+      <CustomButton style={{marginHorizontal: 10}} title="END" onPress={() => navigation.navigate("Rating")}/>
     </View>
   );
 }

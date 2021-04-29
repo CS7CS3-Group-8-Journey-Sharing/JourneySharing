@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Image, Button, Text, View, StyleSheet, ScrollView } from 'react-native';
+import { Image, Button, Text, View, StyleSheet,ScrollView } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { TextInput } from 'react-native-gesture-handler';
 import AuthContext from '../../context/AuthContext';
