@@ -15,7 +15,8 @@ import CustomDatePicker2 from "../../components/CustomDatePicker2";
 import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
-import { sendCreateJourney } from "../../utils/APIcalls"
+import { sendCreateJourney, getJourneysOfUser } from "../../utils/APIcalls"
+import { Home, ViewTrip } from "../home/stack";
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
@@ -89,24 +90,22 @@ export default function CreateJourneyScreen({ navigation }) {
 
     console.log("User Token: " + userToken);
     console.log("User email: " + user.email);
+    console.log("ISO String?: " + startDate.toISOString());
     //TODO: validate data
     var journey = {
       name: journeyName,
       maxParticipants: 10,
       modeOfTransport: transportMode.toUpperCase(),
 
-      //ownerId: userToken,
       ownerId: "6065e0e6fdb39f04922f3d53",
-      //participantIds: ["6065e1e3388f3868f0487e30", "6065e1fb388f3868f0487e31"],
+      //ownerEmail: user.email,
+
       participantIds: [],
 
       recurring: recurring,
       recurringDays: recurringDays,
-      startTime: startDate,
-      //TODO: Set actual end time
-      // endtime is required parameter, probably shouldn't be
-      //endTime: "3000-02-30T20:42:49.978Z",
-      endTime: null,
+
+      startTime: startDate.toISOString(),
 
       startLocation: {
         lat: startMarker.coordinate.latitude,
@@ -123,10 +122,12 @@ export default function CreateJourneyScreen({ navigation }) {
     //let response = sendCreateJourney(userToken, journey, setPopupText);
     sendCreateJourney(userToken, journey, setPopupText)
       .then(function (response) {
-        //console.log(response);
+        console.log(response.data);
         //setPopupText("All Good!\n" +response.status);
-        setPopupText("All Good\nJourney has been created!");
-        setShowPopup(true);
+        var journey = getJourneysOfUser("WHAT");
+        navigation.navigate("ViewTrip", {item: journey[0]});
+        //setPopupText("All Good\nJourney has been created!");
+        //setShowPopup(true);
       })
       .catch(function (error) {
         console.log(error);
@@ -134,6 +135,8 @@ export default function CreateJourneyScreen({ navigation }) {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
+          //ViewTripScreen
+          //navigation.navigate(ViewTrip, {item: response.data});
           setPopupText("Oh no :(\n" + error.response.status + "\n" + error.message);
           setShowPopup(true);
         } else if (error.request) {
