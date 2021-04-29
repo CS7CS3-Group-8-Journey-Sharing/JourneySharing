@@ -8,10 +8,11 @@ import {
   ScrollView,
 } from "react-native";
 import MapView, { Marker } from "react-native-maps";
-import CustomDatePicker from "./CustomDatePicker";
+import CustomDatePicker2 from "../../components/CustomDatePicker2";
 import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
+import { Platform } from "react-native";
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
@@ -22,11 +23,10 @@ export default function CreateJourneyScreen({ navigation }) {
     longitudeDelta: 0.00421,
   });
 
-  const GOOGLE_MAPS_APIKEY = "AIzaSyBvpQxAF7Ix36SK5pdB1vyW6O3Ek5tUAYI";
+  const GOOGLE_MAPS_APIKEY = null;
 
   const { userToken } = React.useContext(AuthContext);
 
-  // is date AND time
   const [startDate, setStartDate] = useState(new Date());
   const [dateTimeMode, setDateTimeMode] = useState("date");
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -111,11 +111,6 @@ export default function CreateJourneyScreen({ navigation }) {
         {setMarkersButton()}
       </View>
 
-      {
-        // Journey details/options menu might need own screen
-        // could use elements overlay for options
-        // or react native bottom drawer
-      }
       <ScrollView style={styles.journeyMenu}>
         <DropDownPicker
           items={[
@@ -144,52 +139,47 @@ export default function CreateJourneyScreen({ navigation }) {
           checked={recurring}
           onPress={() => setRecurring(!recurring)}
         />
-        <TouchableOpacity
-          onPress={() => {
-            setDateTimeMode("time");
-            setShowDatePicker(true);
-          }}
-        >
-          <Input
-            disabled={true}
-            placeholder={"Start Time"}
-            value={startDate.toLocaleTimeString()}
-            leftIcon={{ type: "font-awesome", name: "clock-o" }}
-          />
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={() => {
-            setDateTimeMode("date");
-            setShowDatePicker(true);
-          }}
-        >
-          <Input
-            disabled={true}
-            placeholder={"Start Date"}
-            value={startDate.toLocaleDateString()}
-            leftIcon={{ type: "font-awesome", name: "calendar" }}
-          />
-        </TouchableOpacity>
 
-        {showDatePicker && (
-          <CustomDatePicker
-            date={startDate}
-            mode={dateTimeMode}
-            onClose={(date) => {
-              if (date && Platform.OS !== "iOS") {
-                setShowDatePicker(false);
-                //setStartDate(moment(date));
-                setStartDate(date);
-              } else {
-                setShowDatePicker(false);
-              }
-            }}
-            onChange={(d) => {
-              // don't know about this
-              setStartDate(moment(d));
-            }}
-          />
-        )}
+        {Platform.OS === 'android' ?
+          <>
+            <TouchableOpacity
+              onPress={() => {
+                setDateTimeMode("time");
+                setShowDatePicker(true);
+              }}
+            >
+              <Input
+                disabled={true}
+                placeholder={"Start Time"}
+                value={startDate.toLocaleTimeString()}
+                leftIcon={{ type: "font-awesome", name: "clock-o" }}
+              />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => {
+                setDateTimeMode("date");
+                setShowDatePicker(true);
+              }}
+            >
+              <Input
+                disabled={true}
+                placeholder={"Start Date"}
+                value={startDate.toLocaleDateString()}
+                leftIcon={{ type: "font-awesome", name: "calendar" }}
+              />
+            </TouchableOpacity>
+          </>
+          :
+          <>
+            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"date"} setShow={setShowDatePicker}/>
+            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"time"} setShow={setShowDatePicker}/>
+          </>
+        }
+
+        {showDatePicker && Platform.OS === "android" && (
+          <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={dateTimeMode} setShow={setShowDatePicker}/>
+        )
+        }
 
         <Button
           type="outline"

@@ -7,7 +7,7 @@ import { getJourneysOfUser } from "../../utils/APIcalls";
 import JourneyListView from "../../components/JourneyListView";
 import COLORS from "../../common/colors"
 
-export default function ProfileScreen({ navigation })  {
+export default function ProfileScreen({ navigation }) {
   const list = getJourneysOfUser();
 
   return (
@@ -29,7 +29,7 @@ function ProfileView(){
       <View style={styles.headerContainer}>
         <View style={styles.headerContent}>
           <Avatar rounded source={ require('../../assets/default-profile.png') } size='xlarge' onPress={() => console.log('Avatar clicked!')} activeOpacity={0.7} avatarStyle={styles.avatar} />
-          <Text style={styles.headerText}>h</Text>
+          <Text style={styles.headerText}>{user.email}</Text>
           <Text style={styles.headerText}>+123456789</Text>
         </View>
       </View>
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   headerText:{
     padding: 5,
     fontSize:22,
-    color:COLORS.mainColor,
+    color: COLORS.mainColor,
     fontWeight:'600',
   },
   avatar: {

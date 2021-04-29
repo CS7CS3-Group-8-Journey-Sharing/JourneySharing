@@ -1,22 +1,25 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import { Input, Button } from "react-native-elements";
+import { Input } from "react-native-elements";
 import AuthContext from "../../context/AuthContext";
+import CustomButton from "../../components/CustomButton"
 
 export default function SignInScreen({ navigation }) {
-  const [username, setUsername] = React.useState("");
+  const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
   const [passwordEye, setPasswordEye] = React.useState("eyeo");
+  const [error, setError] = React.useState("");
 
   const { signIn } = React.useContext(AuthContext).authFunctions;
 
   return (
     <View style={styles.container}>
       <Input
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
+        placeholder="Email"
+        value={email}
+        onChangeText={setEmail}
+        autoCapitalize='none'
         leftIcon={{ type: "ant-design", name: "user" }}
       />
       <Input
@@ -33,21 +36,23 @@ export default function SignInScreen({ navigation }) {
             setPasswordEye(hidePassword ? "eye" : "eyeo");
           },
         }} //https://oblador.github.io/react-native-vector-icons/
+        errorStyle={styles.errorText}
+        errorMessage={error ? "Invalid Credentials" : ""}
       />
-      <Button
-        type="outline"
+      <CustomButton
         title="Sign in"
-        onPress={() => signIn({ username, password })}
+        onPress={() => {
+          setError("")
+          signIn({ email, password }, setError)
+        }}
       />
       <View style={{ marginVertical: 5 }} />
-      <Button
-        type="outline"
+      <CustomButton
         title="New? Create Account"
         onPress={() => navigation.navigate("SignUp")}
       />
       <View style={{ marginVertical: 5 }} />
-      <Button
-        type="outline"
+      <CustomButton
         title="Recover Password"
         onPress={() => navigation.navigate("RecoverPassword")}
       />
@@ -62,4 +67,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  errorText: {
+    color: 'red',
+    fontSize: 20,
+    textAlign: 'center',
+    marginBottom: 10
+  }
 });

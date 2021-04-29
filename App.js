@@ -11,9 +11,13 @@ import Ionicons from "react-native-vector-icons/Ionicons";
 import SplashScreen from "./screens/auth/SplashScreen";
 import AuthContext from "./context/AuthContext";
 import authReducer from "./context/AuthReducer";
+import COLORS from "./common/colors"
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from "axios";
 import SignUpScreen from "./screens/auth/SignUpScreen";
+import { getUserDetails } from "./utils/APIcalls";
+import { parseJwt } from "./utils/utilFunctions";
 
 const Stack = createStackNavigator();
 const Tab = createBottomTabNavigator();
@@ -32,67 +36,75 @@ export default function App({ navigation }) {
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
-      let userName;
 
       try {
-        userToken = await AsyncStorage.getItem("userToken");
+        userToken = await AsyncStorage.getItem("jwtToken");
       } catch (e) {
-        // Restoring token failed
+        console.log("Could restore token, error: "+e)
       }
 
-      // After restoring token, we may need to validate it in production apps
-
-      // This will switch to the App screen or Auth screen and this loading
-      // screen will be unmounted and thrown away.
-      dispatch({ type: "RESTORE_TOKEN", token: userToken , username: userName});
+      if(userToken != null){
+        const decodedEmail = parseJwt(userToken);
+        getUserDetails(decodedEmail, userToken).then(resData => {
+          dispatch({ type: "RESTORE_TOKEN", userToken: userToken , user: resData});    
+        }).catch((error) => {
+          console.log(error);
+          dispatch({ type: "SIGN_OUT" });
+        });
+      } else {
+        dispatch({ type: "SIGN_OUT" });
+      }
     };
 
     bootstrapAsync();
   }, []);
 
-  // Authentication functions, useMemo is so that we wait until the functions are done
   const authFunctions = React.useMemo(
     () => ({
-      signIn: async (data) => {
-        // In a production app, we need to send some data (usually username, password) to server and get a token
-        // We will also need to handle errors if sign in failed
-        // After getting token, we need to persist the token using `AsyncStorage`
-        // In the example, we'll use a dummy token
-        console.log(JSON.stringify(data.username));
-
-        try {
-          await AsyncStorage.setItem({
-            userToken: "dummy-auth-token",
-          });
-        } catch (e) {
-          // setting token failed
-        }
-
-        dispatch({ type: "SIGN_IN", token: "dummy-auth-token", username: data.username });
-      },
-      signOut: () => dispatch({ type: "SIGN_OUT" }),
-      signUp: async (data) => {
-        // In a production app, we need to send user data to server and get a token
-        // We will also need to handle errors if sign up failed
-        // After getting token, we need to persist the token using `AsyncStorage`
-        // In the example, we'll use a dummy token
-        /*axios
+      signIn: async (data, setError) => {
+        axios
           .post(
-            "http://localhost:8080/api/journeysharing/user/adduser",
-            username,
+            "http://localhost:8080/api/journeysharing/login",
+            data,
             {
               headers: { "Content-Type": "application/json" },
             }
           )
           .then((res) => {
-            var user = res.data;
-            dispatch({ type: "SIGN_IN", token: user.id, user: user });
-          }).catch(() => {
-            console.log(error)
-            dispatch({ type: "SIGN_IN", token: "dummy-auth-token" });
-          });*/
-
-        dispatch({ type: "SIGN_IN", token: "dummy-auth-token", username: data.username });
+            var responseData = res.data;
+            AsyncStorage.setItem("jwtToken", responseData.jwtToken);
+            dispatch({ type: "SIGN_IN", userToken: responseData.jwtToken, user: responseData.user });
+          }).catch((error) => {
+            console.log("Could not sign in: "+error)
+            setError(error);
+            dispatch({ type: "SIGN_OUT" });
+          });
+      },
+      signOut: () =>  {
+        AsyncStorage.removeItem("jwtToken")
+        dispatch({ type: "SIGN_OUT" })
+      },
+      signUp: async (data, setError) => {
+        axios
+          .post(
+            "http://localhost:8080/api/journeysharing/signup",
+            data,
+            {
+              headers: { "Content-Type": "application/json" },
+            }
+          )
+          .then((res) => {
+            var data = res.data;
+            console.log(data);
+            AsyncStorage.setItem("jwtToken", data.jwtToken);
+            dispatch({ type: "SIGN_IN", userToken: data.jwtToken, user: data.user });
+          }).catch(error => {
+            var errorMessage = error.response.data.errorMessage;
+            errorMessage = errorMessage.substring(1, errorMessage.length-1);
+            setError(errorMessage)
+            console.log("Could not sign up: "+errorMessage)
+            dispatch({ type: "SIGN_OUT" });
+          });
       },
     }),
     []
@@ -130,7 +142,7 @@ export default function App({ navigation }) {
               },
             })}
             tabBarOptions={{
-              activeTintColor: "green",
+              activeTintColor: COLORS.mainColor,
               inactiveTintColor: "gray",
             }}
           >
