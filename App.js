@@ -16,7 +16,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import axios from "axios";
 import SignUpScreen from "./screens/auth/SignUpScreen";
-import { getUserDetails } from "./utils/APIcalls";
+import { getUserDetails, baseUrl } from "./utils/APIcalls";
 import { parseJwt } from "./utils/utilFunctions";
 
 const Stack = createStackNavigator();
@@ -64,7 +64,7 @@ export default function App({ navigation }) {
       signIn: async (data, setError) => {
         axios
           .post(
-            "http://localhost:8080/api/journeysharing/login",
+            baseUrl+"login",
             data,
             {
               headers: { "Content-Type": "application/json" },
@@ -87,7 +87,7 @@ export default function App({ navigation }) {
       signUp: async (data, setError) => {
         axios
           .post(
-            "http://localhost:8080/api/journeysharing/signup",
+            baseUrl+"signup",
             data,
             {
               headers: { "Content-Type": "application/json" },

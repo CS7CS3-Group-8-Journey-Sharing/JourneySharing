@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { Button, Text, Input, CheckBox } from "react-native-elements";
+import { Text, Input, CheckBox } from "react-native-elements";
+import CustomButton from "../../components/CustomButton";
 import {
+  Platform,
+  Modal,
   View,
   StyleSheet,
   TouchableOpacity,
@@ -12,7 +15,8 @@ import CustomDatePicker2 from "../../components/CustomDatePicker2";
 import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
-import { Platform } from "react-native";
+import { sendCreateJourney, getJourneysOfUser } from "../../utils/APIcalls"
+import { Home, ViewTrip } from "../home/stack";
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
@@ -25,8 +29,9 @@ export default function CreateJourneyScreen({ navigation }) {
 
   const GOOGLE_MAPS_APIKEY = null;
 
-  const { userToken } = React.useContext(AuthContext);
+  const { userToken, user } = React.useContext(AuthContext);
 
+  const [journeyName, setJourneyName] = useState("");
   const [startDate, setStartDate] = useState(new Date());
   const [dateTimeMode, setDateTimeMode] = useState("date");
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -44,6 +49,28 @@ export default function CreateJourneyScreen({ navigation }) {
     set: false,
   });
 
+  const [recurringDays, setRecurringDays] = useState([
+    false, false, false, false, false, false, false,
+  ]);
+
+  const [popupText, setPopupText] = useState("");
+
+  const [showPopup, setShowPopup] = useState(false);
+
+  const DayCheckbox = (props) => {
+    return (
+      <CheckBox
+        title={props.name}
+        checked={recurringDays[props.dayIndex]}
+        onPress={() => {
+          let newDays = [...recurringDays];
+          let oldBool = recurringDays[props.dayIndex];
+          newDays[props.dayIndex] = !oldBool;
+          setRecurringDays(newDays);
+        }} />
+    );
+  }
+
   function placeMarker(e) {
     if (!startMarker.set) {
       setStartMarker({ coordinate: e.nativeEvent.coordinate, visible: true });
@@ -52,16 +79,87 @@ export default function CreateJourneyScreen({ navigation }) {
     }
   }
 
+  // Should probably tell people what they have to enter before creating
+  const readyToCreate = () => {
+    //TODO: Add more checks
+    return startMarker.set && endMarker.set
+  }
+
   function createJourney() {
-    // Check if all data is valid and both markers set
-    // or keep button disabled until everything is ready
-    // send it
+    console.log("Send it");
+
+    console.log("User Token: " + userToken);
+    console.log("User email: " + user.email);
+    console.log("ISO String?: " + startDate.toISOString());
+    //TODO: validate data
+    var journey = {
+      name: journeyName,
+      maxParticipants: 10,
+      modeOfTransport: transportMode.toUpperCase(),
+
+      ownerId: "6065e0e6fdb39f04922f3d53",
+      //ownerEmail: user.email,
+
+      participantIds: [],
+
+      recurring: recurring,
+      recurringDays: recurringDays,
+
+      startTime: startDate.toISOString(),
+
+      startLocation: {
+        lat: startMarker.coordinate.latitude,
+        lng: startMarker.coordinate.longitude,
+        name: null
+      },
+      endLocation: {
+        lat: endMarker.coordinate.latitude,
+        lng: endMarker.coordinate.longitude,
+        name: null
+      },
+    };
+
+    //let response = sendCreateJourney(userToken, journey, setPopupText);
+    sendCreateJourney(userToken, journey, setPopupText)
+      .then(function (response) {
+        console.log(response.data);
+        //setPopupText("All Good!\n" +response.status);
+        var journey = getJourneysOfUser("WHAT");
+        navigation.navigate("ViewTrip", {item: journey[0]});
+        //setPopupText("All Good\nJourney has been created!");
+        //setShowPopup(true);
+      })
+      .catch(function (error) {
+        console.log(error);
+        console.log(error.message);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          //ViewTripScreen
+          //navigation.navigate(ViewTrip, {item: response.data});
+          setPopupText("Oh no :(\n" + error.response.status + "\n" + error.message);
+          setShowPopup(true);
+        } else if (error.request) {
+          // The request was made but no response was received
+          // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
+          // http.ClientRequest in node.js
+          setPopupText("Oh no :(\nRequest was made but no response was received.\n" + error.request);
+          setShowPopup(true);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          setPopupText("Oh no, error with creating request. :(\n" + error.status);
+          setShowPopup(true);
+        }
+        //console.log(error.config);
+        //console.log(error.toJSON());
+      });
+    // Stuff here will execute before axios call is finished
   }
 
   function setMarkersButton() {
     if (!startMarker.set) {
       return (
-        <Button
+        <CustomButton
           title="Set Start"
           disabled={!startMarker.visible}
           // Best way to set 1 property?
@@ -71,7 +169,7 @@ export default function CreateJourneyScreen({ navigation }) {
       );
     } else if (!endMarker.set) {
       return (
-        <Button
+        <CustomButton
           title="Set End"
           disabled={!endMarker.visible}
           onPress={() => setEndMarker({ ...endMarker, set: true })}
@@ -82,6 +180,25 @@ export default function CreateJourneyScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
+
+      <Modal
+        visible={showPopup}
+        transparent={true}
+        onTouchOutside={() => {
+          //this.setState({ visible: false });
+          setShowPopup(!showPopup)
+        }}>
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{popupText}</Text>
+            <CustomButton
+              title="Ok"
+              onPress={() => setShowPopup(!showPopup)}
+            />
+          </View>
+        </View>
+      </Modal>
+
       <View style={styles.mapContainer}>
         <MapView
           initialRegion={region}
@@ -112,6 +229,11 @@ export default function CreateJourneyScreen({ navigation }) {
       </View>
 
       <ScrollView style={styles.journeyMenu}>
+        <Input
+          placeholder={"Enter journey name"}
+          value={journeyName}
+          onChangeText={setJourneyName}
+        />
         <DropDownPicker
           items={[
             // Could add nice icons
@@ -130,14 +252,6 @@ export default function CreateJourneyScreen({ navigation }) {
           }
           dropDownStyle={{ backgroundColor: "#fafafa" }}
           onChangeItem={(item) => setTransportMode(item.value)}
-        />
-        <CheckBox
-          //center
-          iconRight
-          title="Recurring? Repeat?"
-          type="outline"
-          checked={recurring}
-          onPress={() => setRecurring(!recurring)}
         />
 
         {Platform.OS === 'android' ?
@@ -171,23 +285,45 @@ export default function CreateJourneyScreen({ navigation }) {
           </>
           :
           <>
-            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"date"} setShow={setShowDatePicker}/>
-            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"time"} setShow={setShowDatePicker}/>
+            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"date"} setShow={setShowDatePicker} />
+            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"time"} setShow={setShowDatePicker} />
           </>
         }
 
         {showDatePicker && Platform.OS === "android" && (
-          <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={dateTimeMode} setShow={setShowDatePicker}/>
+          <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={dateTimeMode} setShow={setShowDatePicker} />
         )
         }
 
-        <Button
+        <CheckBox
+          //center
+          iconRight
+          title="Recurring? Repeat?"
           type="outline"
-          disabled={true}
+          checked={recurring}
+          onPress={() => setRecurring(!recurring)}
+        />
+
+        {recurring && (
+          <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+            <DayCheckbox name="Mon" dayIndex={0} />
+            <DayCheckbox name="Tue" dayIndex={1} />
+            <DayCheckbox name="Wed" dayIndex={2} />
+            <DayCheckbox name="Thu" dayIndex={3} />
+            <DayCheckbox name="Fri" dayIndex={4} />
+            <DayCheckbox name="Sat" dayIndex={5} />
+            <DayCheckbox name="Sun" dayIndex={6} />
+          </View>
+        )}
+
+        <CustomButton
+          type="outline"
+          disabled={!readyToCreate()}
           title="Create Journey"
-          onPress={() => createJourney}
+          onPress={() => createJourney()}
         />
       </ScrollView>
+
     </View>
   );
 }
@@ -195,11 +331,11 @@ export default function CreateJourneyScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    display: "flex",
+    //display: "flex",
     //justifyContent: "center",
     //justifyContent: "space-between",
-    justifyContent: "flex-start",
-    alignItems: "center",
+    //justifyContent: "flex-start",
+    //alignItems: "center",
   },
 
   journeyMenu: {
@@ -207,6 +343,10 @@ const styles = StyleSheet.create({
     display: "flex",
     //justifyContent: "center",
     //alignItems: "center",
+  },
+
+  dayCheckbox: {
+    flex: 1,
   },
 
   mapContainer: {
@@ -218,4 +358,45 @@ const styles = StyleSheet.create({
     height: Dimensions.get("window").height / 2 - 60,
     //height: inherit,
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  button: {
+    borderRadius: 20,
+    padding: 10,
+    elevation: 2
+  },
+  buttonOpen: {
+    backgroundColor: "#F194FF",
+  },
+  buttonClose: {
+    backgroundColor: "#2196F3",
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }
 });
