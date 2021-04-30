@@ -38,6 +38,9 @@ export default function CreateJourneyScreen({ navigation }) {
 
   const [recurring, setRecurring] = useState(false);
   const [transportMode, setTransportMode] = useState("walk");
+
+  const [startName, setStartName] = useState("Origin");
+  const [endName, setEndName] = useState("Destination");
   const [startMarker, setStartMarker] = useState({
     coordinate: null,
     visible: false,
@@ -85,12 +88,28 @@ export default function CreateJourneyScreen({ navigation }) {
     return startMarker.set && endMarker.set
   }
 
+  const getPlacenames = (marker, setName) => {
+    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + marker.coordinate.latitude + ',' + marker.coordinate.longitude + '&key=' + GOOGLE_MAPS_APIKEY)
+        .then((response) => response.json())
+        .then((responseJson) => {
+            //console.log('ADDRESS GEOCODE is BACK!! => ' + JSON.stringify(responseJson));
+            //var number = responseJson.results[0].address_components[0].long_name;
+            var street = responseJson.results[0].address_components[1].long_name;
+            //console.log(number);
+            //console.log(street);
+
+            setName(street);
+    })
+  }
+
   function createJourney() {
     console.log("Send it");
 
     console.log("User Token: " + userToken);
     console.log("User email: " + user.email);
     console.log("ISO String?: " + startDate.toISOString());
+    console.log(startName + " " + endName);
+
     //TODO: validate data
     var journey = {
       name: journeyName,
@@ -110,19 +129,19 @@ export default function CreateJourneyScreen({ navigation }) {
       startLocation: {
         lat: startMarker.coordinate.latitude,
         lng: startMarker.coordinate.longitude,
-        name: null
+        name: startName
       },
       endLocation: {
         lat: endMarker.coordinate.latitude,
         lng: endMarker.coordinate.longitude,
-        name: null
+        name: endName
       },
     };
 
     //let response = sendCreateJourney(userToken, journey, setPopupText);
     sendCreateJourney(userToken, journey, setPopupText)
       .then(function (response) {
-        console.log(response.data);
+        //console.log(response.data);
         //setPopupText("All Good!\n" +response.status);
         var journey = getJourneysOfUser("WHAT");
         navigation.navigate("ViewTrip", {item: journey[0]});
@@ -164,7 +183,10 @@ export default function CreateJourneyScreen({ navigation }) {
           disabled={!startMarker.visible}
           // Best way to set 1 property?
           // This might be bad due to some async thing
-          onPress={() => setStartMarker({ ...startMarker, set: true })}
+          onPress={() => {
+            setStartMarker({ ...startMarker, set: true })
+            getPlacenames(startMarker, setStartName);
+          }}
         />
       );
     } else if (!endMarker.set) {
@@ -172,7 +194,11 @@ export default function CreateJourneyScreen({ navigation }) {
         <CustomButton
           title="Set End"
           disabled={!endMarker.visible}
-          onPress={() => setEndMarker({ ...endMarker, set: true })}
+          onPress={() => {
+            setEndMarker({ ...endMarker, set: true });
+            getPlacenames(endMarker, setEndName);
+            }
+          }
         />
       );
     }
