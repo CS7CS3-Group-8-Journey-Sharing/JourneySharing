@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   StyleSheet,
@@ -14,6 +14,8 @@ import {
   getJourneysOfUser,
 } from "../../utils/APIcalls";
 import HomeScreenItems from "../../components/JourneyListView";
+import * as Permissions from 'expo-permissions';
+import * as Location from 'expo-location';
 
 export default function FindJourneyScreen({ navigation }) {
   const [region, setRegion] = useState({
@@ -25,8 +27,51 @@ export default function FindJourneyScreen({ navigation }) {
   const [journeys, setJourneys] = useState(getJourneysWithinRadius(500));
   const [currentJourney, setCurrentJourney] = useState(journeys[0]);
   const [search, setSearch] = useState('');
+  const [userLocation, setUserLocation] = useState({});
+  const [errorMsg, setErrorMsg] = useState(null);
+  const mapView = useRef(null);
 
   const GOOGLE_MAPS_APIKEY = "#####";
+
+  const animateMap = () => {
+    mapView.current.fitToSuppliedMarkers(
+      ['mk2', 'mk3', 'mk1'],
+      { edgePadding: 
+        {
+          top: 100,
+          right: 50,
+          bottom: 50,
+          left: 50
+        }
+      }
+    )
+  }
+
+  useEffect(() => {
+    if (mapView) {
+      (async () => {
+        let { status } = await Permissions.askAsync(Permissions.LOCATION);
+        if (status !== 'granted') {
+          console.log('Permission to access location was denied');
+          return;
+        }
+
+        let location = await Location.getCurrentPositionAsync({});
+        let userLocation = {
+          latitude: location.coords.latitude,
+          longitude: location.coords.longitude
+        }
+  
+        setUserLocation(userLocation)
+        /*mapView.current.animateToRegion({ // Takes a region object as parameter
+          longitude: userLocation.longitude,
+          latitude: userLocation.latitude,
+          latitudeDelta: 0.005,
+          longitudeDelta: 0.005,
+        },1000);*/
+      })();
+    }
+  }, [])
 
   if (journeys.length > 0)
     return (
@@ -40,17 +85,41 @@ export default function FindJourneyScreen({ navigation }) {
         />
         <MapView
           initialRegion={region}
+          ref={mapView}
           onRegionChange={(newRegion) => setRegion(newRegion)}
           style={styles.map}
-          //provider={PROVIDER_GOOGLE}
+          showsUserLocation
+          followsUserLocation
+          provider={PROVIDER_GOOGLE}
+          onMapReady={() => {
+            mapView.current.fitToSuppliedMarkers(
+              ['mk2', 'mk3', 'mk1'],
+              { edgePadding: 
+                {
+                  top: 50,
+                  right: 50,
+                  bottom: 50,
+                  left: 50
+                }
+              }
+            )
+          }}
         >
+          <MapView.Marker
+            coordinate={userLocation}
+            title="userLoc"
+            opacity={0.0}
+            identifier={'mk1'}
+          />
           <MapView.Marker
             coordinate={currentJourney.coords.origin}
             title="origin"
+            identifier={'mk2'}
           />
           <MapView.Marker
             coordinate={currentJourney.coords.destination}
             title="destination"
+            identifier={'mk3'}
           />
           {/* 
           <MapViewDirections
@@ -68,7 +137,10 @@ export default function FindJourneyScreen({ navigation }) {
           <HomeScreenItems
             navigation={navigation}
             list={journeys}
-            setCurrentJourney={setCurrentJourney}
+            setCurrentJourney={(journey) => {
+              animateMap();
+              setCurrentJourney(journey)}
+            }
             currentJourney={currentJourney}
             fromFindJourney
           />

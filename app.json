@@ -22,6 +22,11 @@
       "buildNumber": "1.0.0",
       "config": {
         "googleMapsApiKey": "AIzaSyAAR-RYyfCvnHlgiLa1reZe7DpioIX04tM"
+      },
+      "infoPlist": {
+        "UIBackgroundModes": [
+          "location"
+        ]
       }
     },
     "android": {
