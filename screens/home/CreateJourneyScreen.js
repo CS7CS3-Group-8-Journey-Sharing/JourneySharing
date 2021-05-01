@@ -37,6 +37,7 @@ export default function CreateJourneyScreen({ navigation }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [recurring, setRecurring] = useState(false);
+  const [womenOnly, setWomenOnly] = useState(false);
   const [transportMode, setTransportMode] = useState("walk");
 
   const [startName, setStartName] = useState("Origin");
@@ -60,9 +61,12 @@ export default function CreateJourneyScreen({ navigation }) {
 
   const [showPopup, setShowPopup] = useState(false);
 
+  const isWoman = true;
+
   const DayCheckbox = (props) => {
     return (
       <CheckBox
+        style={styles.dayCheckbox}
         title={props.name}
         checked={recurringDays[props.dayIndex]}
         onPress={() => {
@@ -123,6 +127,8 @@ export default function CreateJourneyScreen({ navigation }) {
 
       recurring: recurring,
       recurringDays: recurringDays,
+
+      womenOnly: womenOnly,
 
       startTime: startDate.toISOString(),
 
@@ -211,7 +217,6 @@ export default function CreateJourneyScreen({ navigation }) {
         visible={showPopup}
         transparent={true}
         onTouchOutside={() => {
-          //this.setState({ visible: false });
           setShowPopup(!showPopup)
         }}>
         <View style={styles.centeredView}>
@@ -262,7 +267,6 @@ export default function CreateJourneyScreen({ navigation }) {
         />
         <DropDownPicker
           items={[
-            // Could add nice icons
             { label: "Walk", value: "walk" },
             { label: "Car", value: "car" },
             { label: "Bicycle", value: "bike" },
@@ -281,8 +285,9 @@ export default function CreateJourneyScreen({ navigation }) {
         />
 
         {Platform.OS === 'android' ?
-          <>
+          <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
             <TouchableOpacity
+              style={{flexGrow: 1 }}
               onPress={() => {
                 setDateTimeMode("time");
                 setShowDatePicker(true);
@@ -296,6 +301,7 @@ export default function CreateJourneyScreen({ navigation }) {
               />
             </TouchableOpacity>
             <TouchableOpacity
+              style={{flexGrow: 1 }}
               onPress={() => {
                 setDateTimeMode("date");
                 setShowDatePicker(true);
@@ -308,7 +314,7 @@ export default function CreateJourneyScreen({ navigation }) {
                 leftIcon={{ type: "font-awesome", name: "calendar" }}
               />
             </TouchableOpacity>
-          </>
+          </View>
           :
           <>
             <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"date"} setShow={setShowDatePicker} />
@@ -324,11 +330,12 @@ export default function CreateJourneyScreen({ navigation }) {
         <CheckBox
           //center
           iconRight
-          title="Recurring? Repeat?"
+          title="Recurring journey"
           type="outline"
           checked={recurring}
           onPress={() => setRecurring(!recurring)}
         />
+
 
         {recurring && (
           <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
@@ -340,6 +347,17 @@ export default function CreateJourneyScreen({ navigation }) {
             <DayCheckbox name="Sat" dayIndex={5} />
             <DayCheckbox name="Sun" dayIndex={6} />
           </View>
+        )}
+
+        {isWoman && (
+          <CheckBox
+            //center
+            iconRight
+            title="Women only"
+            type="outline"
+            checked={womenOnly}
+            onPress={() => setWomenOnly(!womenOnly)}
+          />
         )}
 
         <CustomButton
@@ -371,10 +389,6 @@ const styles = StyleSheet.create({
     //alignItems: "center",
   },
 
-  dayCheckbox: {
-    flex: 1,
-  },
-
   mapContainer: {
     height: Dimensions.get("window").height / 2 - 10,
   },
@@ -383,6 +397,10 @@ const styles = StyleSheet.create({
     width: Dimensions.get("window").width,
     height: Dimensions.get("window").height / 2 - 60,
     //height: inherit,
+  },
+
+  dayCheckbox: {
+    flex: 1,
   },
   centeredView: {
     flex: 1,
@@ -404,22 +422,6 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5
-  },
-  button: {
-    borderRadius: 20,
-    padding: 10,
-    elevation: 2
-  },
-  buttonOpen: {
-    backgroundColor: "#F194FF",
-  },
-  buttonClose: {
-    backgroundColor: "#2196F3",
-  },
-  textStyle: {
-    color: "white",
-    fontWeight: "bold",
-    textAlign: "center"
   },
   modalText: {
     marginBottom: 15,
