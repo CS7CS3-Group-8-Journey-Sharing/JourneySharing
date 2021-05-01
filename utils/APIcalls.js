@@ -104,113 +104,26 @@ export function getJourneysOfUser(user) {
   return journeys;
 }
 
-export function getJourneysWithinRadius(radius) {
-  /*
-  TODO: find journey shows journeys in x radius
-  */
-  const journeys = [
-    {
-      title: "Find a Journey",
-      owner: "Owner",
-      people: "People",
-      time: "Time",
-      date: "Date",
-      from: "From",
-      to: "To",
-      price: "Price",
-      transport: "Transport",
-      goTo: ["Example", 0],
-      coords: {
-        origin: {
-          latitude: 53.347257,
-          longitude: -6.2589555,
-        },
-        destination: {
-          latitude: 53.3446581,
-          longitude: -6.2563436,
-        },
-      },
-    },
-    {
-      title: "Weekly Zoo Trip",
-      owner: "Billy",
-      people: "Joe, Bob",
-      time: "14:00",
-      date: "Every Sunday",
-      from: "Bear St.",
-      to: "Dublin Zoo",
-      price: "2",
-      transport: "Car",
-      goTo: ["Example", 1],
-      coords: {
-        origin: {
-          latitude: 53.347779,
-          longitude: -6.2571537,
-        },
-        destination: {
-          latitude: 53.3449032,
-          longitude: -6.2573468,
-        },
-      },
-    },
-  ];
-
-  return journeys;
-}
-export function getJourneysDetails(number) {
-  if (number == 0) {
-    const journeys = [
-      {
-        title: "Find a Journey",
-        owner: "Owner",
-        people: "People",
-        time: "Time",
-        date: "Date",
-        from: "From",
-        to: "To",
-        price: "Price",
-        transport: "Transport",
-        goTo: ["ViewTrip", 0],
-        coords: {
-          origin: {
-            latitude: 53.347257,
-            longitude: -6.2589555,
-          },
-          destination: {
-            latitude: 53.3446581,
-            longitude: -6.2563436,
-          },
-        },
-      },
-    ];
-
-    return journeys;
-  } else {
-    const journeys = [
-      {
-        title: "Weekly Zoo Trip",
-        owner: "Billy",
-        people: "Joe, Bob",
-        time: "14:00",
-        date: "Every Sunday",
-        from: "Bear St.",
-        to: "Dublin Zoo",
-        price: "2",
-        transport: "Car",
-        goTo: ["ViewTrip", 1],
-        coords: {
-          origin: {
-            latitude: 53.347779,
-            longitude: -6.2571537,
-          },
-          destination: {
-            latitude: 53.3449032,
-            longitude: -6.2573468,
-          },
-        },
-      },
-    ];
-
-    return journeys;
+export function getJourneysWithinRadius(userLocation, radius, token) {
+  let params = {
+    lat: userLocation.latitude,
+    lng: userLocation.longitude,
+    radius: radius
   }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "journey/getjourneys", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      reject(error);
+    })
+  });
 }
