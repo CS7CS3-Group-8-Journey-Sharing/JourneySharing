@@ -64,8 +64,8 @@ export default function JourneyListView({
                 />
               </View>
               <Text style={styles().containerJourneys_text}>
-                <Text style={{ color: COLORS.mainColor }}>{item.ownerId}</Text>,{" "}
-                {item.participantsIds}
+                <Text style={{ color: COLORS.mainColor }}>{item.ownerEmail}</Text>,{" "}
+                {item.participantsEmails}
               </Text>
             </View>
 
@@ -128,17 +128,17 @@ export default function JourneyListView({
                 <View
                   style={[
                     styles().containerJourneys_icon,
-                    { marginLeft: 3, marginRight: 12 },
+                    { marginLeft: 4, marginRight: 12 },
                   ]}
                 >
                   <Icon
                     color={COLORS.black}
                     type="font-awesome"
-                    name="plus-square-o"
+                    name="euro"
                     size={20}
                   />
                 </View>
-                <Text style={styles().containerJourneys_text}>{item.stops}</Text>
+                <Text style={styles().containerJourneys_text}>{item.price}</Text>
               </View>
               <View style={styles().containerJourneys_text_container}>
                 <View

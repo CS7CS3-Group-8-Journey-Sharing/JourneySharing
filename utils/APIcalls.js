@@ -117,7 +117,7 @@ export function getJourneysWithinRadius(userLocation, radius, token) {
   }
 
   return new Promise((resolve, reject) => {
-    axios.get(baseUrl + "journey/getjourneys", {
+    axios.get(baseUrl + "journey/getjourneysradius", {
       headers: headers,
       params: params
     }).then((res) => {

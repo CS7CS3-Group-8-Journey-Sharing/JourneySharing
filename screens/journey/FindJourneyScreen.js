@@ -32,6 +32,7 @@ export default function FindJourneyScreen({ navigation }) {
   const [search, setSearch] = useState('');
   const [userLocation, setUserLocation] = useState({});
   const [errorMsg, setErrorMsg] = useState(null);
+  const [loading, setLoading] = useState(true);
   const mapView = useRef(null);
 
   const GOOGLE_MAPS_APIKEY = "#####";
@@ -70,17 +71,19 @@ export default function FindJourneyScreen({ navigation }) {
       getJourneysWithinRadius(userLocation, 500, userToken).then(res => {
         setCurrentJourney(res[0]);
         setJourneys(res);
+        setLoading(false);
       }).catch((error) => console.log(error))
     })();
   }, [])
 
   useLayoutEffect(() => {
-    if(mapView.current !== null){
+    if(mapView.current !== null && currentJourney !== null){
       animateMap();
     }
-  })
+  }, [currentJourney])
 
-  if (journeys.length > 0) {
+  if (journeys.length > 0 && !loading) {
+    console.log(JSON.stringify(currentJourney))
     return (
       <View style={styles.container}>
         <SearchBar
@@ -151,7 +154,7 @@ export default function FindJourneyScreen({ navigation }) {
             navigation={navigation}
             list={journeys}
             setCurrentJourney={(journey) => {
-              setCurrentJourney(journey)
+              setCurrentJourney(journey);
             }}
             currentJourney={currentJourney}
             fromFindJourney
@@ -159,7 +162,7 @@ export default function FindJourneyScreen({ navigation }) {
         </ScrollView>
       </View>
     );
-  } else {
+  } else if(!loading) {
     return (
       <View style={styles.container}>
         <View style={styles.center}>
@@ -171,6 +174,16 @@ export default function FindJourneyScreen({ navigation }) {
             title="Create Journey"
             onPress={() => navigation.navigate("CreateJourney")}
           />
+        </View>
+      </View>
+    );
+  } else {
+    return (
+      <View style={styles.container}>
+        <View style={styles.center}>
+          <Text style={{ marginBottom: 10 }}>
+            Loading journeys withing 500m radius...
+          </Text>
         </View>
       </View>
     );
