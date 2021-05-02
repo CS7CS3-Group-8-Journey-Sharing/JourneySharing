@@ -17,6 +17,14 @@ export default function JourneyItemView({ item ,navigation}) {
 
   const { user, userToken } = React.useContext(AuthContext);
 
+  var isOwner;
+  if (user.email == item.ownerEmail) {
+    isOwner = true;
+  }
+  else {
+    isOwner = false;
+  }
+
   return (
     <View>
         <ListItem
@@ -144,10 +152,15 @@ export default function JourneyItemView({ item ,navigation}) {
             </View>
           </ListItem.Content>
         </ListItem>
-      <View style={{ marginBottom: 10 }} />
-      <CustomButton style={{marginHorizontal: 10}} title="START" onPress={() => startJourney(user.email, item.journeyId, userToken)}/>
-      <View style={{ marginBottom: 10 }} />
-      <CustomButton style={{marginHorizontal: 10}} title="END" onPress={() => endJourney(user.email, item.journeyId, userToken)}/>
+      (isOwner ? (
+        <View style={{ marginBottom: 10 }} />
+        <CustomButton style={{marginHorizontal: 10}} title="START" onPress={() => startJourney(user.email, item.journeyId, userToken)}/>
+        <View style={{ marginBottom: 10 }} />
+        <CustomButton style={{marginHorizontal: 10}} title="END" onPress={() => endJourney(user.email, item.journeyId, userToken)}/>
+      ) : (
+        <View style={{ marginBottom: 10 }} />
+        <CustomButton style={{marginHorizontal: 10}} title="REQUEST TO JOIN" />
+      ))
     </View>
   );
 }
