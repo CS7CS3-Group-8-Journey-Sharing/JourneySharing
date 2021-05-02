@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useFocusEffect } from "react";
 import { Text, ScrollView, View, StyleSheet, Dimensions } from "react-native";
 import { Button } from "react-native-elements";
 import { Icon } from "react-native-elements";
@@ -6,29 +6,35 @@ import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
 import JourneyListView from "../../components/JourneyListViewFind";
 import COLORS from "../../common/colors"
 import { getOwnersJourneys, getParticipatingJourneys } from "../../utils/APIcalls";
+import { useIsFocused } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }) {
   const { userToken, user } = React.useContext(AuthContext);
+  const isFocused = useIsFocused();
 
   const [loading, setLoading] = useState(true);
   const [ownerJourneys, setOwnerJourneys] = useState([]);
   const [participatingJourneys, setParticipatingJourneys] = useState([]);
 
   useEffect(() => {
-    getOwnersJourneys(user.email, userToken).then(res => {
-      setOwnerJourneys(res);
-      getParticipatingJourneys(user.email, userToken).then(res => { 
-        setParticipatingJourneys(res);
-        setLoading(false);
+    const unsubscribe = navigation.addListener('focus', () => {
+      getOwnersJourneys(user.email, userToken).then(res => {
+        setOwnerJourneys(res);
+        getParticipatingJourneys(user.email, userToken).then(res => { 
+          setParticipatingJourneys(res);
+          setLoading(false);
+        }).catch((error) => {
+          console.log(error)
+          setLoading(false);
+        })
       }).catch((error) => {
         console.log(error)
         setLoading(false);
       })
-    }).catch((error) => {
-      console.log(error)
-      setLoading(false);
-    })
-  })
+    });
+
+    return unsubscribe;
+  }, [navigation])
 
   if ((ownerJourneys.length > 0 || participatingJourneys > 0) && !loading) {
     return (
