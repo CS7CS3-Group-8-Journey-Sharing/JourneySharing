@@ -3,8 +3,8 @@ import { Image, Button, Text, View, StyleSheet,ScrollView } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { TextInput } from 'react-native-gesture-handler';
 import AuthContext from '../../context/AuthContext';
-import { getRecurrentJourneys } from "../../utils/APIcalls";
-import JourneyListView from "../../components/JourneyListView";
+import { getOwnersJourneys } from "../../utils/APIcalls";
+import JourneyListView from "../../components/JourneyListViewFind";
 import COLORS from "../../common/colors"
 
 export default function ProfileScreen({ navigation }) {
@@ -14,8 +14,8 @@ export default function ProfileScreen({ navigation }) {
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      getRecurrentJourneys(user.email, userToken).then(res => {
-        setRecurrentJourneys(res);
+      getOwnersJourneys(user.email, userToken).then(res => {
+        setRecurrentJourneys(res.filter(item => item.recurring));
       }).catch((error) => {
         console.log(error)
       })

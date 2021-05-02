@@ -192,7 +192,7 @@ export function getParticipatingJourneys(userEmail, token) {
   });
 }
 
-export function getRecurrentJourneys(userEmail, token) {
+export function getWomenJourneys(userEmail, token) {
   let params = {
     userEmail: userEmail,
   }
@@ -203,7 +203,7 @@ export function getRecurrentJourneys(userEmail, token) {
   }
 
   return new Promise((resolve, reject) => {
-    axios.get(baseUrl + "journey/getrecurrent", {
+    axios.get(baseUrl + "journey/getjourneyswoman", {
       headers: headers,
       params: params
     }).then((res) => {

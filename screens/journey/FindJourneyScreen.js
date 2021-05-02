@@ -6,17 +6,22 @@ import {
   Platform,
   ScrollView,
   Text,
-  Button
+  Button,
+  Switch,
+  Modal
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { SearchBar } from 'react-native-elements';
+import { SearchBar, Icon } from 'react-native-elements';
 import {
-  getJourneysWithinRadius
+  getJourneysWithinRadius,
+  getWomenJourneys
 } from "../../utils/APIcalls";
 import JourneyListView from "../../components/JourneyListViewFind";
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
+import COLORS from "../../common/colors";
+import CustomButton from "../../components/CustomButton";
 
 export default function FindJourneyScreen({ navigation }) {
   const { userToken } = React.useContext(AuthContext);
@@ -28,11 +33,16 @@ export default function FindJourneyScreen({ navigation }) {
     longitudeDelta: 0.00271,
   });
   const [journeys, setJourneys] = useState([]);
+  const [filteredJourneys, setFilteredJourneys] = useState([]);
   const [currentJourney, setCurrentJourney] = useState({});
   const [search, setSearch] = useState('');
   const [userLocation, setUserLocation] = useState({});
   const [errorMsg, setErrorMsg] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [womenOnly, setWomenOnly] = useState(false);
+  const [showPopup, setShowPopup] = useState(false);
+  const togglePopup = () => setShowPopup(previousState => !previousState);
+  const toggleSwitch = () => setWomenOnly(previousState => !previousState);
   const mapView = useRef(null);
 
   const GOOGLE_MAPS_APIKEY = "#####";
@@ -50,6 +60,39 @@ export default function FindJourneyScreen({ navigation }) {
         animated: true
       },
     )
+  }
+
+
+  const searchFilterFunction = (text) => {
+    // Check if searched text is not blank
+    if (text) {
+      // Inserted text is not blank
+      // Filter the journeys
+      // Update filteredJourneys
+      const newData = journeys.filter(function (item) {
+        const nameData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
+        const originData = item.startLocation.name ? item.startLocation.name.toUpperCase() : ''.toUpperCase();
+        const endData = item.endLocation.name ? item.endLocation.name.toUpperCase() : ''.toUpperCase();
+        const textData = text.toUpperCase();
+        return nameData.indexOf(textData) > -1 || originData.indexOf(textData) > -1 || endData.indexOf(textData) > -1;
+      });
+      setFilteredJourneys(newData);
+      setSearch(text);
+    } else {
+      // Inserted text is blank
+      // Update filteredJourneys with journeys
+      setFilteredJourneys(journeys);
+      setSearch(text);
+    }
+  };
+
+  const filterWomenOnly = () => {
+    if(womenOnly) {
+      
+      setFilteredJourneys(journeys.filter(journey => journey.womenOnly));
+    } else {
+      setFilteredJourneys(journeys);
+    }
   }
 
   useEffect(() => {
@@ -71,6 +114,7 @@ export default function FindJourneyScreen({ navigation }) {
       getJourneysWithinRadius(userLocation, 500, userToken).then(res => {
         setCurrentJourney(res[0]);
         setJourneys(res);
+        setFilteredJourneys(res);
         setLoading(false);
       }).catch((error) => console.log(error))
     })();
@@ -82,16 +126,61 @@ export default function FindJourneyScreen({ navigation }) {
     }
   }, [currentJourney])
 
-  if (journeys.length > 0 && !loading) {
+  if (filteredJourneys.length > 0 && !loading) {
     return (
       <View style={styles.container}>
-        <SearchBar
-          placeholder="Search a journey..."
-          onChangeText={setSearch}
-          lightTheme
-          round
-          value={search}
-        />
+
+        <Modal
+          visible={showPopup}
+          transparent={true}
+          onTouchOutside={() => {
+            setShowPopup(!showPopup)
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{"Set women only"}</Text>
+              <Switch
+                trackColor={{ false: '#767577', true: COLORS.mainColor }}
+                thumbColor={womenOnly ? '#f4f3f4' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleSwitch}
+                value={womenOnly}
+              />
+              <CustomButton
+                title="Ok"
+                style={{paddingTop: 10}}
+                onPress={() => {
+                  setShowPopup(!showPopup)
+                  filterWomenOnly()
+                }}
+              />
+            </View>
+          </View>
+        </Modal>
+
+        <View style={{flexDirection: 'row'}}>
+            <SearchBar
+              placeholder="Search a journey..."
+              onChangeText={setSearch}
+              lightTheme
+              round
+              containerStyle={styles.searchBar}
+              value={search}
+              searchIcon={{ size: 24 }}
+              onChangeText={(text) => searchFilterFunction(text)}
+              onClear={(text) => searchFilterFunction('')}
+              placeholder="Search by name, origin or destination..."
+            />
+            <View style={{flex: 1, backgroundColor: COLORS.white, justifyContent: 'center', alignItems: 'center'}}>
+              <Icon
+                color={COLORS.greyMore}
+                type="font-awesome"
+                name="cog"
+                size={30}
+                onPress={() =>  togglePopup()}
+              />
+            </View>
+        </View>
         <MapView
           initialRegion={region}
           ref={mapView}
@@ -151,7 +240,7 @@ export default function FindJourneyScreen({ navigation }) {
         <ScrollView>
           <JourneyListView
             navigation={navigation}
-            list={journeys}
+            list={filteredJourneys}
             setCurrentJourney={(journey) => {
               setCurrentJourney(journey);
             }}
@@ -166,7 +255,7 @@ export default function FindJourneyScreen({ navigation }) {
       <View style={styles.container}>
         <View style={styles.center}>
           <Text style={{ marginBottom: 10 }}>
-            You have no Journeys. Create one?
+            No journeys found. Create one?
           </Text>
           <Button
             type="outline"
@@ -206,4 +295,36 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
   },
+  searchBar: {
+    flex: 6, 
+    backgroundColor: COLORS.white, 
+    borderColor: COLORS.white, 
+    marginRight: 0, 
+    paddingRight: 0
+  },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }
 });
