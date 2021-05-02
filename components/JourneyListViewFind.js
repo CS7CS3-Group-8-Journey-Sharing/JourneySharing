@@ -18,7 +18,7 @@ export default function JourneyListView({
     if (fromFindJourney) {
       setCurrentJourney(item);
     } else {
-      navigation.navigate(item.goTo[0],{item: item});
+      navigation.navigate("ViewTrip", {currentJourney: item});
     }
   };
 

@@ -144,3 +144,50 @@ export function getJourneysWithinRadius(userLocation, radius, token) {
     })
   });
 }
+
+export function getOwnersJourneys(userEmail, token) {
+  let params = {
+    userEmail: userEmail,
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "journey/getjourneys", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
+
+
+export function getParticipatingJourneys(userEmail, token) {
+  let params = {
+    userEmail: userEmail,
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "journey/gethistory", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
