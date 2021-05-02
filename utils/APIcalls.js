@@ -191,3 +191,26 @@ export function getParticipatingJourneys(userEmail, token) {
     })
   });
 }
+
+export function getRecurrentJourneys(userEmail, token) {
+  let params = {
+    userEmail: userEmail,
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "journey/getrecurrent", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
