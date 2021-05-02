@@ -253,6 +253,7 @@ export default function CreateJourneyScreen({ navigation }) {
 
       <ScrollView style={styles.journeyMenu}>
         <Input
+          label="Journey Name"
           placeholder={"Enter journey name"}
           value={journeyName}
           onChangeText={setJourneyName}
