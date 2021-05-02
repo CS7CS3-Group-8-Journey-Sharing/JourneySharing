@@ -145,9 +145,9 @@ export default function JourneyItemView({ item ,navigation}) {
           </ListItem.Content>
         </ListItem>
       <View style={{ marginBottom: 10 }} />
-      <CustomButton style={{marginHorizontal: 10}} title="START" onPress={() => startJourney(user, item.journeyId, userToken)}/>
+      <CustomButton style={{marginHorizontal: 10}} title="START" onPress={() => startJourney(user.email, item.journeyId, userToken)}/>
       <View style={{ marginBottom: 10 }} />
-      <CustomButton style={{marginHorizontal: 10}} title="END" onPress={() => endJourney(user, item.journeyId, userToken)}/>
+      <CustomButton style={{marginHorizontal: 10}} title="END" onPress={() => endJourney(user.email, item.journeyId, userToken)}/>
     </View>
   );
 }

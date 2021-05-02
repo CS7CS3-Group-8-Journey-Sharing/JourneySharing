@@ -193,8 +193,6 @@ export function getParticipatingJourneys(userEmail, token) {
 }
 
 export function startJourney(userEmail, journeyID, token) {
-  console.log("startJourney")
-
   let params = {
     userEmail: userEmail,
     journeyId: journeyID
@@ -205,10 +203,8 @@ export function startJourney(userEmail, journeyID, token) {
     'Authorization': 'Bearer ' + token
   }
 
-  console.log(journeyID)
-
   return new Promise((resolve, reject) => {
-    axios.post(baseUrl + "journey/startjourney", {
+    axios.post(baseUrl + "journey/startjourney", null, {
       headers: headers,
       params: params
     }).then((res) => {
@@ -221,8 +217,6 @@ export function startJourney(userEmail, journeyID, token) {
 }
 
 export function endJourney(userEmail, journeyID, token) {
-  console.log("endJourney")
-
   let params = {
     userEmail: userEmail,
     journeyId: journeyID
@@ -234,7 +228,7 @@ export function endJourney(userEmail, journeyID, token) {
   }
 
   return new Promise((resolve, reject) => {
-    axios.post(baseUrl + "journey/endjourney", {
+    axios.post(baseUrl + "journey/endjourney", null, {
       headers: headers,
       params: params
     }).then((res) => {
