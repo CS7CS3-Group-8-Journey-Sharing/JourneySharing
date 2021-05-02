@@ -22,7 +22,7 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import COLORS from "../../common/colors";
 import CustomButton from "../../components/CustomButton";
-import { GOOGLE_MAPS_APIKEY } from '@env';
+//import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function FindJourneyScreen({ navigation }) {
   const { userToken } = React.useContext(AuthContext);
