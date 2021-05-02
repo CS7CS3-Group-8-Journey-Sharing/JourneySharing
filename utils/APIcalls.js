@@ -191,3 +191,55 @@ export function getParticipatingJourneys(userEmail, token) {
     })
   });
 }
+
+export function startJourney(userEmail, journeyID, token) {
+  console.log("startJourney")
+
+  let params = {
+    userEmail: userEmail,
+    journeyId: journeyID
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.post(baseUrl + "journey/startjourney", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
+
+export function endJourney(userEmail, journeyID, token) {
+  console.log("endJourney")
+
+  let params = {
+    userEmail: userEmail,
+    journeyId: journeyID
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.post(baseUrl + "journey/endjourney", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}

@@ -7,11 +7,15 @@ import TouchableScale from "react-native-touchable-scale";
 import COLORS from "../common/colors";
 import CustomButton from "./CustomButton"
 import { parseISOString, isoFormatDMY, isoFormatHMS } from "../utils/utilFunctions"
+import { startJourney, endJourney } from "../utils/APIcalls";
+import AuthContext from '../context/AuthContext';
 
 export default function JourneyItemView({ item ,navigation}) {
   const handleItemPress = (item) => {};
 
   const datetimeStart = parseISOString(item.startTime);
+
+  const { user, userToken } = React.useContext(AuthContext);
 
   return (
     <View>
@@ -141,9 +145,9 @@ export default function JourneyItemView({ item ,navigation}) {
           </ListItem.Content>
         </ListItem>
       <View style={{ marginBottom: 10 }} />
-      <CustomButton style={{marginHorizontal: 10}} title="START" />
+      <CustomButton style={{marginHorizontal: 10}} title="START" onPress={() => startJourney(user, item.journeyId, userToken)}/>
       <View style={{ marginBottom: 10 }} />
-      <CustomButton style={{marginHorizontal: 10}} title="END" onPress={() => navigation.navigate("Rating")}/>
+      <CustomButton style={{marginHorizontal: 10}} title="END" onPress={() => endJourney(user, item.journeyId, userToken)}/>
     </View>
   );
 }
