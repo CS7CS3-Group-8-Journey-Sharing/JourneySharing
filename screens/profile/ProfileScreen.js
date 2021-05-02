@@ -1,21 +1,36 @@
-import * as React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, Button, Text, View, StyleSheet,ScrollView } from 'react-native';
 import { Avatar } from 'react-native-elements';
 import { TextInput } from 'react-native-gesture-handler';
 import AuthContext from '../../context/AuthContext';
-import { getJourneysOfUser } from "../../utils/APIcalls";
-import JourneyListView from "../../components/JourneyListView";
+import { getOwnersJourneys } from "../../utils/APIcalls";
+import JourneyListView from "../../components/JourneyListViewFind";
 import COLORS from "../../common/colors"
 
 export default function ProfileScreen({ navigation }) {
-  const list = getJourneysOfUser();
+  const { userToken, user } = React.useContext(AuthContext);
+
+  const [recurrentJourneys, setRecurrentJourneys] = useState([]);
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      getOwnersJourneys(user.email, userToken).then(res => {
+        setRecurrentJourneys(res.filter(item => item.recurring));
+      }).catch((error) => {
+        console.log(error)
+      })
+    });
+
+    return unsubscribe;
+  }, [navigation])
 
   return (
     <ScrollView>
       <ProfileView />
+      {}
       <View style={styles.container}>
         <Text style={styles.title}>Recurrent Journeys</Text>
-        <JourneyListView navigation={navigation} list={list} />
+        <JourneyListView navigation={navigation} list={recurrentJourneys} />
       </View>
     </ScrollView>
   );
