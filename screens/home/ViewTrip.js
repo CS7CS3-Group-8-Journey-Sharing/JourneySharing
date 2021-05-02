@@ -14,6 +14,8 @@ import TouchableScale from "react-native-touchable-scale";
 
 import JourneyItemView from "../../components/JourneyItemView";
 
+import { GOOGLE_MAPS_APIKEY } from '@env';
+
 export default function ViewTripScreen({ route,navigation }) {
   const {currentJourney} = route.params;
   const [region, setRegion] = useState({
@@ -24,8 +26,6 @@ export default function ViewTripScreen({ route,navigation }) {
   });
 
   const mapView = useRef(null);
-
-  const GOOGLE_MAPS_APIKEY = "#####";
 
     return (
       <View style={styles.container}>

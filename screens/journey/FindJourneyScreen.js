@@ -17,6 +17,7 @@ import {
 import JourneyListView from "../../components/JourneyListViewFind";
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
+import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function FindJourneyScreen({ navigation }) {
   const { userToken } = React.useContext(AuthContext);
@@ -34,8 +35,6 @@ export default function FindJourneyScreen({ navigation }) {
   const [errorMsg, setErrorMsg] = useState(null);
   const [loading, setLoading] = useState(true);
   const mapView = useRef(null);
-
-  const GOOGLE_MAPS_APIKEY = "#####";
 
   const animateMap = () => {
     mapView.current.fitToSuppliedMarkers(
