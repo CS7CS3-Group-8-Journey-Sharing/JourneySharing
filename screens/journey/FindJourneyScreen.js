@@ -83,7 +83,6 @@ export default function FindJourneyScreen({ navigation }) {
   }, [currentJourney])
 
   if (journeys.length > 0 && !loading) {
-    console.log(JSON.stringify(currentJourney))
     return (
       <View style={styles.container}>
         <SearchBar

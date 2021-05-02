@@ -3,38 +3,53 @@ import { Text, ScrollView, View, StyleSheet, Dimensions } from "react-native";
 import { Button } from "react-native-elements";
 import { Icon } from "react-native-elements";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import JourneyListView from "../../components/JourneyListView";
-import { getJourneysOfUser } from "../../utils/APIcalls";
+import JourneyListView from "../../components/JourneyListViewFind";
 import COLORS from "../../common/colors"
-import { getOwnersJourneys } from "../../utils/utilFunctions";
+import { getOwnersJourneys, getParticipatingJourneys } from "../../utils/APIcalls";
 
 export default function HomeScreen({ navigation }) {
   const { userToken, user } = React.useContext(AuthContext);
 
-  const list = getJourneysOfUser(user.email, userToken);
-  //getJourneysOfUser(user.email, userToken).then
+  const [loading, setLoading] = useState(true);
+  const [ownerJourneys, setOwnerJourneys] = useState([]);
+  const [participatingJourneys, setParticipatingJourneys] = useState([]);
 
-  if (list.length > 0)
+  useEffect(() => {
+    getOwnersJourneys(user.email, userToken).then(res => {
+      setOwnerJourneys(res);
+      getParticipatingJourneys(user.email, userToken).then(res => { 
+        setParticipatingJourneys(res);
+        setLoading(false);
+      }).catch((error) => {
+        console.log(error)
+        setLoading(false);
+      })
+    }).catch((error) => {
+      console.log(error)
+      setLoading(false);
+    })
+  }, [])
+
+  if ((ownerJourneys.length > 0 || participatingJourneys > 0) && !loading) {
     return (
       <ScrollView>
-        <View style={styles.container}>
-          {/* Journeys that are happening at the current time */}
-          <Text style={styles.title}>Current Journey</Text> 
-          <JourneyListView navigation={navigation} isHappening list={[list[0]]} />
-        </View>
-        <View style={styles.container}>
-          {/* Journeys that you are the owner of */}
-          <Text style={styles.title}>Your Journeys</Text> 
-          <JourneyListView navigation={navigation} list={getOwnersJourneys(list, user.email)} />
-        </View>
-        <View style={styles.container}>
-          {/* Journeys that you are NOT the owner of, but are participating in */}
-          <Text style={styles.title}>Participating In</Text> 
-          <JourneyListView navigation={navigation} list={list} />
-        </View>
+        { ownerJourneys.length> 0 && 
+          <View style={styles.container}>
+            {/* Journeys that you are the owner of */}
+            <Text style={styles.title}>Your Journeys</Text> 
+            <JourneyListView isHappening navigation={navigation} list={ownerJourneys} />
+          </View>
+        }
+        { participatingJourneys.length> 0 && 
+          <View style={styles.container}>
+            {/* Journeys that you are NOT the owner of, but are participating in */}
+            <Text style={styles.title}>Participating In</Text> 
+            <JourneyListView navigation={navigation} list={participatingJourneys} />
+          </View>
+        }
       </ScrollView>
     );
-  else
+  } else if(!loading) {
     return (
       <View style={styles.container}>
         <View style={styles.center}>
@@ -50,6 +65,17 @@ export default function HomeScreen({ navigation }) {
         </View>
       </View>
     );
+  } else {
+    return (
+      <View style={styles.container}>
+        <View style={styles.center}>
+          <Text style={{ marginBottom: 10 }}>
+            Loading journeys...
+          </Text>
+        </View>
+      </View>
+    );
+  } 
 }
 
 const styles = StyleSheet.create({
