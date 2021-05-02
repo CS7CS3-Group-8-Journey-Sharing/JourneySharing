@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Text, Input, CheckBox } from "react-native-elements";
+import { Text, Input, CheckBox, Icon } from "react-native-elements";
 import CustomButton from "../../components/CustomButton";
 import {
   Platform,
@@ -16,7 +16,8 @@ import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
 import { sendCreateJourney, getJourneysOfUser } from "../../utils/APIcalls"
-import { Home, ViewTrip } from "../home/stack";
+import InputSpinner from "react-native-input-spinner";
+import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
@@ -27,8 +28,6 @@ export default function CreateJourneyScreen({ navigation }) {
     longitudeDelta: 0.00421,
   });
 
-  const GOOGLE_MAPS_APIKEY = null;
-
   const { userToken, user } = React.useContext(AuthContext);
 
   const [journeyName, setJourneyName] = useState("");
@@ -37,8 +36,13 @@ export default function CreateJourneyScreen({ navigation }) {
   const [showDatePicker, setShowDatePicker] = useState(false);
 
   const [recurring, setRecurring] = useState(false);
+  const [recurringDays, setRecurringDays] = useState([
+    false, false, false, false, false, false, false,
+  ]);
   const [womenOnly, setWomenOnly] = useState(false);
   const [transportMode, setTransportMode] = useState("walk");
+  const [maxParticipants, setMaxParticipants] = useState(10)
+  const [price, setPrice] = useState(0.00);
 
   const [startName, setStartName] = useState("Origin");
   const [endName, setEndName] = useState("Destination");
@@ -52,10 +56,6 @@ export default function CreateJourneyScreen({ navigation }) {
     visible: false,
     set: false,
   });
-
-  const [recurringDays, setRecurringDays] = useState([
-    false, false, false, false, false, false, false,
-  ]);
 
   const [popupText, setPopupText] = useState("");
 
@@ -117,13 +117,15 @@ export default function CreateJourneyScreen({ navigation }) {
     //TODO: validate data
     var journey = {
       name: journeyName,
-      maxParticipants: 10,
+      maxParticipants: maxParticipants,
       modeOfTransport: transportMode.toUpperCase(),
 
       ownerEmail: user.email,
 
       recurring: recurring,
       recurringDays: recurringDays,
+
+      price: price,
 
       womenOnly: womenOnly,
 
@@ -317,6 +319,54 @@ export default function CreateJourneyScreen({ navigation }) {
         )
         }
 
+        <View style={{ flexDirection: "row", justifyContent: "space-between",}}>
+          <View style={{flex: 1, flexGrow: 1, flexDirection: "row", justifyContent: "flex-start", alignItems: "center"}}>
+            <Icon style={{paddingEnd: 10, paddingStart: 10}} color={COLORS.black} type="font-awesome" name="users" size={20}
+            />
+            <Text style={{ textAlign: "center", textAlignVertical: "center", fontSize: 20 }}>
+              Max Participants
+            </Text>
+          </View>
+
+          <InputSpinner
+            style={{flex: 1, flexGrow: 1}}
+            //skin={"square"}
+            shadow={false}
+            max={20}
+            min={1}
+            step={1}
+            rounded={false}
+            colorMax={"#f04048"}
+            colorMin={"#40c5f4"}
+            value={maxParticipants}
+            onChange={setMaxParticipants}
+          />
+        </View>
+        <View style={{ flexDirection: "row", justifyContent: "space-evenly",}}>
+          <View style={{flex: 1, flexGrow: 1, flexDirection: "row", justifyContent: "flex-start", alignItems: "center"}}>
+            <Icon style={{paddingEnd: 10, paddingStart: 10}} color={COLORS.black} type="font-awesome" name="euro" size={20} />
+            <Text style={{ textAlign: "center", textAlignVertical: "center", fontSize: 20 }}>
+              Price
+            </Text>
+          </View>
+
+          <InputSpinner
+            style={{flex: 1, flexGrow: 1}}
+            //skin={"square"}
+            shadow={false}
+            max={1000}
+            min={0}
+            type={"real"}
+            step={0.01}
+            precision={2}
+            rounded={false}
+            colorMax={"#f04048"}
+            colorMin={"#40c5f4"}
+            value={price}
+            onChange={setPrice}
+          />
+        </View>
+
         <CheckBox
           //center
           iconRight
@@ -325,7 +375,6 @@ export default function CreateJourneyScreen({ navigation }) {
           checked={recurring}
           onPress={() => setRecurring(!recurring)}
         />
-
 
         {recurring && (
           <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>

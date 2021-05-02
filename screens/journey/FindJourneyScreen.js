@@ -22,6 +22,7 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import COLORS from "../../common/colors";
 import CustomButton from "../../components/CustomButton";
+import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function FindJourneyScreen({ navigation }) {
   const { userToken } = React.useContext(AuthContext);
@@ -44,8 +45,6 @@ export default function FindJourneyScreen({ navigation }) {
   const togglePopup = () => setShowPopup(previousState => !previousState);
   const toggleSwitch = () => setWomenOnly(previousState => !previousState);
   const mapView = useRef(null);
-
-  const GOOGLE_MAPS_APIKEY = "#####";
 
   const animateMap = () => {
     mapView.current.fitToSuppliedMarkers(
