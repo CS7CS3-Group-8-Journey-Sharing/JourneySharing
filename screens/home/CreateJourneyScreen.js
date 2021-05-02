@@ -18,6 +18,7 @@ import AuthContext from "../../context/AuthContext";
 import { sendCreateJourney, getJourneysOfUser } from "../../utils/APIcalls"
 import { Home, ViewTrip } from "../home/stack";
 import InputSpinner from "react-native-input-spinner";
+import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
@@ -27,8 +28,6 @@ export default function CreateJourneyScreen({ navigation }) {
     latitudeDelta: 0.00922,
     longitudeDelta: 0.00421,
   });
-
-  const GOOGLE_MAPS_APIKEY = null;
 
   const { userToken, user } = React.useContext(AuthContext);
 
