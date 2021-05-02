@@ -16,7 +16,6 @@ import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
 import { sendCreateJourney, getJourneysOfUser } from "../../utils/APIcalls"
-import { Home, ViewTrip } from "../home/stack";
 import InputSpinner from "react-native-input-spinner";
 import { GOOGLE_MAPS_APIKEY } from '@env';
 
@@ -331,10 +330,12 @@ export default function CreateJourneyScreen({ navigation }) {
 
           <InputSpinner
             style={{flex: 1, flexGrow: 1}}
-            skin={"square"}
+            //skin={"square"}
+            shadow={false}
             max={20}
             min={1}
             step={1}
+            rounded={false}
             colorMax={"#f04048"}
             colorMin={"#40c5f4"}
             value={maxParticipants}
@@ -351,12 +352,14 @@ export default function CreateJourneyScreen({ navigation }) {
 
           <InputSpinner
             style={{flex: 1, flexGrow: 1}}
-            skin={"square"}
+            //skin={"square"}
+            shadow={false}
             max={1000}
             min={0}
             type={"real"}
             step={0.01}
             precision={2}
+            rounded={false}
             colorMax={"#f04048"}
             colorMin={"#40c5f4"}
             value={price}
