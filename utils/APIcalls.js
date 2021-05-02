@@ -205,6 +205,8 @@ export function startJourney(userEmail, journeyID, token) {
     'Authorization': 'Bearer ' + token
   }
 
+  console.log(journeyID)
+
   return new Promise((resolve, reject) => {
     axios.post(baseUrl + "journey/startjourney", {
       headers: headers,
