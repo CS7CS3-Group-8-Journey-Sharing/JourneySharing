@@ -28,7 +28,7 @@ export default function HomeScreen({ navigation }) {
       console.log(error)
       setLoading(false);
     })
-  }, [])
+  })
 
   if ((ownerJourneys.length > 0 || participatingJourneys > 0) && !loading) {
     return (
