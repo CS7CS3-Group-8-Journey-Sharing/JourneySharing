@@ -9,7 +9,7 @@ export default function SignUpScreen() {
   const [firstname, setFirstname] = React.useState("");
   const [surname, setSurname] = React.useState("");
   const [age, setAge] = React.useState("");
-  const [gender, setGender] = React.useState("OTHER");
+  const [gender, setGender] = React.useState("NONE");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
@@ -55,7 +55,7 @@ export default function SignUpScreen() {
         items={[
           { label: "Male", value: "MALE" },
           { label: "Female", value: "FEMALE" },
-          { label: "Other", value: "OTHER" },
+          { label: "Other", value: "NONE" },
         ]}
         defaultValue={gender}
         dropDownStyle={{ backgroundColor: "#fafafa"}}
