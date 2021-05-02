@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   Text,
   View,
@@ -15,14 +15,16 @@ import TouchableScale from "react-native-touchable-scale";
 import JourneyItemView from "../../components/JourneyItemView";
 
 export default function ViewTripScreen({ route,navigation }) {
-  const {item} = route.params;
+  const {currentJourney} = route.params;
   const [region, setRegion] = useState({
     latitude: 53.3436581,
     longitude: -6.2563436,
     latitudeDelta: 0.00582,
     longitudeDelta: 0.00271,
   });
-  
+
+  const mapView = useRef(null);
+
   const GOOGLE_MAPS_APIKEY = "#####";
 
     return (
@@ -31,30 +33,50 @@ export default function ViewTripScreen({ route,navigation }) {
           initialRegion={region}
           onRegionChange={(newRegion) => setRegion(newRegion)}
           style={styles.map}
+          ref={mapView}
           //provider={PROVIDER_GOOGLE}
+          onMapReady={() => {
+            mapView.current.fitToSuppliedMarkers(
+              ['mk1', 'mk2'],
+              { edgePadding: 
+                {
+                  top: 100,
+                  right: 50,
+                  bottom: 50,
+                  left: 50
+                }
+              }
+            )
+          }}
         >
           <MapView.Marker
-            coordinate={item.coords.origin}
+            coordinate={{
+              latitude: currentJourney.startLocation.lat,
+              longitude: currentJourney.startLocation.lng,
+            }}
             title="origin"
+            identifier={'mk1'}
           />
           <MapView.Marker
-            coordinate={item.coords.destination}
+            coordinate={{
+              latitude: currentJourney.endLocation.lat,
+              longitude: currentJourney.endLocation.lng,
+            }}
             title="destination"
+            identifier={'mk2'}
           />
-          {/* 
           <MapViewDirections
-            origin={item.coords.origin}
-            destination={item.coords.destination}
+            origin={'mk1'}
+            destination={'mk2'}
             mode="WALKING"
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={3}
             strokeColor="darkgreen"
             optimizeWaypoints={true}
           />
-          */}
         </MapView>
         <ScrollView>
-        <JourneyItemView navigation={navigation} item={item} />
+        <JourneyItemView navigation={navigation} item={currentJourney} />
         </ScrollView>
       </View>
     );

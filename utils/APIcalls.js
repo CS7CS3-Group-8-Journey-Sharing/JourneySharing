@@ -52,7 +52,24 @@ export const sendCreateJourney = (userToken, journey) => {
     );
 };
 
-export function getJourneysOfUser(user) {
+export function getJourneysOfUser(email, token) {
+
+  //let params = {
+  //  email: email
+  //}
+
+  //let headers = {
+  //  'Content-Type': 'application/json',
+  //  'Authorization': 'Bearer ' + token
+  //}
+
+  //return axios
+  //  .post(
+  //    baseUrl + "journey/getjourneys", {
+  //      headers,
+  //      params,
+  //    }
+  //  );
   const journeys = [
     {
       title: "One of Bob's Journeys",

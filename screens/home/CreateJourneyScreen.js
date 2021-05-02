@@ -112,7 +112,7 @@ export default function CreateJourneyScreen({ navigation }) {
     console.log("User Token: " + userToken);
     console.log("User email: " + user.email);
     console.log("ISO String?: " + startDate.toISOString());
-    console.log(startName + " " + endName);
+    console.log(startName + " to " + endName);
 
     //TODO: validate data
     var journey = {
@@ -120,10 +120,7 @@ export default function CreateJourneyScreen({ navigation }) {
       maxParticipants: 10,
       modeOfTransport: transportMode.toUpperCase(),
 
-      ownerId: "6065e0e6fdb39f04922f3d53",
-      //ownerEmail: user.email,
-
-      participantIds: [],
+      ownerEmail: user.email,
 
       recurring: recurring,
       recurringDays: recurringDays,
@@ -147,12 +144,8 @@ export default function CreateJourneyScreen({ navigation }) {
     //let response = sendCreateJourney(userToken, journey, setPopupText);
     sendCreateJourney(userToken, journey, setPopupText)
       .then(function (response) {
-        //console.log(response.data);
-        //setPopupText("All Good!\n" +response.status);
-        var journey = getJourneysOfUser("WHAT");
-        navigation.navigate("ViewTrip", {item: journey[0]});
-        //setPopupText("All Good\nJourney has been created!");
-        //setShowPopup(true);
+        console.log(response.data);
+        navigation.navigate("ViewTrip", {currentJourney: response.data});
       })
       .catch(function (error) {
         console.log(error);
@@ -178,7 +171,6 @@ export default function CreateJourneyScreen({ navigation }) {
         //console.log(error.config);
         //console.log(error.toJSON());
       });
-    // Stuff here will execute before axios call is finished
   }
 
   function setMarkersButton() {
@@ -187,8 +179,6 @@ export default function CreateJourneyScreen({ navigation }) {
         <CustomButton
           title="Set Start"
           disabled={!startMarker.visible}
-          // Best way to set 1 property?
-          // This might be bad due to some async thing
           onPress={() => {
             setStartMarker({ ...startMarker, set: true })
             getPlacenames(startMarker, setStartName);
@@ -375,11 +365,6 @@ export default function CreateJourneyScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    //display: "flex",
-    //justifyContent: "center",
-    //justifyContent: "space-between",
-    //justifyContent: "flex-start",
-    //alignItems: "center",
   },
 
   journeyMenu: {

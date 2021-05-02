@@ -9,8 +9,10 @@ import COLORS from "../../common/colors"
 import { getOwnersJourneys } from "../../utils/utilFunctions";
 
 export default function HomeScreen({ navigation }) {
-  const list = getJourneysOfUser();
-  const { username } = React.useContext(AuthContext);
+  const { userToken, user } = React.useContext(AuthContext);
+
+  const list = getJourneysOfUser(user.email, userToken);
+  //getJourneysOfUser(user.email, userToken).then
 
   if (list.length > 0)
     return (
@@ -23,7 +25,7 @@ export default function HomeScreen({ navigation }) {
         <View style={styles.container}>
           {/* Journeys that you are the owner of */}
           <Text style={styles.title}>Your Journeys</Text> 
-          <JourneyListView navigation={navigation} list={getOwnersJourneys(list, username)} />
+          <JourneyListView navigation={navigation} list={getOwnersJourneys(list, user.email)} />
         </View>
         <View style={styles.container}>
           {/* Journeys that you are NOT the owner of, but are participating in */}

@@ -6,9 +6,12 @@ import { LinearGradient } from "expo-linear-gradient";
 import TouchableScale from "react-native-touchable-scale";
 import COLORS from "../common/colors";
 import CustomButton from "./CustomButton"
+import { parseISOString, isoFormatDMY, isoFormatHMS } from "../utils/utilFunctions"
 
 export default function JourneyItemView({ item ,navigation}) {
   const handleItemPress = (item) => {};
+
+  const datetimeStart = parseISOString(item.startTime);
 
   return (
     <View>
@@ -24,7 +27,7 @@ export default function JourneyItemView({ item ,navigation}) {
           <ListItem.Content>
             <View style={{ flexDirection: "row" }}>
               <Text style={styles.containerJourneys_text_title}>
-                {item.title}
+                {item.name}
               </Text>
             </View>
             <View style={styles.containerJourneys_row}>
@@ -37,8 +40,10 @@ export default function JourneyItemView({ item ,navigation}) {
                 />
               </View>
               <Text style={styles.containerJourneys_text}>
-                <Text style={{ color: COLORS.mainColor }}>{item.owner}</Text>,{" "}
-                {item.people}
+                {
+                <Text style={{ color: COLORS.mainColor }}>{item.ownerEmail}</Text>
+                //,{" "}item.people
+                }
               </Text>
             </View>
 
@@ -52,7 +57,7 @@ export default function JourneyItemView({ item ,navigation}) {
                     size={20}
                   />
                 </View>
-                <Text style={styles.containerJourneys_text}>{item.time}</Text>
+                <Text style={styles.containerJourneys_text}>{isoFormatHMS(datetimeStart)}</Text>
               </View>
               <View style={styles.containerJourneys_text_container}>
                 <View style={styles.containerJourneys_icon}>
@@ -63,7 +68,7 @@ export default function JourneyItemView({ item ,navigation}) {
                     size={20}
                   />
                 </View>
-                <Text style={styles.containerJourneys_text}>{item.date}</Text>
+                <Text style={styles.containerJourneys_text}>{isoFormatDMY(datetimeStart)}</Text>
               </View>
             </View>
 
@@ -79,7 +84,7 @@ export default function JourneyItemView({ item ,navigation}) {
                     size={20}
                   />
                 </View>
-                <Text style={styles.containerJourneys_text}>{item.from}</Text>
+                <Text style={styles.containerJourneys_text}>{item.startLocation.name ? item.startLocation.name : item.startLocation.lat.toFixed(4) + ","+item.startLocation.lng.toFixed(3)}</Text>
               </View>
               <View style={styles.containerJourneys_text_container}>
                 <View
@@ -92,7 +97,7 @@ export default function JourneyItemView({ item ,navigation}) {
                     size={20}
                   />
                 </View>
-                <Text style={styles.containerJourneys_text}>{item.to}</Text>
+                <Text style={styles.containerJourneys_text}>{item.endLocation.name ? item.endLocation.name : item.endLocation.lat.toFixed(4) + ","+item.endLocation.lng.toFixed(3)}</Text>
               </View>
             </View>
 
@@ -111,7 +116,8 @@ export default function JourneyItemView({ item ,navigation}) {
                     size={20}
                   />
                 </View>
-                <Text style={styles.containerJourneys_text}>{item.price}</Text>
+                {/*<Text style={styles.containerJourneys_text}>{item.price}</Text>*/}
+                <Text style={styles.containerJourneys_text}>"$$$$$$$"</Text>
               </View>
               <View style={styles.containerJourneys_text_container}>
                 <View
@@ -128,7 +134,7 @@ export default function JourneyItemView({ item ,navigation}) {
                   />
                 </View>
                 <Text style={styles.containerJourneys_text}>
-                  {item.transport}
+                  {item.modeOfTransport}
                 </Text>
               </View>
             </View>
