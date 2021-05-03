@@ -1,6 +1,9 @@
+import React from "react";
 import axios from "axios";
+import AuthContext from "../context/AuthContext";
+import { Platform } from "react-native";
 
-const baseUrl = "http://localhost:8080/api/journeysharing/";
+export const baseUrl = (Platform.OS === 'ios') ? "http://localhost:8080/api/journeysharing/" : "http://10.0.2.2:8080/api/journeysharing/";
 
 export function getUserDetails(email, token) {
   let params = {
@@ -41,7 +44,40 @@ export const createJourney = (journey) => {
   return journey;
 };
 
-export function getJourneysOfUser(user) {
+export const sendCreateJourney = (userToken, journey) => {
+
+  console.log("Bearer " + userToken);
+  console.log(baseUrl + "journey/createjourney");
+  //return new Promise()
+  //return axios
+  return axios
+    .post(
+      baseUrl + "journey/createjourney",
+      journey,
+      {
+        headers: { "Content-Type": "application/json", "Authorization": "Bearer " + userToken, },
+      }
+    );
+};
+
+export function getJourneysOfUser(email, token) {
+
+  //let params = {
+  //  email: email
+  //}
+
+  //let headers = {
+  //  'Content-Type': 'application/json',
+  //  'Authorization': 'Bearer ' + token
+  //}
+
+  //return axios
+  //  .post(
+  //    baseUrl + "journey/getjourneys", {
+  //      headers,
+  //      params,
+  //    }
+  //  );
   const journeys = [
     {
       title: "One of Bob's Journeys",
@@ -53,7 +89,7 @@ export function getJourneysOfUser(user) {
       to: "To",
       price: "Price",
       transport: "Transport",
-      goTo: ["ViewTrip",0],
+      goTo: ["ViewTrip", 0],
       coords: {
         origin: {
           latitude: 53.347257,
@@ -75,7 +111,7 @@ export function getJourneysOfUser(user) {
       to: "Dublin Zoo",
       price: "2",
       transport: "Car",
-      goTo: ["ViewTrip",1],
+      goTo: ["ViewTrip", 1],
       number: "1",
       coords: {
         origin: {
@@ -93,113 +129,96 @@ export function getJourneysOfUser(user) {
   return journeys;
 }
 
-export function getJourneysWithinRadius(radius) {
-  /*
-  TODO: find journey shows journeys in x radius
-  */
-  const journeys = [
-    {
-      title: "Find a Journey",
-      owner: "Owner",
-      people: "People",
-      time: "Time",
-      date: "Date",
-      from: "From",
-      to: "To",
-      price: "Price",
-      transport: "Transport",
-      goTo: ["Example",0],
-      coords: {
-        origin: {
-          latitude: 53.347257,
-          longitude: -6.2589555,
-        },
-        destination: {
-          latitude: 53.3446581,
-          longitude: -6.2563436,
-        },
-      },
-    },
-    {
-      title: "Weekly Zoo Trip",
-      owner: "Billy",
-      people: "Joe, Bob",
-      time: "14:00",
-      date: "Every Sunday",
-      from: "Bear St.",
-      to: "Dublin Zoo",
-      price: "2",
-      transport: "Car",
-      goTo: ["Example",1],
-      coords: {
-        origin: {
-          latitude: 53.347779,
-          longitude: -6.2571537,
-        },
-        destination: {
-          latitude: 53.3449032,
-          longitude: -6.2573468,
-        },
-      },
-    },
-  ];
-
-  return journeys;
-}
-export function getJourneysDetails(number) {
-  if (number == 0) {
-    const journeys = [
-      {
-        title: "Find a Journey",
-        owner: "Owner",
-        people: "People",
-        time: "Time",
-        date: "Date",
-        from: "From",
-        to: "To",
-        price: "Price",
-        transport: "Transport",
-        goTo: ["ViewTrip",0],
-        coords: {
-          origin: {
-            latitude: 53.347257,
-            longitude: -6.2589555,
-          },
-          destination: {
-            latitude: 53.3446581,
-            longitude: -6.2563436,
-          },
-        },
-      },
-    ];
-
-    return journeys;
-  } else {
-    const journeys = [
-      {
-        title: "Weekly Zoo Trip",
-        owner: "Billy",
-        people: "Joe, Bob",
-        time: "14:00",
-        date: "Every Sunday",
-        from: "Bear St.",
-        to: "Dublin Zoo",
-        price: "2",
-        transport: "Car",
-        goTo: ["ViewTrip",1],
-        coords: {
-          origin: {
-            latitude: 53.347779,
-            longitude: -6.2571537,
-          },
-          destination: {
-            latitude: 53.3449032,
-            longitude: -6.2573468,
-          },
-        },
-      },
-    ];
-
-    return journeys;
+export function getJourneysWithinRadius(userLocation, radius, token) {
+  let params = {
+    lat: userLocation.latitude,
+    lng: userLocation.longitude,
+    radius: radius
   }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "journey/getjourneysradius", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      reject(error);
+    })
+  });
+}
+
+export function getOwnersJourneys(userEmail, token) {
+  let params = {
+    userEmail: userEmail,
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "journey/getjourneys", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
+
+
+export function getParticipatingJourneys(userEmail, token) {
+  let params = {
+    userEmail: userEmail,
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "journey/gethistory", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
+
+export function getUserRate(userEmail, token){
+  let params = {
+    userEmail: userEmail,
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "journey/getrating", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
 }

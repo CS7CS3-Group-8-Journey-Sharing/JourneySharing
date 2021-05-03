@@ -6,10 +6,12 @@ import AuthContext from '../../context/AuthContext';
 import { getJourneysOfUser } from "../../utils/APIcalls";
 import JourneyListView from "../../components/JourneyListView";
 import COLORS from "../../common/colors"
+import { getUserRate } from "../../utils/APIcalls";
 
 export default function RatingScreen({ navigation })  {
     const list = getJourneysOfUser();
-  
+    const rate = getUserRate();
+
     return (
       <ScrollView>
         <ProfileView navigation={navigation}/>
@@ -50,7 +52,7 @@ export default function RatingScreen({ navigation })  {
                 <AirbnbRating
                 count={5}
                 reviews={["Terrible", "Bad", "Okay", "Good", "Great"]}
-                defaultRating={5}
+                defaultRating={rate}
                 size={20}
             />
               </View>
