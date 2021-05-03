@@ -22,7 +22,8 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import COLORS from "../../common/colors";
 import CustomButton from "../../components/CustomButton";
-//import { GOOGLE_MAPS_APIKEY } from '@env';
+import { mapperModeOfTransport } from "../../utils/utilFunctions";
+import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function FindJourneyScreen({ navigation }) {
   const { userToken } = React.useContext(AuthContext);
@@ -224,17 +225,21 @@ export default function FindJourneyScreen({ navigation }) {
             title="destination"
             identifier={'mk3'}
           />
-          {/* 
           <MapViewDirections
-            origin={currentJourney.coords.origin}
-            destination={currentJourney.coords.destination}
-            mode="WALKING"
+            origin={{
+              latitude: currentJourney.startLocation.lat,
+              longitude: currentJourney.startLocation.lng,
+            }}
+            destination={{
+              latitude: currentJourney.endLocation.lat,
+              longitude: currentJourney.endLocation.lng,
+            }}
+            mode={mapperModeOfTransport(currentJourney.modeOfTransport)}
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={3}
             strokeColor="darkgreen"
             optimizeWaypoints={true}
           />
-          */}
         </MapView>
         <ScrollView>
           <JourneyListView

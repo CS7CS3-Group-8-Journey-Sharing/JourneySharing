@@ -11,6 +11,7 @@ import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
 import { ListItem, Badge,Icon,withBadge , Avatar, Button } from "react-native-elements";
 import TouchableScale from "react-native-touchable-scale";
+import { mapperModeOfTransport } from "../../utils/utilFunctions"
 
 import JourneyItemView from "../../components/JourneyItemView";
 
@@ -27,59 +28,67 @@ export default function ViewTripScreen({ route,navigation }) {
 
   const mapView = useRef(null);
 
-    return (
-      <View style={styles.container}>
-        <MapView
-          initialRegion={region}
-          onRegionChange={(newRegion) => setRegion(newRegion)}
-          style={styles.map}
-          ref={mapView}
-          //provider={PROVIDER_GOOGLE}
-          onMapReady={() => {
-            mapView.current.fitToSuppliedMarkers(
-              ['mk1', 'mk2'],
-              { edgePadding: 
-                {
-                  top: 100,
-                  right: 50,
-                  bottom: 50,
-                  left: 50
-                }
+  currentJourney.modeOfTransport = mapperModeOfTransport(currentJourney.modeOfTransport)
+
+  return (
+    <View style={styles.container}>
+      <MapView
+        initialRegion={region}
+        onRegionChange={(newRegion) => setRegion(newRegion)}
+        style={styles.map}
+        ref={mapView}
+        provider={PROVIDER_GOOGLE}
+        onMapReady={() => {
+          mapView.current.fitToSuppliedMarkers(
+            ['mk1', 'mk2'],
+            { edgePadding: 
+              {
+                top: 100,
+                right: 50,
+                bottom: 50,
+                left: 50
               }
-            )
+            }
+          )
+        }}
+      >
+        <MapView.Marker
+          coordinate={{
+            latitude: currentJourney.startLocation.lat,
+            longitude: currentJourney.startLocation.lng,
           }}
-        >
-          <MapView.Marker
-            coordinate={{
-              latitude: currentJourney.startLocation.lat,
-              longitude: currentJourney.startLocation.lng,
-            }}
-            title="origin"
-            identifier={'mk1'}
-          />
-          <MapView.Marker
-            coordinate={{
-              latitude: currentJourney.endLocation.lat,
-              longitude: currentJourney.endLocation.lng,
-            }}
-            title="destination"
-            identifier={'mk2'}
-          />
-          <MapViewDirections
-            origin={'mk1'}
-            destination={'mk2'}
-            mode="WALKING"
-            apikey={GOOGLE_MAPS_APIKEY}
-            strokeWidth={3}
-            strokeColor="darkgreen"
-            optimizeWaypoints={true}
-          />
-        </MapView>
-        <ScrollView>
-        <JourneyItemView navigation={navigation} item={currentJourney} />
-        </ScrollView>
-      </View>
-    );
+          title="origin"
+          identifier={'mk1'}
+        />
+        <MapView.Marker
+          coordinate={{
+            latitude: currentJourney.endLocation.lat,
+            longitude: currentJourney.endLocation.lng,
+          }}
+          title="destination"
+          identifier={'mk2'}
+        />
+        <MapViewDirections
+          origin={{
+            latitude: currentJourney.startLocation.lat,
+            longitude: currentJourney.startLocation.lng,
+          }}
+          destination={{
+            latitude: currentJourney.endLocation.lat,
+            longitude: currentJourney.endLocation.lng,
+          }}
+          mode={currentJourney.modeOfTransport}
+          apikey={GOOGLE_MAPS_APIKEY}
+          strokeWidth={3}
+          strokeColor="darkgreen"
+          optimizeWaypoints={true}
+        />
+      </MapView>
+      <ScrollView>
+      <JourneyItemView navigation={navigation} item={currentJourney} />
+      </ScrollView>
+    </View>
+  );
 }
 
 const styles = StyleSheet.create({
