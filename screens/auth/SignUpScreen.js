@@ -1,6 +1,7 @@
 import * as React from "react";
 import { StyleSheet, View } from "react-native";
-import { Input } from "react-native-elements";
+import { Text, Input } from "react-native-elements";
+import DropDownPicker from "react-native-dropdown-picker";
 import AuthContext from "../../context/AuthContext";
 import CustomButton from "../../components/CustomButton"
 
@@ -8,7 +9,7 @@ export default function SignUpScreen() {
   const [firstname, setFirstname] = React.useState("");
   const [surname, setSurname] = React.useState("");
   const [age, setAge] = React.useState("");
-  const [gender, setGender] = React.useState("");
+  const [gender, setGender] = React.useState("NONE");
   const [email, setEmail] = React.useState("");
   const [password, setPassword] = React.useState("");
   const [hidePassword, setHidePassword] = React.useState(true);
@@ -43,11 +44,22 @@ export default function SignUpScreen() {
         value={age}
         onChangeText={setAge}
       />
-      <Input
-        placeholder="Gender"
-        label="Gender"
-        value={gender}
-        onChangeText={setGender}
+      <Text style={{color: "#86939e", fontSize: 16, fontWeight: "bold", paddingLeft: 10, paddingBottom: 5 }}>Gender</Text>
+      <DropDownPicker
+        //style={{flex: 1, flexGrow: 1}}
+        globalTextStyle={{fontSize: 18, color: "#86939e"}}
+        style={{ backgroundColor: "#f2f2f2"}}
+        label={"Gender"}
+        containerStyle={{height: 60, paddingBottom: 20}}
+        itemStyle={{ justifyContent: 'flex-start'}}
+        items={[
+          { label: "Male", value: "MALE" },
+          { label: "Female", value: "FEMALE" },
+          { label: "Other", value: "NONE" },
+        ]}
+        defaultValue={gender}
+        dropDownStyle={{ backgroundColor: "#fafafa"}}
+        onChangeItem={(item) => setGender(item.value)}
       />
       <Input
         placeholder="Password"
@@ -68,7 +80,7 @@ export default function SignUpScreen() {
       />
       <CustomButton
         title="Sign Up"
-        onPress={() => signUp({ email: email, firstName: firstname, lastName: surname, password: password }, setError)}
+        onPress={() => signUp({ email: email, firstName: firstname, lastName: surname, gender: gender, password: password }, setError)}
       />
     </View>
   );
@@ -79,7 +91,7 @@ const styles = StyleSheet.create({
     flex: 1,
     display: "flex",
     justifyContent: "center",
-    alignItems: "center",
+    //alignItems: "center",
   },
   errorText: {
     color: 'red',
