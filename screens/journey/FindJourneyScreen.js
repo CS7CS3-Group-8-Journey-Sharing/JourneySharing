@@ -252,6 +252,56 @@ export default function FindJourneyScreen({ navigation }) {
   } else if(!loading) {
     return (
       <View style={styles.container}>
+         <Modal
+          visible={showPopup}
+          transparent={true}
+          onTouchOutside={() => {
+            setShowPopup(!showPopup)
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{"Set women only"}</Text>
+              <Switch
+                trackColor={{ false: '#767577', true: COLORS.mainColor }}
+                thumbColor={womenOnly ? '#f4f3f4' : '#f4f3f4'}
+                ios_backgroundColor="#3e3e3e"
+                onValueChange={toggleSwitch}
+                value={womenOnly}
+              />
+              <CustomButton
+                title="Ok"
+                style={{paddingTop: 10}}
+                onPress={() => {
+                  setShowPopup(!showPopup)
+                  filterWomenOnly()
+                }}
+              />
+            </View>
+          </View>
+        </Modal>
+        <View style={{flexDirection: 'row'}}>
+          <SearchBar
+              placeholder="Search a journey..."
+              onChangeText={setSearch}
+              lightTheme
+              round
+              containerStyle={styles.searchBar}
+              value={search}
+              searchIcon={{ size: 24 }}
+              onChangeText={(text) => searchFilterFunction(text)}
+              onClear={(text) => searchFilterFunction('')}
+              placeholder="Search by name, origin or destination..."
+            />
+            <View style={{flex: 1, backgroundColor: COLORS.white, justifyContent: 'center', alignItems: 'center'}}>
+              <Icon
+                color={COLORS.greyMore}
+                type="font-awesome"
+                name="cog"
+                size={30}
+                onPress={() =>  togglePopup()}
+              />
+            </View>
+        </View>
         <View style={styles.center}>
           <Text style={{ marginBottom: 10 }}>
             No journeys found. Create one?

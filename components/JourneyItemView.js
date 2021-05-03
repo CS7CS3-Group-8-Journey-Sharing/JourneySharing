@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Dimensions } from "react-native";
 import MapView, { OverlayComponent } from "react-native-maps";
 import { ListItem, Icon, Avatar } from "react-native-elements";
@@ -7,11 +7,23 @@ import TouchableScale from "react-native-touchable-scale";
 import COLORS from "../common/colors";
 import CustomButton from "./CustomButton"
 import { parseISOString, isoFormatDMY, isoFormatHMS } from "../utils/utilFunctions"
+import { startJourney, endJourney } from "../utils/APIcalls";
+import AuthContext from '../context/AuthContext';
 
 export default function JourneyItemView({ item ,navigation}) {
   const handleItemPress = (item) => {};
 
   const datetimeStart = parseISOString(item.startTime);
+
+  const { user, userToken } = React.useContext(AuthContext);
+
+  const [isOwner, setIsOwner] = useState(false);
+  const [isActive, setIsActive] = useState(false);
+
+  useEffect(() => {
+    setIsOwner(user.email == item.ownerEmail);
+    setIsActive(item.active);
+  }, [])
 
   return (
     <View>
@@ -140,10 +152,22 @@ export default function JourneyItemView({ item ,navigation}) {
             </View>
           </ListItem.Content>
         </ListItem>
-      <View style={{ marginBottom: 10 }} />
-      <CustomButton style={{marginHorizontal: 10}} title="START" />
-      <View style={{ marginBottom: 10 }} />
-      <CustomButton style={{marginHorizontal: 10}} title="END" onPress={() => navigation.navigate("Rating")}/>
+      {isOwner ? (
+        <>
+          <View style={{ marginBottom: 10 }} />
+          {!isActive ? 
+            <CustomButton style={{marginHorizontal: 10}} title="START" onPress={() => startJourney(user.email, item.journeyId, userToken)}/>
+            :
+            <CustomButton style={{marginHorizontal: 10}} deny title="END" onPress={() => endJourney(user.email, item.journeyId, userToken)}/>
+          } 
+          <View style={{ marginBottom: 10 }} />
+        </>
+      ) : (
+        <>
+          <View style={{ marginBottom: 10 }} />
+          <CustomButton style={{marginHorizontal: 10}} title="REQUEST TO JOIN" />
+        </>
+      )}
     </View>
   );
 }

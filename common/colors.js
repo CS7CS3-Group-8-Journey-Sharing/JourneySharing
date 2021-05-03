@@ -3,5 +3,6 @@ export default COLORS = {
     mainColor: '#808000',
     black: '#000000',
     grey: '#303030',
+    denyColor: '#b41200',
     greyMore: '#606060'
 }
