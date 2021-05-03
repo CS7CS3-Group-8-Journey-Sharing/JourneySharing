@@ -7,46 +7,24 @@ import { getOwnersJourneys } from "../../utils/APIcalls";
 import JourneyListView from "../../components/JourneyListViewFind";
 import COLORS from "../../common/colors"
 
-export default function ProfileScreen({ route,navigation }) {
-  const { userToken, user } = React.useContext(AuthContext);
-
-  const [recurrentJourneys, setRecurrentJourneys] = useState([]);
-
-  useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getOwnersJourneys(user.email, userToken).then(res => {
-        setRecurrentJourneys(res.filter(item => item.recurring));
-      }).catch((error) => {
-        console.log(error)
-      })
-    });
-
-    return unsubscribe;
-  }, [navigation])
+export default function OtherUserProfileScreen({ route,navigation }) {
+  const {user} = route.params;
 
   return (
     <ScrollView>
-      <ProfileView />
-      {recurrentJourneys.length > 0 && 
-        <View style={styles.container}>
-          <Text style={styles.title}>Recurrent Journeys</Text>
-          <JourneyListView navigation={navigation} list={recurrentJourneys} />
-        </View>
-      }
+      <ProfileView user={user} />
     </ScrollView>
   );
 }
 
-function ProfileView(outside){
-  const { authFunctions, user } = React.useContext(AuthContext);
-
+function ProfileView(user){
   return (
     <View style={styles.container}>
       <View style={styles.headerContainer}>
         <View style={styles.headerContent}>
           <Avatar rounded source={ require('../../assets/default-profile.png') } size='xlarge' onPress={() => console.log('Avatar clicked!')} activeOpacity={0.7} avatarStyle={styles.avatar} />
-          <Text style={styles.headerText}>{user.email}</Text>
-          <Text style={styles.headerText}>+123456789</Text>
+          <Text style={styles.headerText}>{user.user.email}</Text>
+          <Text style={styles.headerText}>{user.user.firstName+" "+user.user.lastName}</Text>
         </View>
       </View>
       <View style={styles.detailsContainer}>
@@ -72,9 +50,6 @@ function ProfileView(outside){
           <Text style={styles.detailsTitle}>Gender</Text>
           <Text style={styles.detailsText}>Female</Text>
         </View>
-      </View>
-      <View style={styles.buttonContainer}>
-        <Button style={styles.buttonContent} title='Sign out' onPress={authFunctions.signOut} />
       </View>
     </View>
 )}

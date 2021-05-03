@@ -23,6 +23,12 @@ export default authReducer = (prevState, action) => {
         userToken: null,
         user: null,
         isLoading: false,
+        notifications: []
+      };
+    case "ADD_NOTIFICATIONS":
+      return {
+        ...prevState,
+        notifications: action.notifications
       };
   }
 };

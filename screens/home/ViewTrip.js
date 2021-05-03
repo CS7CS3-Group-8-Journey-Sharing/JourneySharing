@@ -19,6 +19,8 @@ import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function ViewTripScreen({ route,navigation }) {
   const {currentJourney} = route.params;
+  navigation.setOptions({ headerTitle: currentJourney.name });
+
   const [region, setRegion] = useState({
     latitude: 53.3436581,
     longitude: -6.2563436,
