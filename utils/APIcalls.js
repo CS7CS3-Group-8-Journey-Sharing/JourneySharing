@@ -196,6 +196,30 @@ export function getWomenJourneys(userEmail, token) {
   let params = {
     userEmail: userEmail,
   }
+  
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+  
+  axios.get(baseUrl + "journey/getjourneyswoman", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
+
+
+export function startJourney(userEmail, journeyID, token) {
+  let params = {
+    userEmail: userEmail,
+    journeyId: journeyID
+  }
 
   let headers = {
     'Content-Type': 'application/json',
@@ -203,7 +227,31 @@ export function getWomenJourneys(userEmail, token) {
   }
 
   return new Promise((resolve, reject) => {
-    axios.get(baseUrl + "journey/getjourneyswoman", {
+    axios.post(baseUrl + "journey/startjourney", null, {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
+
+export function endJourney(userEmail, journeyID, token) {
+  let params = {
+    userEmail: userEmail,
+    journeyId: journeyID
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.post(baseUrl + "journey/endjourney", null, {
       headers: headers,
       params: params
     }).then((res) => {
