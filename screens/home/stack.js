@@ -8,6 +8,7 @@ import Rating from "./Rating";
 import { ListItem,Avatar,Badge,Icon,withBadge ,Button, Overlay } from 'react-native-elements'
 import Ionicons from "react-native-vector-icons/Ionicons";
 import { StyleSheet,View , Text} from "react-native";
+import COLORS from "../../common/colors";
 
 const HomeStack = createStackNavigator();
 
@@ -25,7 +26,7 @@ export default function HomeStackScreen({navigation}) {
               size = {40}
               type = "ionicon"
               name = "ios-add"
-              color="#2196F3"
+              color={COLORS.mainColor}
               onPress={() => navigation.navigate('CreateJourney')}
               containerStyle={{ marginRight: 20 }}
             />
@@ -66,21 +67,20 @@ export default function HomeStackScreen({navigation}) {
             title="Accpet"
             onPress={() => navigation.navigate("ViewTrip")}
           />
-       <Button
-          icon={
-            <Icon
-              size = {30}
-              type = "ionicon"
-              name = "close-circle"
-              color="tomato"
+         <Button
+            icon={
+              <Icon
+                size = {30}
+                type = "ionicon"
+                name = "close-circle"
+                color="tomato"
+              />
+            }
+              type="outline"
+              title="Refuse"
+              onPress={() => navigation.navigate("ViewTrip")}
             />
-          }
-            type="outline"
-            title="Refuse"
-            onPress={() => navigation.navigate("ViewTrip")}
-          />
-      </View>
-          
+          </View>
             </Overlay>
           </View>
           ),

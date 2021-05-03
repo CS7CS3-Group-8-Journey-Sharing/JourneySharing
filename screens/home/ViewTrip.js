@@ -16,7 +16,6 @@ import JourneyItemView from "../../components/JourneyItemView";
 
 export default function ViewTripScreen({ route,navigation }) {
   const {item} = route.params;
-
   const [region, setRegion] = useState({
     latitude: 53.3436581,
     longitude: -6.2563436,
@@ -44,8 +43,8 @@ export default function ViewTripScreen({ route,navigation }) {
           />
           {/* 
           <MapViewDirections
-            origin={currentJourney.coords.origin}
-            destination={currentJourney.coords.destination}
+            origin={item.coords.origin}
+            destination={item.coords.destination}
             mode="WALKING"
             apikey={GOOGLE_MAPS_APIKEY}
             strokeWidth={3}

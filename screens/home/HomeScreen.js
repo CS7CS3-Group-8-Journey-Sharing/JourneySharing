@@ -15,22 +15,22 @@ export default function HomeScreen({ navigation }) {
   if (list.length > 0)
     return (
       <ScrollView>
-      <View style={styles.container}>
-        {/* Journeys that are happening at the current time */}
-        <Text style={styles.title}>Current Journey</Text> 
-        <JourneyListView navigation={navigation} isHappening list={[list[0]]} />
-      </View>
-      <View style={styles.container}>
-        {/* Journeys that you are the owner of */}
-        <Text style={styles.title}>Your Journeys</Text> 
-        <JourneyListView navigation={navigation} list={getOwnersJourneys(list, username)} />
-      </View>
-      <View style={styles.container}>
-        {/* Journeys that you are NOT the owner of, but are participating in */}
-        <Text style={styles.title}>Participating In</Text> 
-        <JourneyListView navigation={navigation} list={list} />
-      </View>
-    </ScrollView>
+        <View style={styles.container}>
+          {/* Journeys that are happening at the current time */}
+          <Text style={styles.title}>Current Journey</Text> 
+          <JourneyListView navigation={navigation} isHappening list={[list[0]]} />
+        </View>
+        <View style={styles.container}>
+          {/* Journeys that you are the owner of */}
+          <Text style={styles.title}>Your Journeys</Text> 
+          <JourneyListView navigation={navigation} list={getOwnersJourneys(list, username)} />
+        </View>
+        <View style={styles.container}>
+          {/* Journeys that you are NOT the owner of, but are participating in */}
+          <Text style={styles.title}>Participating In</Text> 
+          <JourneyListView navigation={navigation} list={list} />
+        </View>
+      </ScrollView>
     );
   else
     return (
@@ -42,6 +42,7 @@ export default function HomeScreen({ navigation }) {
           <Button
             type="outline"
             title="Create Journey"
+            color={COLORS.mainColor}
             onPress={() => navigation.navigate("CreateJourney")}
           />
         </View>

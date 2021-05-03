@@ -5,22 +5,24 @@ export default authReducer = (prevState, action) => {
     case "RESTORE_TOKEN":
       return {
         ...prevState,
-        userToken: action.token,
+        userToken: action.userToken,
+        user: action.user,
         isLoading: false,
       };
     case "SIGN_IN":
       return {
         ...prevState,
         isSignout: false,
-        userToken: action.token,
-        username: action.username,
+        userToken: action.userToken,
+        user: action.user,
       };
     case "SIGN_OUT":
       return {
         ...prevState,
         isSignout: true,
         userToken: null,
-        username: null
+        user: null,
+        isLoading: false,
       };
   }
 };
