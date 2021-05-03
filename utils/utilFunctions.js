@@ -34,3 +34,11 @@ export const isoFormatHMS = (d) => {
   function pad(n) {return (n<10? '0' :  '') + n}
   return pad(d.getUTCHours()) + ':' + pad(d.getUTCMinutes());
 }
+
+export const mapperModeOfTransport = (mode) => {  
+  if(mode == "WALK") return "WALKING";
+  else if(mode == "CAR") return "DRIVING";
+  else if(mode == "BIKE") return "BICYCLING";
+  else if(mode == "TAXI") return "DRIVING";
+  else return "WALKING"
+}
