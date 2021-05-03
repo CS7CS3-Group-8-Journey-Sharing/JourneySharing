@@ -192,6 +192,29 @@ export function getParticipatingJourneys(userEmail, token) {
   });
 }
 
+export function getWomenJourneys(userEmail, token) {
+  let params = {
+    userEmail: userEmail,
+  }
+  
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+  
+  axios.get(baseUrl + "journey/getjourneyswoman", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
+
+
 export function startJourney(userEmail, journeyID, token) {
   let params = {
     userEmail: userEmail,

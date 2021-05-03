@@ -23,7 +23,6 @@ export default function HomeScreen({ navigation }) {
         setOwnerJourneys(res);
         getParticipatingJourneys(user.email, userToken).then(res => { 
           setParticipatingJourneys(res);
-
           var startedList = [];
           res.forEach((journey) => {
             if(journey.active) {
