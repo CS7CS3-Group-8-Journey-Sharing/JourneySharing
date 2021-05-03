@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Dimensions } from "react-native";
-import MapView, { OverlayComponent } from "react-native-maps";
 import { ListItem, Icon, Avatar } from "react-native-elements";
 import { LinearGradient } from "expo-linear-gradient";
 import TouchableScale from "react-native-touchable-scale";
 import COLORS from "../common/colors";
 import CustomButton from "./CustomButton"
 import { parseISOString, isoFormatDMY, isoFormatHMS } from "../utils/utilFunctions"
-import { startJourney, endJourney } from "../utils/APIcalls";
+import { startJourney, endJourney, deleteJourney } from "../utils/APIcalls";
 import AuthContext from '../context/AuthContext';
 
 export default function JourneyItemView({ item ,navigation}) {
@@ -24,6 +23,17 @@ export default function JourneyItemView({ item ,navigation}) {
     setIsOwner(user.email == item.ownerEmail);
     setIsActive(item.active);
   }, [])
+
+  const doDeleteJourney = (journeyId) => {
+    deleteJourney(journeyId, userToken).then(() => {
+      navigation.navigate("Home");
+    }).catch(error => { 
+      console.log("Error deleting journey: "+error)
+      navigation.navigate("Home");    
+    })
+  }
+
+  console.log(item)
 
   return (
     <View>
@@ -52,10 +62,8 @@ export default function JourneyItemView({ item ,navigation}) {
                 />
               </View>
               <Text style={styles.containerJourneys_text}>
-                {
                 <Text style={{ color: COLORS.mainColor }}>{item.ownerEmail}</Text>
-                //,{" "}item.people
-                }
+                {item.participantEmails && item.participantEmails.map((item, i) => <Text>{", "+item}</Text>)}
               </Text>
             </View>
 
@@ -164,8 +172,13 @@ export default function JourneyItemView({ item ,navigation}) {
         </>
       ) : (
         <>
-          <View style={{ marginBottom: 10 }} />
-          <CustomButton style={{marginHorizontal: 10}} title="REQUEST TO JOIN" />
+          <View style={{ marginVertical: 10, marginLeft: 10, textAlign: 'center' }}>
+          {isActive ?
+            <Text style={styles.comment_title}>The journey has started!</Text>
+            :
+            <Text style={styles.comment_title}>Waiting for the owner to start the journey</Text>
+          }
+          </View>
         </>
       )}
     </View>
@@ -198,6 +211,13 @@ const styles = StyleSheet.create({
     color: COLORS.black,
     fontSize: 20,
     paddingBottom: 5,
+  },
+  comment_title: {
+    flex: 1,
+    color: COLORS.black,
+    fontSize: 20,
+    paddingBottom: 5,
+    textAlign: "center"
   },
   containerJourneys_icon: {
     marginRight: 10,

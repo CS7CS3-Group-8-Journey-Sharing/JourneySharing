@@ -50,7 +50,7 @@ export default function HomeScreen({ navigation }) {
       }
     })  
     setHappeningJourneys(startedList);
-  }, [ownerJourneys])
+  }, [ownerJourneys, participatingJourneys])
 
   if ((ownerJourneys.length > 0 || participatingJourneys > 0 || happeningJourneys.length > 0) && !loading) {
     return (

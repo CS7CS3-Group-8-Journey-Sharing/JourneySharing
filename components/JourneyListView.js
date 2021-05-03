@@ -23,10 +23,6 @@ export default function JourneyListView({
     }
   };
 
-  const joinJourney = (item) => {
-
-  }
-
   return (
     <View>
       {list.map((item, i) => (

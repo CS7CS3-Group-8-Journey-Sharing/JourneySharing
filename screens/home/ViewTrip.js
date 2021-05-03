@@ -18,6 +18,8 @@ import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function ViewTripScreen({ route,navigation }) {
   const {currentJourney} = route.params;
+  navigation.setOptions({ headerTitle: currentJourney.name });
+
   const [region, setRegion] = useState({
     latitude: 53.3436581,
     longitude: -6.2563436,
@@ -34,7 +36,7 @@ export default function ViewTripScreen({ route,navigation }) {
           onRegionChange={(newRegion) => setRegion(newRegion)}
           style={styles.map}
           ref={mapView}
-          //provider={PROVIDER_GOOGLE}
+          provider={PROVIDER_GOOGLE}
           onMapReady={() => {
             mapView.current.fitToSuppliedMarkers(
               ['mk1', 'mk2'],

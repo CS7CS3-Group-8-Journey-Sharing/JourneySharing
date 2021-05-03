@@ -28,11 +28,19 @@ export default function App({ navigation }) {
     isSignout: false,
     userToken: null,
     username: null,
+    notifications: []
   };
+
 
   const [state, dispatch] = React.useReducer(authReducer, initialState);
 
   React.useEffect(() => {
+    try {
+      console.disableYellowBox = true;
+    } catch(e){
+
+    }
+
     // Fetch the token from storage then navigate to our appropriate place
     const bootstrapAsync = async () => {
       let userToken;
@@ -105,6 +113,9 @@ export default function App({ navigation }) {
             console.log("Could not sign up: "+errorMessage)
             dispatch({ type: "SIGN_OUT" });
           });
+      },
+      addNotifications: (notifications) =>  {
+        dispatch({ type: "ADD_NOTIFICATIONS", notifications: notifications });
       },
     }),
     []

@@ -22,7 +22,7 @@ import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
 import COLORS from "../../common/colors";
 import CustomButton from "../../components/CustomButton";
-//import { GOOGLE_MAPS_APIKEY } from '@env';
+import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function FindJourneyScreen({ navigation }) {
   const { userToken } = React.useContext(AuthContext);
@@ -42,7 +42,13 @@ export default function FindJourneyScreen({ navigation }) {
   const [loading, setLoading] = useState(true);
   const [womenOnly, setWomenOnly] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
-  const togglePopup = () => setShowPopup(previousState => !previousState);
+  const [popupText, setPopupText] = useState(false);
+  const [joinJourneyPopup, setJoinJourneyPopup] = useState(false);
+  const togglePopup = (fromJoinJourney) => {
+    setJoinJourneyPopup(fromJoinJourney);
+    if(!fromJoinJourney) setPopupText("Set Women Only.")
+    setShowPopup(previousState => !previousState)
+  };
   const toggleSwitch = () => setWomenOnly(previousState => !previousState);
   const mapView = useRef(null);
 
@@ -87,7 +93,6 @@ export default function FindJourneyScreen({ navigation }) {
 
   const filterWomenOnly = () => {
     if(womenOnly) {
-      
       setFilteredJourneys(journeys.filter(journey => journey.womenOnly));
     } else {
       setFilteredJourneys(journeys);
@@ -137,20 +142,23 @@ export default function FindJourneyScreen({ navigation }) {
           }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <Text style={styles.modalText}>{"Set women only"}</Text>
-              <Switch
-                trackColor={{ false: '#767577', true: COLORS.mainColor }}
-                thumbColor={womenOnly ? '#f4f3f4' : '#f4f3f4'}
-                ios_backgroundColor="#3e3e3e"
-                onValueChange={toggleSwitch}
-                value={womenOnly}
-              />
+              <Text style={styles.modalText}>{popupText}</Text>
+              {!joinJourneyPopup && 
+                <Switch
+                  trackColor={{ false: '#767577', true: COLORS.mainColor }}
+                  thumbColor={womenOnly ? '#f4f3f4' : '#f4f3f4'}
+                  ios_backgroundColor="#3e3e3e"
+                  onValueChange={toggleSwitch}
+                  value={womenOnly}
+                />
+              }
               <CustomButton
                 title="Ok"
                 style={{paddingTop: 10}}
                 onPress={() => {
                   setShowPopup(!showPopup)
-                  filterWomenOnly()
+                  if(!joinJourneyPopup) filterWomenOnly()
+                  else { navigation.navigate("Home") }
                 }}
               />
             </View>
@@ -176,7 +184,7 @@ export default function FindJourneyScreen({ navigation }) {
                 type="font-awesome"
                 name="cog"
                 size={30}
-                onPress={() =>  togglePopup()}
+                onPress={() =>  togglePopup(false)}
               />
             </View>
         </View>
@@ -245,6 +253,8 @@ export default function FindJourneyScreen({ navigation }) {
             }}
             currentJourney={currentJourney}
             fromFindJourney
+            togglePopup={togglePopup}
+            setPopupText={setPopupText}
           />
         </ScrollView>
       </View>
