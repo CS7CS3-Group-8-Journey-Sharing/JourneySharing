@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useFocusEffect } from "react";
+import React, { useState, useEffect, useLayoutEffect } from "react";
 import { Text, ScrollView, View, StyleSheet, Dimensions } from "react-native";
 import { Button } from "react-native-elements";
 import { Icon } from "react-native-elements";
@@ -23,18 +23,6 @@ export default function HomeScreen({ navigation }) {
         setOwnerJourneys(res);
         getParticipatingJourneys(user.email, userToken).then(res => { 
           setParticipatingJourneys(res);
-          var startedList = [];
-          res.forEach((journey) => {
-            if(journey.active) {
-              startedList.push(journey);
-            }
-          })  
-          ownerJourneys.forEach((journey) => {
-            if(journey.active) {
-              startedList.push(journey);
-            }
-          })  
-          setHappeningJourneys(startedList);
           setLoading(false);
         }).catch((error) => {
           console.log(error)
@@ -48,6 +36,21 @@ export default function HomeScreen({ navigation }) {
 
     return unsubscribe;
   }, [navigation])
+
+  useLayoutEffect(() => {
+    var startedList = [];
+    participatingJourneys.forEach((journey) => {
+      if(journey.active) {
+        startedList.push(journey);
+      }
+    })  
+    ownerJourneys.forEach((journey) => {
+      if(journey.active) {
+        startedList.push(journey);
+      }
+    })  
+    setHappeningJourneys(startedList);
+  }, [ownerJourneys])
 
   if ((ownerJourneys.length > 0 || participatingJourneys > 0 || happeningJourneys.length > 0) && !loading) {
     return (

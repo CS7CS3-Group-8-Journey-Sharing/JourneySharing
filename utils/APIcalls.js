@@ -211,7 +211,6 @@ export function getWomenJourneys(userEmail, token) {
       console.log(error)
       reject(error);
     })
-  });
 }
 
 

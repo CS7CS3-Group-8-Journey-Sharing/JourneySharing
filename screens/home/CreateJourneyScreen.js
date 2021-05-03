@@ -17,7 +17,7 @@ import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
 import { sendCreateJourney, getJourneysOfUser } from "../../utils/APIcalls"
 import InputSpinner from "react-native-input-spinner";
-import { GOOGLE_MAPS_APIKEY } from '@env';
+//import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
