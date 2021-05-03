@@ -61,7 +61,7 @@ export default function CreateJourneyScreen({ navigation }) {
 
   const [showPopup, setShowPopup] = useState(false);
 
-  const isWoman = true;
+  const isWoman = user.gender && user.gender == "FEMALE";
 
   const DayCheckbox = (props) => {
     return (

@@ -6,6 +6,7 @@ import {
   Dimensions,
   Platform,
   ScrollView,
+  Modal
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
@@ -16,6 +17,7 @@ import { mapperModeOfTransport } from "../../utils/utilFunctions"
 import JourneyItemView from "../../components/JourneyItemView";
 
 import { GOOGLE_MAPS_APIKEY } from '@env';
+import CustomButton from "../../components/CustomButton";
 
 export default function ViewTripScreen({ route,navigation }) {
   const {currentJourney} = route.params;
@@ -27,6 +29,8 @@ export default function ViewTripScreen({ route,navigation }) {
     latitudeDelta: 0.00582,
     longitudeDelta: 0.00271,
   });
+  const [showPopup, setShowPopup] = useState(false);
+  const [popupText, setPopupText] = useState("Journey Started");
 
   const mapView = useRef(null);
 
@@ -34,6 +38,27 @@ export default function ViewTripScreen({ route,navigation }) {
 
   return (
     <View style={styles.container}>
+      <Modal
+          visible={showPopup}
+          transparent={true}
+          onTouchOutside={() => {
+            setShowPopup(!showPopup)
+          }}>
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              <Text style={styles.modalText}>{popupText}</Text>
+              <CustomButton
+                title="Ok"
+                style={{paddingTop: 10}}
+                onPress={() => {
+                  setShowPopup(!showPopup)
+                  navigation.navigate("Home")
+                }}
+              />
+            </View>
+          </View>
+        </Modal>
+
       <MapView
         initialRegion={region}
         onRegionChange={(newRegion) => setRegion(newRegion)}
@@ -87,7 +112,7 @@ export default function ViewTripScreen({ route,navigation }) {
         />
       </MapView>
       <ScrollView>
-      <JourneyItemView navigation={navigation} item={currentJourney} />
+      <JourneyItemView navigation={navigation} item={currentJourney} setPopupText={setPopupText} setShowPopup={setShowPopup} />
       </ScrollView>
     </View>
   );
@@ -114,4 +139,29 @@ const styles = StyleSheet.create({
     backgroundColor: "#2196F3",
     borderRadius: 10,
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }
 });

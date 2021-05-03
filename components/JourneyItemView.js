@@ -9,9 +9,7 @@ import { parseISOString, isoFormatDMY, isoFormatHMS } from "../utils/utilFunctio
 import { startJourney, endJourney, deleteJourney } from "../utils/APIcalls";
 import AuthContext from '../context/AuthContext';
 
-export default function JourneyItemView({ item ,navigation}) {
-  const handleItemPress = (item) => {};
-
+export default function JourneyItemView({ item, navigation, setShowPopup, setPopupText}) {
   const datetimeStart = parseISOString(item.startTime);
 
   const { user, userToken } = React.useContext(AuthContext);
@@ -32,6 +30,19 @@ export default function JourneyItemView({ item ,navigation}) {
       navigation.navigate("Home");    
     })
   }
+
+  const handleStartPress = (journey) => {
+    startJourney(user.email, journey.journeyId, userToken).then(() => {
+      setPopupText("Journey "+journey.name+" started, it has switched to 'Started Journeys' on your home page")
+      setShowPopup(true);
+    }).catch(error => console.log(error))
+  };
+
+  const handleEndPress = (journey) => {
+    endJourney(user.email, journey.journeyId, userToken).then(() => {
+
+    }).catch(error => console.log(error))
+  };
 
   console.log(item)
 
@@ -164,9 +175,9 @@ export default function JourneyItemView({ item ,navigation}) {
         <>
           <View style={{ marginBottom: 10 }} />
           {!isActive ? 
-            <CustomButton style={{marginHorizontal: 10}} title="START" onPress={() => startJourney(user.email, item.journeyId, userToken)}/>
+            <CustomButton style={{marginHorizontal: 10}} title="START" onPress={() => handleStartPress(item)}/>
             :
-            <CustomButton style={{marginHorizontal: 10}} deny title="END" onPress={() => endJourney(user.email, item.journeyId, userToken)}/>
+            <CustomButton style={{marginHorizontal: 10}} deny title="END" onPress={() => handleEndPress(item)}/>
           } 
           <View style={{ marginBottom: 10 }} />
         </>

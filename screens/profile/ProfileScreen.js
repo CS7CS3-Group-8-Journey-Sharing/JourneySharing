@@ -46,21 +46,21 @@ function ProfileView(outside){
         <View style={styles.headerContent}>
           <Avatar rounded source={ require('../../assets/default-profile.png') } size='xlarge' onPress={() => console.log('Avatar clicked!')} activeOpacity={0.7} avatarStyle={styles.avatar} />
           <Text style={styles.headerText}>{user.email}</Text>
-          <Text style={styles.headerText}>+123456789</Text>
+          <Text style={styles.headerText}>{user.firstName+" "+user.lastName}</Text>
         </View>
       </View>
       <View style={styles.detailsContainer}>
         <View style={styles.detailsContent}>
           <Text style={styles.detailsTitle}>Reputation</Text>
-          <Text style={styles.detailsText}>4.5/5</Text>
+          <Text style={styles.detailsText}>{user.rating.numOfRating > 0 ? user.rating.totalRating/user.rating.numOfRating : 0}/5</Text>
         </View>
         <View style={styles.detailsContent}>
           <Text style={styles.detailsTitle}>Ratings</Text>
-          <Text style={styles.detailsText}>56</Text>
+          <Text style={styles.detailsText}>{user.rating.numOfRating}</Text>
         </View>
         <View style={styles.detailsContent}>
           <Text style={styles.detailsTitle}>Journeys</Text>
-          <Text style={styles.detailsText}>123</Text>
+          <Text style={styles.detailsText}>{user.history.length}</Text>
         </View>
       </View>
       <View style={styles.detailsContainer}>
@@ -70,7 +70,7 @@ function ProfileView(outside){
         </View>
         <View style={styles.detailsContent}>
           <Text style={styles.detailsTitle}>Gender</Text>
-          <Text style={styles.detailsText}>Female</Text>
+          <Text style={styles.detailsText}>{user.gender && user.gender}</Text>
         </View>
       </View>
       <View style={styles.buttonContainer}>
