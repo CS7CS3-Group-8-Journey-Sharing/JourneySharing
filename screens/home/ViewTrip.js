@@ -6,21 +6,28 @@ import {
   Dimensions,
   Platform,
   ScrollView,
-  Modal
+  Modal,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { ListItem, Badge,Icon,withBadge , Avatar, Button } from "react-native-elements";
+import {
+  ListItem,
+  Badge,
+  Icon,
+  withBadge,
+  Avatar,
+  Button,
+} from "react-native-elements";
 import TouchableScale from "react-native-touchable-scale";
-import { mapperModeOfTransport } from "../../utils/utilFunctions"
+import { mapperModeOfTransport } from "../../utils/utilFunctions";
 
 import JourneyItemView from "../../components/JourneyItemView";
 
-import { GOOGLE_MAPS_APIKEY } from '@env';
+import { GOOGLE_MAPS_APIKEY } from "@env";
 import CustomButton from "../../components/CustomButton";
 
-export default function ViewTripScreen({ route,navigation }) {
-  const {currentJourney} = route.params;
+export default function ViewTripScreen({ route, navigation }) {
+  const { currentJourney } = route.params;
   navigation.setOptions({ headerTitle: currentJourney.name });
 
   const [region, setRegion] = useState({
@@ -30,34 +37,46 @@ export default function ViewTripScreen({ route,navigation }) {
     longitudeDelta: 0.00271,
   });
   const [showPopup, setShowPopup] = useState(false);
-  const [popupText, setPopupText] = useState("Journey Started");
+  const [fromEnd, setFromEnd] = useState(false);
+  const [popupText, setPopupText] = useState("");
 
   const mapView = useRef(null);
 
-  currentJourney.modeOfTransport = mapperModeOfTransport(currentJourney.modeOfTransport)
+  currentJourney.modeOfTransport = mapperModeOfTransport(
+    currentJourney.modeOfTransport
+  );
 
+  console.log(currentJourney.journeyId);
   return (
     <View style={styles.container}>
       <Modal
-          visible={showPopup}
-          transparent={true}
-          onTouchOutside={() => {
-            setShowPopup(!showPopup)
-          }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <Text style={styles.modalText}>{popupText}</Text>
-              <CustomButton
-                title="Ok"
-                style={{paddingTop: 10}}
-                onPress={() => {
-                  setShowPopup(!showPopup)
-                  navigation.navigate("Home")
-                }}
-              />
-            </View>
+        visible={showPopup}
+        transparent={true}
+        onTouchOutside={() => {
+          setShowPopup(!showPopup);
+        }}
+      >
+        <View style={styles.centeredView}>
+          <View style={styles.modalView}>
+            <Text style={styles.modalText}>{popupText}</Text>
+            <CustomButton
+              title="Ok"
+              style={{ paddingTop: 10 }}
+              onPress={() => {
+                setShowPopup(!showPopup);
+                if (fromEnd) {
+                  navigation.navigate("Rating");
+                  navigation.navigate("Rating", {
+                    participantEmails: currentJourney.participantEmails,
+                  });
+                } else {
+                  navigation.navigate("Home");
+                }
+              }}
+            />
           </View>
-        </Modal>
+        </View>
+      </Modal>
 
       <MapView
         initialRegion={region}
@@ -66,17 +85,14 @@ export default function ViewTripScreen({ route,navigation }) {
         ref={mapView}
         provider={PROVIDER_GOOGLE}
         onMapReady={() => {
-          mapView.current.fitToSuppliedMarkers(
-            ['mk1', 'mk2'],
-            { edgePadding: 
-              {
-                top: 100,
-                right: 50,
-                bottom: 50,
-                left: 50
-              }
-            }
-          )
+          mapView.current.fitToSuppliedMarkers(["mk1", "mk2"], {
+            edgePadding: {
+              top: 100,
+              right: 50,
+              bottom: 50,
+              left: 50,
+            },
+          });
         }}
       >
         <MapView.Marker
@@ -85,7 +101,7 @@ export default function ViewTripScreen({ route,navigation }) {
             longitude: currentJourney.startLocation.lng,
           }}
           title="origin"
-          identifier={'mk1'}
+          identifier={"mk1"}
         />
         <MapView.Marker
           coordinate={{
@@ -93,7 +109,7 @@ export default function ViewTripScreen({ route,navigation }) {
             longitude: currentJourney.endLocation.lng,
           }}
           title="destination"
-          identifier={'mk2'}
+          identifier={"mk2"}
         />
         <MapViewDirections
           origin={{
@@ -105,14 +121,20 @@ export default function ViewTripScreen({ route,navigation }) {
             longitude: currentJourney.endLocation.lng,
           }}
           mode={currentJourney.modeOfTransport}
-          apikey={GOOGLE_MAPS_APIKEY}
+          apikey={"AIzaSyDng0CwnEOFcCNp3vLzQ0Q_W7GA_WKs6B0"}
           strokeWidth={3}
           strokeColor="darkgreen"
           optimizeWaypoints={true}
         />
       </MapView>
       <ScrollView>
-      <JourneyItemView navigation={navigation} item={currentJourney} setPopupText={setPopupText} setShowPopup={setShowPopup} />
+        <JourneyItemView
+          navigation={navigation}
+          item={currentJourney}
+          setPopupText={setPopupText}
+          setShowPopup={setShowPopup}
+          setFromEnd={setFromEnd}
+        />
       </ScrollView>
     </View>
   );
@@ -143,7 +165,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22
+    marginTop: 22,
   },
   modalView: {
     margin: 20,
@@ -154,14 +176,14 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });

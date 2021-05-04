@@ -15,9 +15,9 @@ import CustomDatePicker2 from "../../components/CustomDatePicker2";
 import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
-import { sendCreateJourney, getJourneysOfUser } from "../../utils/APIcalls"
+import { sendCreateJourney, getJourneysOfUser } from "../../utils/APIcalls";
 import InputSpinner from "react-native-input-spinner";
-import { GOOGLE_MAPS_APIKEY } from '@env';
+import { GOOGLE_MAPS_APIKEY } from "@env";
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
@@ -37,12 +37,18 @@ export default function CreateJourneyScreen({ navigation }) {
 
   const [recurring, setRecurring] = useState(false);
   const [recurringDays, setRecurringDays] = useState([
-    false, false, false, false, false, false, false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
+    false,
   ]);
   const [womenOnly, setWomenOnly] = useState(false);
   const [transportMode, setTransportMode] = useState("walk");
-  const [maxParticipants, setMaxParticipants] = useState(10)
-  const [price, setPrice] = useState(0.00);
+  const [maxParticipants, setMaxParticipants] = useState(10);
+  const [price, setPrice] = useState(0.0);
 
   const [startName, setStartName] = useState("Origin");
   const [endName, setEndName] = useState("Destination");
@@ -74,9 +80,10 @@ export default function CreateJourneyScreen({ navigation }) {
           let oldBool = recurringDays[props.dayIndex];
           newDays[props.dayIndex] = !oldBool;
           setRecurringDays(newDays);
-        }} />
+        }}
+      />
     );
-  }
+  };
 
   function placeMarker(e) {
     if (!startMarker.set) {
@@ -89,22 +96,29 @@ export default function CreateJourneyScreen({ navigation }) {
   // Should probably tell people what they have to enter before creating
   const readyToCreate = () => {
     //TODO: Add more checks
-    return startMarker.set && endMarker.set
-  }
+    return startMarker.set && endMarker.set;
+  };
 
   const getPlacenames = (marker, setName) => {
-    fetch('https://maps.googleapis.com/maps/api/geocode/json?address=' + marker.coordinate.latitude + ',' + marker.coordinate.longitude + '&key=' + GOOGLE_MAPS_APIKEY)
-        .then((response) => response.json())
-        .then((responseJson) => {
-            //console.log('ADDRESS GEOCODE is BACK!! => ' + JSON.stringify(responseJson));
-            //var number = responseJson.results[0].address_components[0].long_name;
-            var street = responseJson.results[0].address_components[1].long_name;
-            //console.log(number);
-            //console.log(street);
+    fetch(
+      "https://maps.googleapis.com/maps/api/geocode/json?address=" +
+        marker.coordinate.latitude +
+        "," +
+        marker.coordinate.longitude +
+        "&key=" +
+        GOOGLE_MAPS_APIKEY
+    )
+      .then((response) => response.json())
+      .then((responseJson) => {
+        //console.log('ADDRESS GEOCODE is BACK!! => ' + JSON.stringify(responseJson));
+        //var number = responseJson.results[0].address_components[0].long_name;
+        var street = responseJson.results[0].address_components[1].long_name;
+        //console.log(number);
+        //console.log(street);
 
-            setName(street);
-    })
-  }
+        setName(street);
+      });
+  };
 
   function createJourney() {
     console.log("Send it");
@@ -114,6 +128,7 @@ export default function CreateJourneyScreen({ navigation }) {
     console.log("ISO String?: " + startDate.toISOString());
     console.log(startName + " to " + endName);
 
+    console.log(womenOnly);
     //TODO: validate data
     var journey = {
       name: journeyName,
@@ -127,19 +142,19 @@ export default function CreateJourneyScreen({ navigation }) {
 
       price: price,
 
-      womenOnly: womenOnly,
+      womanOnly: womenOnly,
 
       startTime: startDate.toISOString(),
 
       startLocation: {
         lat: startMarker.coordinate.latitude,
         lng: startMarker.coordinate.longitude,
-        name: startName
+        name: startName,
       },
       endLocation: {
         lat: endMarker.coordinate.latitude,
         lng: endMarker.coordinate.longitude,
-        name: endName
+        name: endName,
       },
     };
 
@@ -147,7 +162,7 @@ export default function CreateJourneyScreen({ navigation }) {
     sendCreateJourney(userToken, journey, setPopupText)
       .then(function (response) {
         console.log(response.data);
-        navigation.navigate("ViewTrip", {currentJourney: response.data});
+        navigation.navigate("ViewTrip", { currentJourney: response.data });
       })
       .catch(function (error) {
         console.log(error);
@@ -157,17 +172,24 @@ export default function CreateJourneyScreen({ navigation }) {
           // that falls out of the range of 2xx
           //ViewTripScreen
           //navigation.navigate(ViewTrip, {item: response.data});
-          setPopupText("Oh no :(\n" + error.response.status + "\n" + error.message);
+          setPopupText(
+            "Oh no :(\n" + error.response.status + "\n" + error.message
+          );
           setShowPopup(true);
         } else if (error.request) {
           // The request was made but no response was received
           // `error.request` is an instance of XMLHttpRequest in the browser and an instance of
           // http.ClientRequest in node.js
-          setPopupText("Oh no :(\nRequest was made but no response was received.\n" + error.request);
+          setPopupText(
+            "Oh no :(\nRequest was made but no response was received.\n" +
+              error.request
+          );
           setShowPopup(true);
         } else {
           // Something happened in setting up the request that triggered an Error
-          setPopupText("Oh no, error with creating request. :(\n" + error.status);
+          setPopupText(
+            "Oh no, error with creating request. :(\n" + error.status
+          );
           setShowPopup(true);
         }
         //console.log(error.config);
@@ -182,7 +204,7 @@ export default function CreateJourneyScreen({ navigation }) {
           title="Set Start"
           disabled={!startMarker.visible}
           onPress={() => {
-            setStartMarker({ ...startMarker, set: true })
+            setStartMarker({ ...startMarker, set: true });
             getPlacenames(startMarker, setStartName);
           }}
         />
@@ -195,8 +217,7 @@ export default function CreateJourneyScreen({ navigation }) {
           onPress={() => {
             setEndMarker({ ...endMarker, set: true });
             getPlacenames(endMarker, setEndName);
-            }
-          }
+          }}
         />
       );
     }
@@ -204,20 +225,17 @@ export default function CreateJourneyScreen({ navigation }) {
 
   return (
     <View style={styles.container}>
-
       <Modal
         visible={showPopup}
         transparent={true}
         onTouchOutside={() => {
-          setShowPopup(!showPopup)
-        }}>
+          setShowPopup(!showPopup);
+        }}
+      >
         <View style={styles.centeredView}>
           <View style={styles.modalView}>
             <Text style={styles.modalText}>{popupText}</Text>
-            <CustomButton
-              title="Ok"
-              onPress={() => setShowPopup(!showPopup)}
-            />
+            <CustomButton title="Ok" onPress={() => setShowPopup(!showPopup)} />
           </View>
         </View>
       </Modal>
@@ -278,10 +296,17 @@ export default function CreateJourneyScreen({ navigation }) {
           onChangeItem={(item) => setTransportMode(item.value)}
         />
 
-        {Platform.OS === 'android' ?
-          <View style={{ flex: 1, flexDirection: "row", flexWrap: "wrap", justifyContent: "space-between" }}>
+        {Platform.OS === "android" ? (
+          <View
+            style={{
+              flex: 1,
+              flexDirection: "row",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+            }}
+          >
             <TouchableOpacity
-              style={{flexGrow: 1 }}
+              style={{ flexGrow: 1 }}
               onPress={() => {
                 setDateTimeMode("time");
                 setShowDatePicker(true);
@@ -295,7 +320,7 @@ export default function CreateJourneyScreen({ navigation }) {
               />
             </TouchableOpacity>
             <TouchableOpacity
-              style={{flexGrow: 1 }}
+              style={{ flexGrow: 1 }}
               onPress={() => {
                 setDateTimeMode("date");
                 setShowDatePicker(true);
@@ -309,33 +334,68 @@ export default function CreateJourneyScreen({ navigation }) {
               />
             </TouchableOpacity>
           </View>
-          :
-          <View style={{margin: 10, display: 'flex', flexDirection: 'row'}}>
-            <View style={{flex: 1}}>
-              <CustomDatePicker2 style={{flex: 1}} date={startDate} setDate={setStartDate} mode={"date"} setShow={setShowDatePicker} />
+        ) : (
+          <View style={{ margin: 10, display: "flex", flexDirection: "row" }}>
+            <View style={{ flex: 1 }}>
+              <CustomDatePicker2
+                style={{ flex: 1 }}
+                date={startDate}
+                setDate={setStartDate}
+                mode={"date"}
+                setShow={setShowDatePicker}
+              />
             </View>
-            <View style={{flex: 1}}>
-              <CustomDatePicker2 style={{flex: 1}} date={startDate} setDate={setStartDate} mode={"time"} setShow={setShowDatePicker} />
+            <View style={{ flex: 1 }}>
+              <CustomDatePicker2
+                style={{ flex: 1 }}
+                date={startDate}
+                setDate={setStartDate}
+                mode={"time"}
+                setShow={setShowDatePicker}
+              />
             </View>
           </View>
-        }
+        )}
 
         {showDatePicker && Platform.OS === "android" && (
-          <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={dateTimeMode} setShow={setShowDatePicker} />
-        )
-        }
+          <CustomDatePicker2
+            date={startDate}
+            setDate={setStartDate}
+            mode={dateTimeMode}
+            setShow={setShowDatePicker}
+          />
+        )}
 
-        <View style={{ flexDirection: "row", justifyContent: "space-between",}}>
-          <View style={{flex: 1, flexGrow: 1, flexDirection: "row", justifyContent: "flex-start", alignItems: "center"}}>
-            <Icon style={{paddingEnd: 10, paddingStart: 10}} color={COLORS.black} type="font-awesome" name="users" size={20}
+        <View style={{ flexDirection: "row", justifyContent: "space-between" }}>
+          <View
+            style={{
+              flex: 1,
+              flexGrow: 1,
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <Icon
+              style={{ paddingEnd: 10, paddingStart: 10 }}
+              color={COLORS.black}
+              type="font-awesome"
+              name="users"
+              size={20}
             />
-            <Text style={{ textAlign: "center", textAlignVertical: "center", fontSize: 20 }}>
+            <Text
+              style={{
+                textAlign: "center",
+                textAlignVertical: "center",
+                fontSize: 20,
+              }}
+            >
               Max Participants
             </Text>
           </View>
 
           <InputSpinner
-            style={{flex: 1, flexGrow: 1}}
+            style={{ flex: 1, flexGrow: 1 }}
             //skin={"square"}
             shadow={false}
             max={20}
@@ -348,16 +408,36 @@ export default function CreateJourneyScreen({ navigation }) {
             onChange={setMaxParticipants}
           />
         </View>
-        <View style={{ flexDirection: "row", justifyContent: "space-evenly",}}>
-          <View style={{flex: 1, flexGrow: 1, flexDirection: "row", justifyContent: "flex-start", alignItems: "center"}}>
-            <Icon style={{paddingEnd: 10, paddingStart: 10}} color={COLORS.black} type="font-awesome" name="euro" size={20} />
-            <Text style={{ textAlign: "center", textAlignVertical: "center", fontSize: 20 }}>
+        <View style={{ flexDirection: "row", justifyContent: "space-evenly" }}>
+          <View
+            style={{
+              flex: 1,
+              flexGrow: 1,
+              flexDirection: "row",
+              justifyContent: "flex-start",
+              alignItems: "center",
+            }}
+          >
+            <Icon
+              style={{ paddingEnd: 10, paddingStart: 10 }}
+              color={COLORS.black}
+              type="font-awesome"
+              name="euro"
+              size={20}
+            />
+            <Text
+              style={{
+                textAlign: "center",
+                textAlignVertical: "center",
+                fontSize: 20,
+              }}
+            >
               Price
             </Text>
           </View>
 
           <InputSpinner
-            style={{flex: 1, flexGrow: 1}}
+            style={{ flex: 1, flexGrow: 1 }}
             //skin={"square"}
             shadow={false}
             max={1000}
@@ -383,7 +463,9 @@ export default function CreateJourneyScreen({ navigation }) {
         />
 
         {recurring && (
-          <View style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}>
+          <View
+            style={{ display: "flex", flexDirection: "row", flexWrap: "wrap" }}
+          >
             <DayCheckbox name="Mon" dayIndex={0} />
             <DayCheckbox name="Tue" dayIndex={1} />
             <DayCheckbox name="Wed" dayIndex={2} />
@@ -401,19 +483,21 @@ export default function CreateJourneyScreen({ navigation }) {
             title="Women only"
             type="outline"
             checked={womenOnly}
-            onPress={() => setWomenOnly(!womenOnly)}
+            onPress={() => {
+              var newWomenOnly = !womenOnly;
+              setWomenOnly(newWomenOnly);
+            }}
           />
         )}
 
         <CustomButton
           type="outline"
-          style={{marginHorizontal: 10, marginBottom: 10}}
+          style={{ marginHorizontal: 10, marginBottom: 10 }}
           disabled={!readyToCreate()}
           title="Create Journey"
           onPress={() => createJourney()}
         />
       </ScrollView>
-
     </View>
   );
 }
@@ -426,7 +510,7 @@ const styles = StyleSheet.create({
   journeyMenu: {
     flex: 1,
     display: "flex",
-    marginHorizontal: 5
+    marginHorizontal: 5,
     //justifyContent: "center",
     //alignItems: "center",
   },
@@ -448,7 +532,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22
+    marginTop: 22,
   },
   modalView: {
     margin: 20,
@@ -459,14 +543,14 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });

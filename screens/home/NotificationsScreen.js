@@ -1,11 +1,7 @@
 import * as React from 'react';
 import { Image, Button, Text, View, StyleSheet,ScrollView } from 'react-native';
-import { Avatar ,ListItem,Rating, AirbnbRating,Icon} from 'react-native-elements';
-import { TextInput } from 'react-native-gesture-handler';
 import AuthContext from '../../context/AuthContext';
 import { getJourneysOfUser, updateToSeen } from "../../utils/APIcalls";
-import JourneyListView from "../../components/JourneyListView";
-import COLORS from "../../common/colors"
 import RequestsListView from '../../components/RequestsListView';
 
 export default function NotificationsScreen({ navigation })  {

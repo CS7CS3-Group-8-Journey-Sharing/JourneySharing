@@ -4,7 +4,7 @@ import { Avatar } from 'react-native-elements';
 import { TextInput } from 'react-native-gesture-handler';
 import AuthContext from '../../context/AuthContext';
 import { getOwnersJourneys } from "../../utils/APIcalls";
-import JourneyListView from "../../components/JourneyListViewFind";
+import JourneyListView from "../../components/JourneyListView";
 import COLORS from "../../common/colors"
 
 export default function OtherUserProfileScreen({ route,navigation }) {

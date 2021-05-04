@@ -8,22 +8,22 @@ import {
   Text,
   Button,
   Switch,
-  Modal
+  Modal,
 } from "react-native";
 import MapView, { PROVIDER_GOOGLE } from "react-native-maps";
 import MapViewDirections from "react-native-maps-directions";
-import { SearchBar, Icon } from 'react-native-elements';
+import { SearchBar, Icon } from "react-native-elements";
 import {
   getJourneysWithinRadius,
-  getWomenJourneys
+  getWomenJourneys,
 } from "../../utils/APIcalls";
-import JourneyListView from "../../components/JourneyListViewFind";
-import * as Permissions from 'expo-permissions';
-import * as Location from 'expo-location';
+import JourneyListView from "../../components/JourneyListView";
+import * as Permissions from "expo-permissions";
+import * as Location from "expo-location";
 import COLORS from "../../common/colors";
 import CustomButton from "../../components/CustomButton";
 import { mapperModeOfTransport } from "../../utils/utilFunctions";
-import { GOOGLE_MAPS_APIKEY } from '@env';
+import { GOOGLE_MAPS_APIKEY } from "@env";
 
 export default function FindJourneyScreen({ navigation }) {
   const { userToken } = React.useContext(AuthContext);
@@ -37,7 +37,7 @@ export default function FindJourneyScreen({ navigation }) {
   const [journeys, setJourneys] = useState([]);
   const [filteredJourneys, setFilteredJourneys] = useState([]);
   const [currentJourney, setCurrentJourney] = useState({});
-  const [search, setSearch] = useState('');
+  const [search, setSearch] = useState("");
   const [userLocation, setUserLocation] = useState({});
   const [errorMsg, setErrorMsg] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -47,27 +47,23 @@ export default function FindJourneyScreen({ navigation }) {
   const [joinJourneyPopup, setJoinJourneyPopup] = useState(false);
   const togglePopup = (fromJoinJourney) => {
     setJoinJourneyPopup(fromJoinJourney);
-    if(!fromJoinJourney) setPopupText("Set Women Only.")
-    setShowPopup(previousState => !previousState)
+    if (!fromJoinJourney) setPopupText("Set Women Only.");
+    setShowPopup((previousState) => !previousState);
   };
-  const toggleSwitch = () => setWomenOnly(previousState => !previousState);
+  const toggleSwitch = () => setWomenOnly((previousState) => !previousState);
   const mapView = useRef(null);
 
   const animateMap = () => {
-    mapView.current.fitToSuppliedMarkers(
-      ['mk2', 'mk3', 'mk1'],
-      { edgePadding: 
-        {
-          top: 100,
-          right: 50,
-          bottom: 50,
-          left: 50
-        },
-        animated: true
+    mapView.current.fitToSuppliedMarkers(["mk2", "mk3", "mk1"], {
+      edgePadding: {
+        top: 100,
+        right: 50,
+        bottom: 50,
+        left: 50,
       },
-    )
-  }
-
+      animated: true,
+    });
+  };
 
   const searchFilterFunction = (text) => {
     // Check if searched text is not blank
@@ -76,11 +72,19 @@ export default function FindJourneyScreen({ navigation }) {
       // Filter the journeys
       // Update filteredJourneys
       const newData = journeys.filter(function (item) {
-        const nameData = item.name ? item.name.toUpperCase() : ''.toUpperCase();
-        const originData = item.startLocation.name ? item.startLocation.name.toUpperCase() : ''.toUpperCase();
-        const endData = item.endLocation.name ? item.endLocation.name.toUpperCase() : ''.toUpperCase();
+        const nameData = item.name ? item.name.toUpperCase() : "".toUpperCase();
+        const originData = item.startLocation.name
+          ? item.startLocation.name.toUpperCase()
+          : "".toUpperCase();
+        const endData = item.endLocation.name
+          ? item.endLocation.name.toUpperCase()
+          : "".toUpperCase();
         const textData = text.toUpperCase();
-        return nameData.indexOf(textData) > -1 || originData.indexOf(textData) > -1 || endData.indexOf(textData) > -1;
+        return (
+          nameData.indexOf(textData) > -1 ||
+          originData.indexOf(textData) > -1 ||
+          endData.indexOf(textData) > -1
+        );
       });
       setFilteredJourneys(newData);
       setSearch(text);
@@ -93,101 +97,114 @@ export default function FindJourneyScreen({ navigation }) {
   };
 
   const filterWomenOnly = () => {
-    if(womenOnly) {
-      setFilteredJourneys(journeys.filter(journey => journey.womenOnly));
+    if (womenOnly) {
+      setFilteredJourneys(
+        journeys.filter((journey) => journey.womanOnly == true)
+      );
     } else {
       setFilteredJourneys(journeys);
     }
-  }
+  };
 
   useEffect(() => {
     (async () => {
       let { status } = await Permissions.askAsync(Permissions.LOCATION);
-      if (status !== 'granted') {
-        console.log('Permission to access location was denied');
+      if (status !== "granted") {
+        console.log("Permission to access location was denied");
         return;
       }
 
       let location = await Location.getCurrentPositionAsync({});
       let userLocation = {
         latitude: location.coords.latitude,
-        longitude: location.coords.longitude
-      }
+        longitude: location.coords.longitude,
+      };
 
-      setUserLocation(userLocation)
+      setUserLocation(userLocation);
 
-      getJourneysWithinRadius(userLocation, 500, userToken).then(res => {
-        setCurrentJourney(res[0]);
-        setJourneys(res);
-        setFilteredJourneys(res);
-        setLoading(false);
-      }).catch((error) => console.log(error))
+      getJourneysWithinRadius(userLocation, 500, userToken)
+        .then((res) => {
+          setCurrentJourney(res[0]);
+          setJourneys(res);
+          setFilteredJourneys(res);
+          setLoading(false);
+        })
+        .catch((error) => console.log(error));
     })();
-  }, [])
+  }, []);
 
   useLayoutEffect(() => {
-    if(mapView.current !== null && currentJourney !== null){
+    if (mapView.current !== null && currentJourney !== null) {
       animateMap();
     }
-  }, [currentJourney])
+  }, [currentJourney]);
 
   if (filteredJourneys.length > 0 && !loading) {
     return (
       <View style={styles.container}>
-
         <Modal
           visible={showPopup}
           transparent={true}
           onTouchOutside={() => {
-            setShowPopup(!showPopup)
-          }}>
+            setShowPopup(!showPopup);
+          }}
+        >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>{popupText}</Text>
-              {!joinJourneyPopup && 
+              {!joinJourneyPopup && (
                 <Switch
-                  trackColor={{ false: '#767577', true: COLORS.mainColor }}
-                  thumbColor={womenOnly ? '#f4f3f4' : '#f4f3f4'}
+                  trackColor={{ false: "#767577", true: COLORS.mainColor }}
+                  thumbColor={womenOnly ? "#f4f3f4" : "#f4f3f4"}
                   ios_backgroundColor="#3e3e3e"
                   onValueChange={toggleSwitch}
                   value={womenOnly}
                 />
-              }
+              )}
               <CustomButton
                 title="Ok"
-                style={{paddingTop: 10}}
+                style={{ paddingTop: 10 }}
                 onPress={() => {
-                  setShowPopup(!showPopup)
-                  if(!joinJourneyPopup) filterWomenOnly()
-                  else { navigation.navigate("Home") }
+                  setShowPopup(!showPopup);
+                  if (!joinJourneyPopup) filterWomenOnly();
+                  else {
+                    navigation.navigate("Home");
+                  }
                 }}
               />
             </View>
           </View>
         </Modal>
 
-        <View style={{flexDirection: 'row'}}>
-            <SearchBar
-              placeholder="Search a journey..."
-              onChangeText={setSearch}
-              lightTheme
-              round
-              containerStyle={styles.searchBar}
-              value={search}
-              searchIcon={{ size: 24 }}
-              onChangeText={(text) => searchFilterFunction(text)}
-              onClear={(text) => searchFilterFunction('')}
-              placeholder="Search by name, origin or destination..."
+        <View style={{ flexDirection: "row" }}>
+          <SearchBar
+            placeholder="Search a journey..."
+            onChangeText={setSearch}
+            lightTheme
+            round
+            containerStyle={styles.searchBar}
+            value={search}
+            searchIcon={{ size: 24 }}
+            onChangeText={(text) => searchFilterFunction(text)}
+            onClear={(text) => searchFilterFunction("")}
+            placeholder="Search by name, origin or destination..."
+          />
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: COLORS.white,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Icon
+              color={COLORS.greyMore}
+              type="font-awesome"
+              name="cog"
+              size={30}
+              onPress={() => togglePopup(false)}
             />
-            <View style={{flex: 1, backgroundColor: COLORS.white, justifyContent: 'center', alignItems: 'center'}}>
-              <Icon
-                color={COLORS.greyMore}
-                type="font-awesome"
-                name="cog"
-                size={30}
-                onPress={() =>  togglePopup(false)}
-              />
-            </View>
+          </View>
         </View>
         <MapView
           initialRegion={region}
@@ -198,24 +215,21 @@ export default function FindJourneyScreen({ navigation }) {
           followsUserLocation
           provider={PROVIDER_GOOGLE}
           onMapReady={() => {
-            mapView.current.fitToSuppliedMarkers(
-              ['mk2', 'mk3', 'mk1'],
-              { edgePadding: 
-                {
-                  top: 100,
-                  right: 50,
-                  bottom: 50,
-                  left: 50
-                }
-              }
-            )
+            mapView.current.fitToSuppliedMarkers(["mk2", "mk3", "mk1"], {
+              edgePadding: {
+                top: 100,
+                right: 50,
+                bottom: 50,
+                left: 50,
+              },
+            });
           }}
         >
           <MapView.Marker
             coordinate={userLocation}
             title="userLoc"
             opacity={0.0}
-            identifier={'mk1'}
+            identifier={"mk1"}
           />
           <MapView.Marker
             coordinate={{
@@ -223,7 +237,7 @@ export default function FindJourneyScreen({ navigation }) {
               longitude: currentJourney.startLocation.lng,
             }}
             title="origin"
-            identifier={'mk2'}
+            identifier={"mk2"}
           />
           <MapView.Marker
             coordinate={{
@@ -231,7 +245,7 @@ export default function FindJourneyScreen({ navigation }) {
               longitude: currentJourney.endLocation.lng,
             }}
             title="destination"
-            identifier={'mk3'}
+            identifier={"mk3"}
           />
           <MapViewDirections
             origin={{
@@ -264,58 +278,66 @@ export default function FindJourneyScreen({ navigation }) {
         </ScrollView>
       </View>
     );
-  } else if(!loading) {
+  } else if (!loading) {
     return (
       <View style={styles.container}>
-         <Modal
+        <Modal
           visible={showPopup}
           transparent={true}
           onTouchOutside={() => {
-            setShowPopup(!showPopup)
-          }}>
+            setShowPopup(!showPopup);
+          }}
+        >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
               <Text style={styles.modalText}>{"Set women only"}</Text>
               <Switch
-                trackColor={{ false: '#767577', true: COLORS.mainColor }}
-                thumbColor={womenOnly ? '#f4f3f4' : '#f4f3f4'}
+                trackColor={{ false: "#767577", true: COLORS.mainColor }}
+                thumbColor={womenOnly ? "#f4f3f4" : "#f4f3f4"}
                 ios_backgroundColor="#3e3e3e"
                 onValueChange={toggleSwitch}
                 value={womenOnly}
               />
               <CustomButton
                 title="Ok"
-                style={{paddingTop: 10}}
+                style={{ paddingTop: 10 }}
                 onPress={() => {
-                  setShowPopup(!showPopup)
-                  filterWomenOnly()
+                  setShowPopup(!showPopup);
+                  filterWomenOnly();
                 }}
               />
             </View>
           </View>
         </Modal>
-        <View style={{flexDirection: 'row'}}>
+        <View style={{ flexDirection: "row" }}>
           <SearchBar
-              placeholder="Search a journey..."
-              onChangeText={setSearch}
-              lightTheme
-              round
-              containerStyle={styles.searchBar}
-              value={search}
-              searchIcon={{ size: 24 }}
-              onChangeText={(text) => searchFilterFunction(text)}
-              onClear={(text) => searchFilterFunction('')}
-              placeholder="Search by name, origin or destination..."
+            placeholder="Search a journey..."
+            onChangeText={setSearch}
+            lightTheme
+            round
+            containerStyle={styles.searchBar}
+            value={search}
+            searchIcon={{ size: 24 }}
+            onChangeText={(text) => searchFilterFunction(text)}
+            onClear={(text) => searchFilterFunction("")}
+            placeholder="Search by name, origin or destination..."
+          />
+          <View
+            style={{
+              flex: 1,
+              backgroundColor: COLORS.white,
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
+            <Icon
+              color={COLORS.greyMore}
+              type="font-awesome"
+              name="cog"
+              size={30}
+              onPress={() => togglePopup()}
             />
-            <View style={{flex: 1, backgroundColor: COLORS.white, justifyContent: 'center', alignItems: 'center'}}>
-              <Icon
-                color={COLORS.greyMore}
-                type="font-awesome"
-                name="cog"
-                size={30}
-                onPress={() =>  togglePopup()}
-              />
-            </View>
+          </View>
         </View>
         <View style={styles.center}>
           <Text style={{ marginBottom: 10 }}>
@@ -360,17 +382,17 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   searchBar: {
-    flex: 6, 
-    backgroundColor: COLORS.white, 
-    borderColor: COLORS.white, 
-    marginRight: 0, 
-    paddingRight: 0
+    flex: 6,
+    backgroundColor: COLORS.white,
+    borderColor: COLORS.white,
+    marginRight: 0,
+    paddingRight: 0,
   },
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22
+    marginTop: 22,
   },
   modalView: {
     margin: 20,
@@ -381,14 +403,14 @@ const styles = StyleSheet.create({
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
   modalText: {
     marginBottom: 15,
-    textAlign: "center"
-  }
+    textAlign: "center",
+  },
 });
