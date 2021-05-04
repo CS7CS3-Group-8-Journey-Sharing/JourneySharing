@@ -10,14 +10,14 @@ import {
   Dimensions,
   ScrollView,
 } from "react-native";
-import MapView, { Marker } from "react-native-maps";
+import MapView, { Marker, PROVIDER_GOOGLE } from "react-native-maps";
 import CustomDatePicker2 from "../../components/CustomDatePicker2";
 import DropDownPicker from "react-native-dropdown-picker";
 import MapViewDirections from "react-native-maps-directions";
 import AuthContext from "../../context/AuthContext";
 import { sendCreateJourney, getJourneysOfUser } from "../../utils/APIcalls"
 import InputSpinner from "react-native-input-spinner";
-//import { GOOGLE_MAPS_APIKEY } from '@env';
+import { GOOGLE_MAPS_APIKEY } from '@env';
 
 export default function CreateJourneyScreen({ navigation }) {
   // get and use current location data
@@ -227,6 +227,7 @@ export default function CreateJourneyScreen({ navigation }) {
           initialRegion={region}
           onRegionChange={setRegion}
           style={styles.map}
+          provider={PROVIDER_GOOGLE}
           onPress={(e) => placeMarker(e)}
         >
           {startMarker.visible ? (
@@ -309,10 +310,14 @@ export default function CreateJourneyScreen({ navigation }) {
             </TouchableOpacity>
           </View>
           :
-          <>
-            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"date"} setShow={setShowDatePicker} />
-            <CustomDatePicker2 date={startDate} setDate={setStartDate} mode={"time"} setShow={setShowDatePicker} />
-          </>
+          <View style={{margin: 10, display: 'flex', flexDirection: 'row'}}>
+            <View style={{flex: 1}}>
+              <CustomDatePicker2 style={{flex: 1}} date={startDate} setDate={setStartDate} mode={"date"} setShow={setShowDatePicker} />
+            </View>
+            <View style={{flex: 1}}>
+              <CustomDatePicker2 style={{flex: 1}} date={startDate} setDate={setStartDate} mode={"time"} setShow={setShowDatePicker} />
+            </View>
+          </View>
         }
 
         {showDatePicker && Platform.OS === "android" && (
@@ -402,6 +407,7 @@ export default function CreateJourneyScreen({ navigation }) {
 
         <CustomButton
           type="outline"
+          style={{marginHorizontal: 10, marginBottom: 10}}
           disabled={!readyToCreate()}
           title="Create Journey"
           onPress={() => createJourney()}
@@ -420,6 +426,7 @@ const styles = StyleSheet.create({
   journeyMenu: {
     flex: 1,
     display: "flex",
+    marginHorizontal: 5
     //justifyContent: "center",
     //alignItems: "center",
   },

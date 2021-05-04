@@ -1,10 +1,11 @@
 import React, { useState } from "react";
-import { Text, View, StyleSheet, Dimensions } from "react-native";
+import { Text, View, StyleSheet, Dimensions, Modal } from "react-native";
 import { ListItem, Icon, Avatar } from "react-native-elements";
 import TouchableScale from "react-native-touchable-scale";
 import COLORS from "../common/colors";
 import CustomButton from "./CustomButton"
 import { parseISOString, isoFormatDMY, isoFormatHMS } from "../utils/utilFunctions"
+import { createRequest } from "../utils/APIcalls"
 
 export default function JourneyListView({
   navigation,
@@ -12,8 +13,12 @@ export default function JourneyListView({
   currentJourney,
   setCurrentJourney,
   fromFindJourney,
-  isHappening
+  isHappening,
+  togglePopup,
+  setPopupText
 }) {
+  const { user, userToken } = React.useContext(AuthContext);
+
   const handleItemPress = (item) => {
     if (fromFindJourney) {
       setCurrentJourney(item);
@@ -22,14 +27,23 @@ export default function JourneyListView({
     }
   };
 
-  const joinJourney = (item) => {
-
+  const joinJourneyRequest = async (item) => {
+    createRequest(user.email, item.journeyId, userToken).then(() => {
+      setPopupText("Requested to join the journey, please wait for the onwer's response.")
+      togglePopup(true);
+    }).catch(error => { 
+      console.log("Error joining journey: "+error)
+      setPopupText("Error joining journey: "+error)   
+      togglePopup(true);
+    })
   }
+
   return (
-    <View>
+    <View style={styles.container}>
       {list.map((item, i) => {
 
         const datetimeStart = parseISOString(item.startTime);
+        const isParticipant = item.participantEmails && item.participantEmails.includes(user.email);
 
         return (
         <ListItem
@@ -40,6 +54,7 @@ export default function JourneyListView({
           tension={100} // These props are passed to the parent component (here TouchableScale)
           activeScale={0.95} //
           onPress={() => handleItemPress(item)}
+          disabled={currentJourney == item}
           key={i}
         >
           <ListItem.Content>
@@ -47,9 +62,9 @@ export default function JourneyListView({
               <Text style={styles().containerJourneys_text_title}>
                 {item.name}
               </Text>
-              {fromFindJourney && (
+              {(fromFindJourney && item.ownerEmail != user.email && !isParticipant) && (
                 <CustomButton
-                  onPress={() => joinJourney(item)}
+                  onPress={() => joinJourneyRequest(item)}
                   title="JOIN"
                 />
               )}
@@ -64,8 +79,8 @@ export default function JourneyListView({
                 />
               </View>
               <Text style={styles().containerJourneys_text}>
-                <Text style={{ color: COLORS.mainColor }}>{item.ownerEmail}</Text>,{" "}
-                {item.participantsEmails}
+                <Text style={{ color: COLORS.mainColor }}>{item.ownerEmail}</Text>
+                {item.participantEmails && item.participantEmails.map((item, i) => <Text>{", "+item}</Text>)}
               </Text>
             </View>
 
@@ -209,4 +224,29 @@ const styles = (isHappening, currentJourney, item) => StyleSheet.create({
     flexDirection: "row",
     paddingVertical: 3,
   },
+  centeredView: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 22
+  },
+  modalView: {
+    margin: 20,
+    backgroundColor: "white",
+    borderRadius: 20,
+    padding: 35,
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
+    elevation: 5
+  },
+  modalText: {
+    marginBottom: 15,
+    textAlign: "center"
+  }
 });

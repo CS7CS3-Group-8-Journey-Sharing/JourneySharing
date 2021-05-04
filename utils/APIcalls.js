@@ -261,3 +261,160 @@ export function endJourney(userEmail, journeyID, token) {
     })
   });
 }
+
+export function getJourney(journeyID, token) {
+  let params = {
+    journeyId: journeyID
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "journey/getjourney", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
+
+export function deleteJourney(journeyID, token) {
+  let params = {
+    journeyId: journeyID
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.post(baseUrl + "journey/deletejourney", null, {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
+
+export function createRequest(userEmail, journeyID, userToken) {
+  let params = {
+    userEmail: userEmail,
+    journeyId: journeyID
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + userToken
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.post(baseUrl + "request/createRequest", null, {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(error)
+      reject(error);
+    })
+  });
+}
+
+export function getRequests(userEmail, token) {
+  let params = {
+    userEmail: userEmail,
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "request/getRequests", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(+error)
+      reject(error);
+    })
+  });
+}
+
+export function getYourRequests(userEmail, token) {
+  let params = {
+    userEmail: userEmail,
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.get(baseUrl + "request/getyourrequests", {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(+error)
+      reject(error);
+    })
+  });
+}
+
+export function joinJourney(requestId, token) {
+  let params = {
+    requestId: requestId,
+  }
+
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.put(baseUrl + "journey/joinjourney", null, {
+      headers: headers,
+      params: params
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(+error)
+      reject(error);
+    })
+  });
+}
+
+export function updateToSeen(requestIds, token) {
+  let headers = {
+    'Content-Type': 'application/json',
+    'Authorization': 'Bearer ' + token
+  }
+
+  return new Promise((resolve, reject) => {
+    axios.post(baseUrl + "request/updatetoseen", requestIds, {
+      headers: headers
+    }).then((res) => {
+      resolve(res.data);
+    }).catch((error) => {
+      console.log(+error)
+      reject(error);
+    })
+  });
+}
