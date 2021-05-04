@@ -3,9 +3,12 @@ import { Text, ScrollView, View, StyleSheet, Dimensions } from "react-native";
 import { Button } from "react-native-elements";
 import { Icon } from "react-native-elements";
 import { SafeAreaProvider, SafeAreaView } from "react-native-safe-area-context";
-import JourneyListView from "../../components/JourneyListViewFind";
-import COLORS from "../../common/colors"
-import { getOwnersJourneys, getParticipatingJourneys } from "../../utils/APIcalls";
+import JourneyListView from "../../components/JourneyListView";
+import COLORS from "../../common/colors";
+import {
+  getOwnersJourneys,
+  getParticipatingJourneys,
+} from "../../utils/APIcalls";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function HomeScreen({ navigation }) {
@@ -18,67 +21,83 @@ export default function HomeScreen({ navigation }) {
   const [happeningJourneys, setHappeningJourneys] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      getOwnersJourneys(user.email, userToken).then(res => {
-        setOwnerJourneys(res);
-        getParticipatingJourneys(user.email, userToken).then(res => { 
-          setParticipatingJourneys(res);
-          setLoading(false);
-        }).catch((error) => {
-          console.log(error)
-          setLoading(false);
+    const unsubscribe = navigation.addListener("focus", () => {
+      getOwnersJourneys(user.email, userToken)
+        .then((res) => {
+          setOwnerJourneys(res);
+          getParticipatingJourneys(user.email, userToken)
+            .then((res) => {
+              setParticipatingJourneys(res);
+              setLoading(false);
+            })
+            .catch((error) => {
+              console.log(error);
+              setLoading(false);
+            });
         })
-      }).catch((error) => {
-        console.log(error)
-        setLoading(false);
-      })
+        .catch((error) => {
+          console.log(error);
+          setLoading(false);
+        });
     });
 
     return unsubscribe;
-  }, [navigation])
+  }, [navigation]);
 
   useLayoutEffect(() => {
     var startedList = [];
     participatingJourneys.forEach((journey) => {
-      if(journey.active) {
+      if (journey.active) {
         startedList.push(journey);
       }
-    })  
+    });
     ownerJourneys.forEach((journey) => {
-      if(journey.active) {
+      if (journey.active) {
         startedList.push(journey);
       }
-    })  
+    });
     setHappeningJourneys(startedList);
-  }, [ownerJourneys, participatingJourneys])
+  }, [ownerJourneys, participatingJourneys]);
 
-  if ((ownerJourneys.length > 0 || participatingJourneys > 0 || happeningJourneys.length > 0) && !loading) {
+  if (
+    (ownerJourneys.length > 0 ||
+      participatingJourneys.length > 0 ||
+      happeningJourneys.length > 0) &&
+    !loading
+  ) {
     return (
       <ScrollView>
-        { happeningJourneys.length> 0 && 
+        {happeningJourneys.length > 0 && (
           <View style={styles.container}>
             {/* Journeys that have started already */}
-            <Text style={styles.title}>Started Journeys</Text> 
-            <JourneyListView isHappening navigation={navigation} list={happeningJourneys} />
+            <Text style={styles.title}>Started Journeys</Text>
+            <JourneyListView
+              isHappening
+              navigation={navigation}
+              list={happeningJourneys}
+            />
           </View>
-        }
-        { ownerJourneys.length> 0 && 
+        )}
+        {ownerJourneys.length > 0 && (
           <View style={styles.container}>
             {/* Journeys that you are the owner of */}
-            <Text style={styles.title}>Your Journeys</Text> 
+            <Text style={styles.title}>Your Journeys</Text>
             <JourneyListView navigation={navigation} list={ownerJourneys} />
           </View>
-        }
-        { participatingJourneys.length> 0 && 
+        )}
+        {participatingJourneys.length > 0 && (
           <View style={styles.container}>
             {/* Journeys that you are NOT the owner of, but are participating in */}
-            <Text style={styles.title}>Participating In</Text> 
-            <JourneyListView navigation={navigation} list={participatingJourneys} />
+            <Text style={styles.title}>Participating In</Text>
+            <JourneyListView
+              navigation={navigation}
+              list={participatingJourneys}
+            />
           </View>
-        }
+        )}
       </ScrollView>
     );
-  } else if(!loading) {
+  } else if (!loading) {
     return (
       <View style={styles.container}>
         <View style={styles.center}>
@@ -98,13 +117,11 @@ export default function HomeScreen({ navigation }) {
     return (
       <View style={styles.container}>
         <View style={styles.center}>
-          <Text style={{ marginBottom: 10 }}>
-            Loading journeys...
-          </Text>
+          <Text style={{ marginBottom: 10 }}>Loading journeys...</Text>
         </View>
       </View>
     );
-  } 
+  }
 }
 
 const styles = StyleSheet.create({
@@ -120,9 +137,9 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   title: {
-    marginHorizontal: 10, 
+    marginHorizontal: 10,
     marginTop: 10,
     fontSize: 25,
-    fontWeight: "bold"
-  }
+    fontWeight: "bold",
+  },
 });

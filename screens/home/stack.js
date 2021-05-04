@@ -115,12 +115,12 @@ export default function HomeStackScreen({navigation}) {
     return (
       <View> 
         <Icon
-        size = {30}
-        type = "ionicon"
-        name = "notifications-outline"
-        color= {COLORS.mainColor}
-        onPress={() => navigation.navigate("Notifications")}
-        containerStyle={{ marginRight: 20 }}
+          size = {30}
+          type = "ionicon"
+          name = "notifications-outline"
+          color= {COLORS.mainColor}
+          onPress={() => navigation.navigate("Notifications")}
+          containerStyle={{ marginRight: 20 }}
         />
         {(number > 0) &&
           <Badge 
