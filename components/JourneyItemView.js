@@ -168,6 +168,8 @@ export default function JourneyItemView({ item ,navigation}) {
           <CustomButton style={{marginHorizontal: 10}} title="REQUEST TO JOIN" />
         </>
       )}
+      <View style={{ marginBottom: 10 }} />
+      <CustomButton style={{marginHorizontal: 10}} opposite={true} title="VIEW IN AUGMENTED REALITY" />
     </View>
   );
 }
