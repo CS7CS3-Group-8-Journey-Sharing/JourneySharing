@@ -121,7 +121,7 @@ export default function ViewTripScreen({ route, navigation }) {
             longitude: currentJourney.endLocation.lng,
           }}
           mode={currentJourney.modeOfTransport}
-          apikey={"AIzaSyDng0CwnEOFcCNp3vLzQ0Q_W7GA_WKs6B0"}
+          apikey={GOOGLE_MAPS_APIKEY}
           strokeWidth={3}
           strokeColor="darkgreen"
           optimizeWaypoints={true}
