@@ -4,9 +4,7 @@ import AuthContext from "../context/AuthContext";
 import { Platform } from "react-native";
 
 export const baseUrl =
-  Platform.OS === "ios"
-    ? "http://localhost:8080/api/journeysharing/"
-    : "http://10.0.2.2:8080/api/journeysharing/";
+  "https://journeysharing.herokuapp.com/api/journeysharing/";
 
 export function getUserDetails(email, token) {
   let params = {

@@ -10,6 +10,7 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
+    "description": "Journey sharing App",
     "updates": {
       "fallbackToCacheTimeout": 0
     },
